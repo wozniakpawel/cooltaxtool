@@ -10,7 +10,6 @@ function App() {
 
   const handleUserInputsChange = (newInputs) => {
     setUserInputs(newInputs);
-    console.log(newInputs);
   };
 
   return (

@@ -114,6 +114,7 @@ const UserMenu = ({ onUserInputsChange }) => {
                     <option value="plan1">Plan 1</option>
                     <option value="plan2">Plan 2</option>
                     <option value="plan4">Plan 4</option>
+                    <option value="plan5">Plan 5</option>
                     <option value="postgrad">Postgraduate</option>
                 </select>
             </form>

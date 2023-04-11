@@ -1,5 +1,4 @@
 export const fetchTaxConstants = (taxYear, residentInScotland) => {
-    console.log(taxYear, residentInScotland);
     // Define tax constants based on the tax year and residency status
     const taxConstants = {
         '2023/24': {
@@ -16,8 +15,6 @@ export const fetchTaxConstants = (taxYear, residentInScotland) => {
                 niUpperLimit: 50270,
                 niRate1: 0.12,
                 niRate2: 0.02,
-                studentLoanPlan2Threshold: 27295,
-                studentLoanPlan2Rate: 0.09,
             },
             restOfUK: {
                 personalAllowance: 12570,
@@ -32,8 +29,6 @@ export const fetchTaxConstants = (taxYear, residentInScotland) => {
                 niUpperLimit: 50270,
                 niRate1: 0.12,
                 niRate2: 0.02,
-                studentLoanPlan2Threshold: 27295,
-                studentLoanPlan2Rate: 0.09,
             },
         },
         // Add more tax years if needed
@@ -92,15 +87,21 @@ export function calculateNationalInsurance(income, constants) {
 }
 
 // Calculate student loan repayments (plan 1 and 2)
-export function calculateStudentLoanRepayments(income, plan, constants) {
+export function calculateStudentLoanRepayments(income, plan) {
+
+    const studentLoanRate = plan === "postgrad" ? 0.06 : 0.09;
+    const studentLoanThresholds = {
+        "plan1": 22015,
+        "plan2": 27295,
+        "plan4": 27660,
+        "plan5": 25000,
+        "postgrad": 21000
+    }
+
     let repayments = 0;
 
-    if (plan === "plan1") {
-        // Add plan1 constants and calculation logic here
-    } else if (plan === "plan2") {
-        if (income > constants.studentLoanPlan2Threshold) {
-            repayments = (income - constants.studentLoanPlan2Threshold) * constants.studentLoanPlan2Rate;
-        }
+    if (income > studentLoanThresholds[plan] && plan !== "none") {
+        repayments = (income - studentLoanThresholds[plan]) * studentLoanRate;
     }
 
     return repayments;
@@ -132,7 +133,6 @@ export function calculateSalarySacrifice(income, salarySacrifice) {
 
 // Top-level function to calculate taxes
 export const calculateTaxes = (grossIncome, options) => {
-    // console.log(options);
     const { taxYear, residentInScotland } = options;
     const constants = fetchTaxConstants(taxYear, residentInScotland);  
     if (!constants) throw new Error(`Tax year ${taxYear} not supported`);
