@@ -5,14 +5,14 @@ import Plot from 'react-plotly.js';
 import { calculateIncomeTax } from '../utils/TaxCalc';
 import TaxDataContext from '../context/TaxDataContext';
 
-const TaxYearOverview = () => {
+const TaxYearOverview = ({ userInputs }) => {
   const { taxData } = useContext(TaxDataContext);
   const [plotData, setPlotData] = useState([]);
 
   useEffect(() => {
     const grossIncomes = Array.from({ length: 101 }, (_, i) => i * 1000); // Gross incomes from 0 to 100,000 with step of 1,000
     const incomeTaxes = grossIncomes.map((grossIncome) =>
-      calculateIncomeTax(taxData, grossIncome),
+      calculateIncomeTax(grossIncome, taxData),
     );
 
     setPlotData([
@@ -24,7 +24,7 @@ const TaxYearOverview = () => {
         marker: { color: 'blue' },
       },
     ]);
-  }, [taxData]);
+  }, [taxData, userInputs]);
 
   return (
     <div className="TaxYearOverview">

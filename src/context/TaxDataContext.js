@@ -1,13 +1,13 @@
 import React, { createContext, useState } from 'react';
-import { calculateTaxes } from '../utils/TaxCalc';
+import { fetchTaxConstants } from '../utils/TaxCalc';
 
 const TaxDataContext = createContext();
 
 export const TaxDataProvider = ({ children }) => {
   const [taxData, setTaxData] = useState({});
 
-  const updateTaxData = (grossIncome, taxYear, options) => {
-    const updatedTaxData = calculateTaxes(grossIncome, taxYear, options);
+  const updateTaxData = (taxYear, residentInScotland) => {
+    const updatedTaxData = fetchTaxConstants(taxYear, residentInScotland);
     setTaxData(updatedTaxData);
   };
 

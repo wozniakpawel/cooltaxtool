@@ -26,7 +26,7 @@ const UserInputs = ({ onUserInputsChange }) => {
 
     useEffect(() => {
         const residentInScotland = inputs.residentInScotland;
-        updateTaxData(residentInScotland, inputs.taxYear);
+        updateTaxData(inputs.taxYear, residentInScotland);
     }, [inputs.taxYear, inputs.residentInScotland, updateTaxData]);
 
     const handleInputChange = (event) => {

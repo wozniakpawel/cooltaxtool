@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import UserInputs from './components/UserInputs';
 import TaxAnalysis from './components/TaxAnalysis';
 import TaxYearOverview from './components/TaxYearOverview';
@@ -12,10 +12,6 @@ function App() {
     setUserInputs(inputs);
   };
 
-  useEffect(() => {
-    // This effect will be called whenever user inputs change, which is when you can perform tax calculations and pass them to the other components
-  }, [userInputs]);
-
   return (
     <TaxDataProvider>
       <div className="appContainer">
@@ -23,13 +19,12 @@ function App() {
           <UserInputs onUserInputsChange={handleUserInputsChange} />
         </div>
         <div className="taxComponentsContainer">
-          <TaxAnalysis />
-          <TaxYearOverview />
+          <TaxAnalysis userInputs={userInputs} />
+          <TaxYearOverview userInputs={userInputs} />
         </div>
       </div>
     </TaxDataProvider>
   );
-  
 }
 
 export default App;

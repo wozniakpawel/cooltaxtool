@@ -1,4 +1,5 @@
 export const fetchTaxConstants = (taxYear, residentInScotland) => {
+    console.log(taxYear, residentInScotland);
     // Define tax constants based on the tax year and residency status
     const taxConstants = {
         '2023/24': {
@@ -131,8 +132,7 @@ export function calculateSalarySacrifice(income, salarySacrifice) {
 
 // Top-level function to calculate taxes
 export function calculateTaxes(grossIncome, taxYear, options = {}) {
-    const region = options.residentInScotland ? 'scotland' : 'restOfUK';
-    const constants = fetchTaxConstants(taxYear, region);
+    const constants = fetchTaxConstants(taxYear, options.residentInScotland);
     if (!constants) throw new Error(`Tax year ${taxYear} not supported`);
   
     // Apply salary sacrifice
