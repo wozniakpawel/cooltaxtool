@@ -1,29 +1,28 @@
 import React, { useState } from 'react';
-import UserInputs from './components/UserInputs';
+import UserMenu from './components/UserMenu';
 import TaxAnalysis from './components/TaxAnalysis';
 import TaxYearOverview from './components/TaxYearOverview';
-import { TaxDataProvider } from './context/TaxDataContext';
+import { defaultInputs } from './components/DefaultInputs';
 import './App.css';
 
 function App() {
-  const [userInputs, setUserInputs] = useState({});
+  const [userInputs, setUserInputs] = useState(defaultInputs);
 
-  const handleUserInputsChange = (inputs) => {
-    setUserInputs(inputs);
+  const handleUserInputsChange = (newInputs) => {
+    setUserInputs(newInputs);
+    console.log(newInputs);
   };
 
   return (
-    <TaxDataProvider>
       <div className="appContainer">
         <div className="inputContainer">
-          <UserInputs onUserInputsChange={handleUserInputsChange} />
+          <UserMenu onUserInputsChange={handleUserInputsChange} />
         </div>
         <div className="taxComponentsContainer">
-          <TaxAnalysis userInputs={userInputs} />
-          <TaxYearOverview userInputs={userInputs} />
+          <TaxAnalysis inputs={userInputs} />
+          <TaxYearOverview inputs={userInputs} />
         </div>
       </div>
-    </TaxDataProvider>
   );
 }
 

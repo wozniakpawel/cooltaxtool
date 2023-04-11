@@ -1,18 +1,15 @@
-// src/components/TaxYearOverview.js
-
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Plot from 'react-plotly.js';
-import { calculateIncomeTax } from '../utils/TaxCalc';
-import TaxDataContext from '../context/TaxDataContext';
+import { calculateTaxes } from '../utils/TaxCalc';
 
-const TaxYearOverview = ({ userInputs }) => {
-  const { taxData } = useContext(TaxDataContext);
+const TaxYearOverview = ({ inputs }) => {
   const [plotData, setPlotData] = useState([]);
+  console.log("aaaaa", inputs);
 
   useEffect(() => {
-    const grossIncomes = Array.from({ length: 101 }, (_, i) => i * 1000); // Gross incomes from 0 to 100,000 with step of 1,000
+    const grossIncomes = Array.from({ length: 101 }, (_, i) => i * 1000);
     const incomeTaxes = grossIncomes.map((grossIncome) =>
-      calculateIncomeTax(grossIncome, taxData),
+      calculateTaxes(grossIncome, inputs),
     );
 
     setPlotData([
@@ -24,7 +21,7 @@ const TaxYearOverview = ({ userInputs }) => {
         marker: { color: 'blue' },
       },
     ]);
-  }, [taxData, userInputs]);
+  }, [inputs]);
 
   return (
     <div className="TaxYearOverview">

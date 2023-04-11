@@ -1,17 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { calculateTax, calculateEffectiveTaxRate } from '../utils/TaxCalc';
-import TaxDataContext from '../context/TaxDataContext';
+import { calculateTaxes } from '../utils/TaxCalc';
 
-const TaxAnalysis = ({ userInputs }) => {
-  const { taxData, updateTaxData } = useContext(TaxDataContext);
-  const [taxResults, setTaxResults] = useState({});
+const TaxAnalysis = ({ inputs }) => {
+  // const taxData = calculateTaxes(inputs);
+  // console.log(taxData);
 
-  useEffect(() => {
-    // Perform tax calculations using the functions from TaxCalc.js
-    // and update the taxResults state
-  }, [userInputs, taxData]);
-
-  // Render the component
+  // Use the taxData to render the TaxAnalysis component
 };
 
 export default TaxAnalysis;

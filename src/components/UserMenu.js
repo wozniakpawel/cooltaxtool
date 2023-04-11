@@ -1,33 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react';
-import TaxDataContext from '../context/TaxDataContext';
+import React, { useState, useEffect } from 'react';
+import { defaultInputs } from './DefaultInputs';
 
-const UserInputs = ({ onUserInputsChange }) => {
-    const { updateTaxData } = useContext(TaxDataContext);
-    const [inputs, setInputs] = useState({
-        taxYear: '2023/24',
-        residentInScotland: false,
-        married: false,
-        blind: false,
-        noNI: false,
-        grossSalary: 0,
-        salaryPeriod: 'annual',
-        pensionContributions: {
-            autoEnrollment: { value: 0, type: '%' },
-            employer: { value: 0, type: '%' },
-            salarySacrifice: { value: 0, type: '%' },
-            personal: { value: 0, type: '%' },
-        },
-        studentLoan: 'none',
-    });
+const UserMenu = ({ onUserInputsChange }) => {
+    const [inputs, setInputs] = useState(defaultInputs);
 
     useEffect(() => {
         onUserInputsChange(inputs);
     }, [inputs, onUserInputsChange]);
-
-    useEffect(() => {
-        const residentInScotland = inputs.residentInScotland;
-        updateTaxData(inputs.taxYear, residentInScotland);
-    }, [inputs.taxYear, inputs.residentInScotland, updateTaxData]);
 
     const handleInputChange = (event) => {
         const { name, value, type, checked } = event.target;
@@ -85,11 +64,11 @@ const UserInputs = ({ onUserInputsChange }) => {
                     onChange={handleInputChange}
                 />
 
-                <label htmlFor="grossSalary">Gross Salary:</label>
+                <label htmlFor="grossIncome">Gross Income:</label>
                 <input
                     type="number"
-                    name="grossSalary"
-                    value={inputs.grossSalary}
+                    name="grossIncome"
+                    value={inputs.grossIncome}
                     onChange={handleInputChange}
                 />
 
@@ -142,4 +121,4 @@ const UserInputs = ({ onUserInputsChange }) => {
     );
 };
 
-export default UserInputs;
+export default UserMenu;

@@ -131,8 +131,10 @@ export function calculateSalarySacrifice(income, salarySacrifice) {
 }
 
 // Top-level function to calculate taxes
-export function calculateTaxes(grossIncome, taxYear, options = {}) {
-    const constants = fetchTaxConstants(taxYear, options.residentInScotland);
+export const calculateTaxes = (grossIncome, options) => {
+    // console.log(options);
+    const { taxYear, residentInScotland } = options;
+    const constants = fetchTaxConstants(taxYear, residentInScotland);  
     if (!constants) throw new Error(`Tax year ${taxYear} not supported`);
   
     // Apply salary sacrifice
