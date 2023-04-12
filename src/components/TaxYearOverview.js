@@ -7,37 +7,30 @@ const TaxYearOverview = ({ inputs }) => {
 
   useEffect(() => {
     const grossIncomes = Array.from({ length: 250 }, (_, i) => i * 1000);
-  
-    const grossIncomeValues = [];
-    const personalAllowanceValues = [];
-    const taxableIncomeValues = [];
-    const incomeTaxValues = [];
-    const niContributionsValues = [];
-    const studentLoanRepaymentsValues = [];
-    const highIncomeChildBenefitChargeValues = [];
-  
-    grossIncomes.forEach((grossIncome) => {
+
+    const percentageData = grossIncomes.map((grossIncome) => {
       const result = calculateTaxes(grossIncome, inputs);
-      grossIncomeValues.push(result.grossIncome);
-      personalAllowanceValues.push(result.personalAllowance);
-      taxableIncomeValues.push(result.taxableIncome);
-      incomeTaxValues.push(result.incomeTax);
-      niContributionsValues.push(result.niContributions);
-      studentLoanRepaymentsValues.push(result.studentLoanRepayments);
-      highIncomeChildBenefitChargeValues.push(result.highIncomeChildBenefitCharge);
+      return {
+        grossIncome: (result.grossIncome / grossIncome) * 100,
+        personalAllowance: (result.personalAllowance / grossIncome) * 100,
+        taxableIncome: (result.taxableIncome / grossIncome) * 100,
+        incomeTax: (result.incomeTax / grossIncome) * 100,
+        niContributions: (result.niContributions / grossIncome) * 100,
+        studentLoanRepayments: (result.studentLoanRepayments / grossIncome) * 100,
+        highIncomeChildBenefitCharge: (result.highIncomeChildBenefitCharge / grossIncome) * 100,
+      };
     });
-  
+
     setPlotData([
-      { x: grossIncomes, y: grossIncomeValues, type: 'scatter', mode: 'lines', marker: { color: 'blue' }, name: 'Gross Income' },
-      { x: grossIncomes, y: personalAllowanceValues, type: 'scatter', mode: 'lines', marker: { color: 'red' }, name: 'Personal Allowance' },
-      { x: grossIncomes, y: taxableIncomeValues, type: 'scatter', mode: 'lines', marker: { color: 'green' }, name: 'Taxable Income' },
-      { x: grossIncomes, y: incomeTaxValues, type: 'scatter', mode: 'lines', marker: { color: 'orange' }, name: 'Income Tax' },
-      { x: grossIncomes, y: niContributionsValues, type: 'scatter', mode: 'lines', marker: { color: 'purple' }, name: 'NI Contributions' },
-      { x: grossIncomes, y: studentLoanRepaymentsValues, type: 'scatter', mode: 'lines', marker: { color: 'brown' }, name: 'Student Loan Repayments' },
-      { x: grossIncomes, y: highIncomeChildBenefitChargeValues, type: 'scatter', mode: 'lines', marker: { color: 'pink' }, name: 'High Income Child Benefit Charge' },
+      { x: grossIncomes, y: percentageData.map((data) => data.grossIncome), type: 'scatter', mode: 'lines', marker: { color: 'blue' }, name: 'Gross Income' },
+      { x: grossIncomes, y: percentageData.map((data) => data.personalAllowance), type: 'scatter', mode: 'lines', marker: { color: 'red' }, name: 'Personal Allowance' },
+      { x: grossIncomes, y: percentageData.map((data) => data.taxableIncome), type: 'scatter', mode: 'lines', marker: { color: 'green' }, name: 'Taxable Income' },
+      { x: grossIncomes, y: percentageData.map((data) => data.incomeTax), type: 'scatter', mode: 'lines', marker: { color: 'orange' }, name: 'Income Tax' },
+      { x: grossIncomes, y: percentageData.map((data) => data.niContributions), type: 'scatter', mode: 'lines', marker: { color: 'purple' }, name: 'NI Contributions' },
+      { x: grossIncomes, y: percentageData.map((data) => data.studentLoanRepayments), type: 'scatter', mode: 'lines', marker: { color: 'brown' }, name: 'Student Loan Repayments' },
+      { x: grossIncomes, y: percentageData.map((data) => data.highIncomeChildBenefitCharge), type: 'scatter', mode: 'lines', marker: { color: 'pink' }, name: 'High Income Child Benefit Charge' },
     ]);
   }, [inputs]);
-  
 
   return (
     <div className="TaxYearOverview">
@@ -46,7 +39,7 @@ const TaxYearOverview = ({ inputs }) => {
         layout={{
           title: 'Gross Income vs Income Tax',
           xaxis: { title: 'Gross Income (£)' },
-          yaxis: { title: 'Income Tax (£)' },
+          yaxis: { title: 'Percentage of Income (%)' },
         }}
       />
     </div>

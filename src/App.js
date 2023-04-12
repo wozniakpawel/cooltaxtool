@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import UserMenu from './components/UserMenu';
 import TaxAnalysis from './components/TaxAnalysis';
 import TaxYearOverview from './components/TaxYearOverview';
-import { defaultInputs } from './components/DefaultInputs';
+import { defaultInputs } from './utils/DefaultInputs';
 import './App.css';
 
 function App() {

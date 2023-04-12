@@ -1,111 +1,113 @@
-export const fetchTaxConstants = (taxYear, residentInScotland) => {
-    // Define tax constants based on the tax year and residency status
-    const taxConstants = {
-        '2023/24': {
-            scotland: {
-                personalAllowance: 12570,
-                personalAllowanceTaper: 100000,
-                personalAllowanceReductionRate: 0.5,
-                basicRateLimit: 37700,
-                higherRateLimit: 125140,
-                basicRate: 0.20,
-                higherRate: 0.40,
-                additionalRate: 0.45,
-                niPrimaryThreshold: 12570,
-                niUpperLimit: 50270,
-                niRate1: 0.12,
-                niRate2: 0.02,
-            },
-            restOfUK: {
-                personalAllowance: 12570,
-                personalAllowanceTaper: 100000,
-                personalAllowanceReductionRate: 0.5,
-                basicRateLimit: 37700,
-                higherRateLimit: 125140,
-                basicRate: 0.20,
-                higherRate: 0.40,
-                additionalRate: 0.45,
-                niPrimaryThreshold: 12570,
-                niUpperLimit: 50270,
-                niRate1: 0.12,
-                niRate2: 0.02,
-            },
-        },
-        // Add more tax years if needed
-    };
-
-    return residentInScotland ? taxConstants[taxYear].scotland : taxConstants[taxYear].restOfUK;
-};
+import { taxConstants } from './TaxConstants';
 
 // Calculate personal allowance taper
-export function calculatePersonalAllowanceTaper(income, constants) {
-    if (income > constants.personalAllowanceTaper) {
-        const reduction = Math.floor((income - constants.personalAllowanceTaper) / 2);
-        return Math.max(0, constants.personalAllowance - reduction);
+export function calculateTaperedPersonalAllowance(income, constants) {
+    const { basicAllowance, taperThreshold } = constants.personalAllowance;
+    if (income > taperThreshold) {
+        const reduction = Math.floor((income - taperThreshold) / 2);
+        return Math.max(0, basicAllowance - reduction);
     }
-    return constants.personalAllowance;
+    return basicAllowance;
 }
 
 // Calculate income tax
-export function calculateIncomeTax(taxableIncome, constants) {
-    let taxDue = 0;
+export function calculateIncomeTax(taxableIncome, constants, residentInScotland = false) {
+    const taxBands = residentInScotland ? constants.incomeTax.scotland : constants.incomeTax.restOfUK;
 
-    if (taxableIncome > 0) {
-        const basicRateTaxableIncome = Math.min(taxableIncome, constants.basicRateLimit);
-        taxDue += basicRateTaxableIncome * constants.basicRate;
-        taxableIncome -= basicRateTaxableIncome;
+    let incomeTax = 0;
+    let remainingIncome = taxableIncome;
+    const taxBreakdown = {};
+
+    taxBands.forEach(([rate, limit]) => {
+        if (remainingIncome > 0) {
+            const taxableAtCurrentRate = Math.min(remainingIncome, limit);
+            const taxAtCurrentRate = taxableAtCurrentRate * rate;
+            incomeTax += taxAtCurrentRate;
+            remainingIncome -= taxableAtCurrentRate;
+
+            taxBreakdown[rate] = (taxBreakdown[rate] || 0) + taxAtCurrentRate;
+        }
+    });
+
+    return { total: incomeTax, breakdown: taxBreakdown };
+};
+
+// Calculate employee national insurance contributions
+export function calculateEmployeeNI(income, constants) {
+    const { lowerEarningsLimit, primaryThreshold, upperEarningsLimit, employeeRates } = constants.nationalInsurance;
+
+    let remainingIncome = Math.max(0, income - lowerEarningsLimit);
+    let employeeNITotal = 0;
+    const employeeNIBreakdown = [];
+
+    if (remainingIncome > 0) {
+        const incomeInFirstBand = Math.min(remainingIncome, upperEarningsLimit - primaryThreshold);
+        if (incomeInFirstBand > 0) {
+            const niInFirstBand = incomeInFirstBand * employeeRates[0];
+            employeeNITotal += niInFirstBand;
+            remainingIncome -= incomeInFirstBand;
+            employeeNIBreakdown.push({ rate: employeeRates[0], amount: niInFirstBand });
+        }
     }
 
-    if (taxableIncome > 0) {
-        const higherRateTaxableIncome = Math.min(taxableIncome, constants.higherRateLimit - constants.basicRateLimit);
-        taxDue += higherRateTaxableIncome * constants.higherRate;
-        taxableIncome -= higherRateTaxableIncome;
+    if (remainingIncome > upperEarningsLimit) {
+        const incomeInSecondBand = remainingIncome - upperEarningsLimit;
+        const niInSecondBand = incomeInSecondBand * employeeRates[1];
+        employeeNITotal += niInSecondBand;
+        employeeNIBreakdown.push({ rate: employeeRates[1], amount: niInSecondBand });
     }
 
-    if (taxableIncome > 0) {
-        taxDue += taxableIncome * constants.additionalRate;
-    }
-
-    return taxDue;
+    return {
+        total: employeeNITotal,
+        breakdown: employeeNIBreakdown
+    };
 }
 
-// Calculate national insurance contributions
-export function calculateNationalInsurance(income, constants) {
-    let contributions = 0;
-
-    if (income > constants.niPrimaryThreshold) {
-        const niRate1Income = Math.min(income - constants.niPrimaryThreshold, constants.niUpperLimit - constants.niPrimaryThreshold);
-        contributions += niRate1Income * constants.niRate1;
-        income -= niRate1Income;
+// Calculate employer national insurance contributions
+export function calculateEmployerNI(income, constants) {
+    const { secondaryThreshold, upperEarningsLimit, employerRates } = constants.nationalInsurance;
+  
+    let remainingIncome = Math.max(0, income - secondaryThreshold);
+    let employerNITotal = 0;
+    const employerNIBreakdown = [];
+  
+    if (remainingIncome > 0) {
+      const incomeInFirstBand = Math.min(remainingIncome, upperEarningsLimit - secondaryThreshold);
+      if (incomeInFirstBand > 0) {
+        const niInFirstBand = incomeInFirstBand * employerRates[0];
+        employerNITotal += niInFirstBand;
+        remainingIncome -= incomeInFirstBand;
+        employerNIBreakdown.push({ rate: employerRates[0], amount: niInFirstBand });
+      }
     }
-
-    if (income > constants.niUpperLimit) {
-        contributions += (income - constants.niUpperLimit) * constants.niRate2;
+  
+    if (remainingIncome > upperEarningsLimit) {
+      const incomeInSecondBand = remainingIncome - upperEarningsLimit;
+      const niInSecondBand = incomeInSecondBand * employerRates[1];
+      employerNITotal += niInSecondBand;
+      employerNIBreakdown.push({ rate: employerRates[1], amount: niInSecondBand });
     }
-
-    return contributions;
-}
-
-// Calculate student loan repayments (plan 1 and 2)
-export function calculateStudentLoanRepayments(income, plan) {
-
-    const studentLoanRate = plan === "postgrad" ? 0.06 : 0.09;
-    const studentLoanThresholds = {
-        "plan1": 22015,
-        "plan2": 27295,
-        "plan4": 27660,
-        "plan5": 25000,
-        "postgrad": 21000
-    }
-
-    let repayments = 0;
-
-    if (income > studentLoanThresholds[plan] && plan !== "none") {
-        repayments = (income - studentLoanThresholds[plan]) * studentLoanRate;
-    }
-
-    return repayments;
-}
+  
+    return {
+      total: employerNITotal,
+      breakdown: employerNIBreakdown,
+    };
+  }
+  
+// Calculate student loan repayments
+export function calculateStudentLoanRepayments(income, studentLoanPlan, constants) {
+    const { defaultRate, postgradRate, thresholds } = constants.studentLoan;
+  
+    if (studentLoanPlan === 'none') return 0;
+  
+    const planThreshold = thresholds[studentLoanPlan];
+    const rate = studentLoanPlan === 'postgrad' ? postgradRate : defaultRate;
+  
+    if (income <= planThreshold) return 0;
+  
+    return (income - planThreshold) * rate;
+  }
+  
 
 // Calculate the High Income Child Benefit Charge
 export function calculateHighIncomeChildBenefitCharge(income, childBenefitAmount) {
@@ -132,35 +134,34 @@ export function calculateSalarySacrifice(income, salarySacrifice) {
 }
 
 // Top-level function to calculate taxes
-export const calculateTaxes = (grossIncome, options) => {
-    const { taxYear, residentInScotland } = options;
-    const constants = fetchTaxConstants(taxYear, residentInScotland);  
-    if (!constants) throw new Error(`Tax year ${taxYear} not supported`);
-  
+export function calculateTaxes(grossIncome, options) {
+    const constants = taxConstants[options.taxYear];
+
     // Apply salary sacrifice
     const incomeAfterSalarySacrifice = calculateSalarySacrifice(grossIncome, options.salarySacrifice || 0);
 
     // Calculate personal allowance (considering taper)
-    const personalAllowance = calculatePersonalAllowanceTaper(incomeAfterSalarySacrifice, constants);
+    const personalAllowance = calculateTaperedPersonalAllowance(incomeAfterSalarySacrifice, constants);
 
     // Calculate taxable income
     const taxableIncome = Math.max(0, incomeAfterSalarySacrifice - personalAllowance);
 
     // Calculate income tax
-    const incomeTax = calculateIncomeTax(taxableIncome, constants);
+    const { total: incomeTax, breakdown: incomeTaxBreakdown } = calculateIncomeTax(taxableIncome, constants, options.residentInScotland);
 
-    // Calculate national insurance contributions
-    const niContributions = calculateNationalInsurance(incomeAfterSalarySacrifice, constants);
+    // Calculate employee national insurance contributions
+    const { total: employeeNI, breakdown: employeeNIBreakdown } = calculateEmployeeNI(incomeAfterSalarySacrifice, constants);
+
+    // Calculate employer national insurance contributions
+    const { total: employerNI, breakdown: employerNIBreakdown } = calculateEmployerNI(incomeAfterSalarySacrifice, constants);
 
     // Calculate student loan repayments
-    const studentLoanRepayments = calculateStudentLoanRepayments(incomeAfterSalarySacrifice, options.studentLoanPlan, constants);
+    const studentLoanRepayments = calculateStudentLoanRepayments(incomeAfterSalarySacrifice, options.studentLoan, constants);
 
     // Calculate High Income Child Benefit Charge (if required)
     const highIncomeChildBenefitCharge = options.childBenefitAmount
         ? calculateHighIncomeChildBenefitCharge(incomeAfterSalarySacrifice, options.childBenefitAmount)
         : 0;
-
-    // Calculate pension taper, tax relief, etc. (if required)
 
     // Return all calculated values
     return {
@@ -168,8 +169,38 @@ export const calculateTaxes = (grossIncome, options) => {
         personalAllowance,
         taxableIncome,
         incomeTax,
-        niContributions,
+        incomeTaxBreakdown,
+        employeeNI,
+        employeeNIBreakdown,
+        employerNI,
+        employerNIBreakdown,
         studentLoanRepayments,
         highIncomeChildBenefitCharge,
     };
 }
+
+export const calculateTaxSavings = (grossIncome, inputs, voluntaryPensionContribution) => {
+    // Calculate taxes without voluntary pension contribution
+    const taxesWithoutVoluntaryPension = calculateTaxes(grossIncome, inputs);
+
+    // Update the inputs object to include the voluntary pension contribution
+    const updatedInputs = {
+        ...inputs,
+        pensionContributions: {
+            ...inputs.pensionContributions,
+            personal: { value: voluntaryPensionContribution, type: '%' },
+        },
+    };
+
+    // Calculate taxes with voluntary pension contribution
+    const taxesWithVoluntaryPension = calculateTaxes(grossIncome, updatedInputs);
+
+    // Calculate tax savings
+    const taxSavings = {
+        incomeTax: taxesWithoutVoluntaryPension.incomeTax - taxesWithVoluntaryPension.incomeTax,
+        employeeNI: taxesWithoutVoluntaryPension.employeeNI - taxesWithVoluntaryPension.employeeNI,
+        employerNI: taxesWithoutVoluntaryPension.employerNI - taxesWithVoluntaryPension.employerNI,
+    };
+
+    return taxSavings;
+};

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { defaultInputs } from './DefaultInputs';
+import { defaultInputs } from '../utils/DefaultInputs';
 
 const UserMenu = ({ onUserInputsChange }) => {
     const [inputs, setInputs] = useState(defaultInputs);
