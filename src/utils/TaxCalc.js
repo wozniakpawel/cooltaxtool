@@ -41,7 +41,7 @@ export function calculateIncomeTax(taxableIncome, constants, residentInScotland 
 export function calculateEmployeeNI(income, constants) {
     const { lowerEarningsLimit, primaryThreshold, upperEarningsLimit, employeeRates } = constants.nationalInsurance;
 
-    let remainingIncome = Math.max(0, income - lowerEarningsLimit);
+    let remainingIncome = Math.max(0, income - primaryThreshold);
     let employeeNITotal = 0;
     const employeeNIBreakdown = [];
 
@@ -55,18 +55,18 @@ export function calculateEmployeeNI(income, constants) {
         }
     }
 
-    if (remainingIncome > upperEarningsLimit) {
-        const incomeInSecondBand = remainingIncome - upperEarningsLimit;
-        const niInSecondBand = incomeInSecondBand * employeeRates[1];
+    if (remainingIncome > 0) {
+        const niInSecondBand = remainingIncome * employeeRates[1];
         employeeNITotal += niInSecondBand;
         employeeNIBreakdown.push({ rate: employeeRates[1], amount: niInSecondBand });
     }
 
     return {
         total: employeeNITotal,
-        breakdown: employeeNIBreakdown
+        breakdown: employeeNIBreakdown,
     };
 }
+
 
 // Calculate employer national insurance contributions
 export function calculateEmployerNI(income, constants) {
