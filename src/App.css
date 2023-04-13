@@ -87,3 +87,23 @@ fieldset legend {
   padding: 0 5px;
   font-weight: bold;
 }
+
+.pension-input-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.pension-input {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.pension-input label {
+  width: 200px;
+}
+
+.pension-input input,
+.pension-input select {
+  margin-left: 8px;
+}
