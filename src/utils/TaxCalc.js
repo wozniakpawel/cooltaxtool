@@ -163,6 +163,12 @@ export function calculateTaxes(grossIncome, options) {
         ? calculateHighIncomeChildBenefitCharge(incomeAfterSalarySacrifice, options.childBenefitAmount)
         : 0;
 
+    // Calculate combined taxes
+    const combinedTaxes = incomeTax + employeeNI + studentLoanRepayments + highIncomeChildBenefitCharge;
+
+    // Calculate take-home pay
+    const takeHomePay = grossIncome - combinedTaxes;
+
     // Return all calculated values
     return {
         grossIncome,
@@ -176,6 +182,8 @@ export function calculateTaxes(grossIncome, options) {
         employerNIBreakdown,
         studentLoanRepayments,
         highIncomeChildBenefitCharge,
+        combinedTaxes,
+        takeHomePay
     };
 }
 
