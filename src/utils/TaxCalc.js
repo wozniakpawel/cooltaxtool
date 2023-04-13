@@ -18,14 +18,19 @@ export function calculateIncomeTax(taxableIncome, constants, residentInScotland 
     let remainingIncome = taxableIncome;
     const taxBreakdown = {};
 
+    let previousLimit = 0;
+
     taxBands.forEach(([rate, limit]) => {
         if (remainingIncome > 0) {
-            const taxableAtCurrentRate = Math.min(remainingIncome, limit);
+            const range = limit - previousLimit;
+            const taxableAtCurrentRate = Math.min(remainingIncome, range);
             const taxAtCurrentRate = taxableAtCurrentRate * rate;
             incomeTax += taxAtCurrentRate;
             remainingIncome -= taxableAtCurrentRate;
 
             taxBreakdown[rate] = (taxBreakdown[rate] || 0) + taxAtCurrentRate;
+
+            previousLimit = limit;
         }
     });
 
