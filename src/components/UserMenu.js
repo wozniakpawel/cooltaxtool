@@ -107,7 +107,7 @@ const UserMenu = ({ onUserInputsChange }) => {
 
                 <fieldset>
                     <legend>Pension Contributions</legend>
-                    {['autoEnrollment', 'employer', 'salarySacrifice', 'personal'].map((type) => (
+                    {['autoEnrolment', 'salarySacrifice', 'employer', 'personal'].map((type) => (
                         <div key={type}>
                             <label htmlFor={`pensionContributions.${type}`}>{type}:</label>
                             <input

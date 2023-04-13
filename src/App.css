@@ -75,3 +75,15 @@ footer {
 .toggle-button:focus {
   outline: none;
 }
+
+fieldset {
+  border: 2px solid grey;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+fieldset legend {
+  padding: 0 5px;
+  font-weight: bold;
+}

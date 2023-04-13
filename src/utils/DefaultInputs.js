@@ -7,9 +7,9 @@ export const defaultInputs = {
     grossIncome: 0,
     salaryPeriod: 'annual',
     pensionContributions: {
-      autoEnrollment: { value: 0, type: '%' },
-      employer: { value: 0, type: '%' },
+      autoEnrolment: { value: 0, type: '%' },
       salarySacrifice: { value: 0, type: '%' },
+      employer: { value: 0, type: '%' },
       personal: { value: 0, type: '%' },
     },
     studentLoan: 'none',
