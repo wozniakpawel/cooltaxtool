@@ -1,6 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { defaultInputs } from '../utils/DefaultInputs';
 
+const ToggleButton = ({ name, label, checked, onChange }) => {
+    const handleClick = () => {
+        onChange({ target: { name, type: 'checkbox', checked: !checked } });
+    };
+
+    return (
+        <button
+            type="button"
+            name={name}
+            onClick={handleClick}
+            className={`toggle-button ${checked ? 'active' : ''}`}
+        >
+            {label}
+        </button>
+    );
+};
+
 const UserMenu = ({ onUserInputsChange }) => {
     const [inputs, setInputs] = useState(defaultInputs);
 
@@ -26,67 +43,70 @@ const UserMenu = ({ onUserInputsChange }) => {
     return (
         <div className="UserInputs">
             <form>
-                <label htmlFor="taxYear">Tax Year:</label>
-                <select name="taxYear" value={inputs.taxYear} onChange={handleInputChange}>
-                    <option value="2023/24">2023/24</option>
-                    {/* Add more tax years if needed */}
-                </select>
+                <div className="form-group">
+                    <select name="taxYear" value={inputs.taxYear} onChange={handleInputChange}>
+                        <option value="2023/24">Tax Year 2023/24</option>
+                        {/* Add more tax years if needed */}
+                    </select>
+                </div>
 
-                <label htmlFor="residentInScotland">Resident in Scotland:</label>
-                <input
-                    type="checkbox"
-                    name="residentInScotland"
-                    checked={inputs.residentInScotland}
-                    onChange={handleInputChange}
-                />
+                <div className="form-group">
+                    <select name="studentLoan" value={inputs.studentLoan} onChange={handleInputChange}>
+                        <option value="none">No Student Loan</option>
+                        <option value="plan1">Student Loan Plan 1</option>
+                        <option value="plan2">Student Loan Plan 2</option>
+                        <option value="plan4">Student Loan Plan 4</option>
+                        <option value="plan5">Student Loan Plan 5</option>
+                        <option value="postgrad">Postgraduate Student Loan</option>
+                    </select>
+                </div>
 
-                <label htmlFor="married">Married:</label>
-                <input
-                    type="checkbox"
-                    name="married"
-                    checked={inputs.married}
-                    onChange={handleInputChange}
-                />
+                <div className="form-group">
+                    <label htmlFor="grossIncome">Annual Gross Income: £</label>
+                    <input
+                        type="number"
+                        name="grossIncome"
+                        value={inputs.grossIncome}
+                        onChange={handleInputChange}
+                    />
+                </div>
 
-                <label htmlFor="blind">Blind:</label>
-                <input
-                    type="checkbox"
-                    name="blind"
-                    checked={inputs.blind}
-                    onChange={handleInputChange}
-                />
 
-                <label htmlFor="noNI">No NI:</label>
-                <input
-                    type="checkbox"
-                    name="noNI"
-                    checked={inputs.noNI}
-                    onChange={handleInputChange}
-                />
+                <div className="form-group">
+                    <fieldset>
+                        <legend>Additional options</legend>
+                        <ToggleButton
+                            name="residentInScotland"
+                            label="Resident in Scotland"
+                            checked={inputs.residentInScotland}
+                            onChange={handleInputChange}
+                        />
 
-                <label htmlFor="grossIncome">Gross Income:</label>
-                <input
-                    type="number"
-                    name="grossIncome"
-                    value={inputs.grossIncome}
-                    onChange={handleInputChange}
-                />
+                        <ToggleButton
+                            name="married"
+                            label="Married"
+                            checked={inputs.married}
+                            onChange={handleInputChange}
+                        />
 
-                <label htmlFor="salaryPeriod">Salary Period:</label>
-                <select
-                    name="salaryPeriod"
-                    value={inputs.salaryPeriod}
-                    onChange={handleInputChange}
-                >
-                    <option value="hourly">Hourly</option>
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                    <option value="annual">Annual</option>
-                </select>
+                        <ToggleButton
+                            name="blind"
+                            label="Blind"
+                            checked={inputs.blind}
+                            onChange={handleInputChange}
+                        />
+
+                        <ToggleButton
+                            name="noNI"
+                            label="Not paying NI"
+                            checked={inputs.noNI}
+                            onChange={handleInputChange}
+                        />
+                    </fieldset>
+                </div>
 
                 <fieldset>
-                    <legend>Pension Contributions:</legend>
+                    <legend>Pension Contributions</legend>
                     {['autoEnrollment', 'employer', 'salarySacrifice', 'personal'].map((type) => (
                         <div key={type}>
                             <label htmlFor={`pensionContributions.${type}`}>{type}:</label>
@@ -108,15 +128,6 @@ const UserMenu = ({ onUserInputsChange }) => {
                     ))}
                 </fieldset>
 
-                <label htmlFor="studentLoan">Student Loan:</label>
-                <select name="studentLoan" value={inputs.studentLoan} onChange={handleInputChange}>
-                    <option value="none">None</option>
-                    <option value="plan1">Plan 1</option>
-                    <option value="plan2">Plan 2</option>
-                    <option value="plan4">Plan 4</option>
-                    <option value="plan5">Plan 5</option>
-                    <option value="postgrad">Postgraduate</option>
-                </select>
             </form>
         </div>
     );
