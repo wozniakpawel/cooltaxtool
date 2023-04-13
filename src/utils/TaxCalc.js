@@ -134,16 +134,29 @@ export function calculateTaxReliefAtSource(income, sippContribution, constants) 
 }
 
 // Calculate salary sacrifice
-export function calculateSalarySacrifice(income, salarySacrifice) {
-    return Math.max(0, income - salarySacrifice);
+export function calculateSalarySacrifice(incomeAfterPensionContributions, salarySacrifice) {
+    return Math.max(0, incomeAfterPensionContributions - salarySacrifice);
 }
 
 // Top-level function to calculate taxes
 export function calculateTaxes(grossIncome, options) {
     const constants = taxConstants[options.taxYear];
-
+    const {
+        pensionContributions: {
+            autoEnrolment: { value: autoEnrolmentValue } = {},
+            personal: { value: personalContributionValue } = {},
+            salarySacrifice: { value: salarySacrificeValue } = {},
+        } = {},
+    } = options;    
+    
+    // Calculate auto enrolment pension contribution
+    const autoEnrolmentContribution = grossIncome * (autoEnrolmentValue / 100);
+    
+    // Calculate total pension contributions
+    const totalPensionContributions = autoEnrolmentContribution + personalContributionValue;
+    
     // Apply salary sacrifice
-    const incomeAfterSalarySacrifice = calculateSalarySacrifice(grossIncome, options.salarySacrifice || 0);
+    const incomeAfterSalarySacrifice = calculateSalarySacrifice(grossIncome - totalPensionContributions, salarySacrificeValue);
 
     // Calculate personal allowance (considering taper)
     const personalAllowance = calculateTaperedPersonalAllowance(incomeAfterSalarySacrifice, constants);

@@ -22,10 +22,9 @@ const UserMenu = ({ onUserInputsChange }) => {
     const [inputs, setInputs] = useState(defaultInputs);
 
     const pensionLabels = {
-        autoEnrolment: 'Auto Enrolment',
-        salarySacrifice: 'Salary Sacrifice',
-        employer: 'Employer Contributions',
-        personal: 'Personal Contributions',
+        autoEnrolment: 'Auto Enrolment (%)',
+        salarySacrifice: 'Salary Sacrifice (£)',
+        personal: 'Personal Contributions (£)',
     };
 
     useEffect(() => {
@@ -117,26 +116,18 @@ const UserMenu = ({ onUserInputsChange }) => {
                 <div className="pension-input-container">
                     <fieldset>
                         <legend>Pension</legend>
-                        {['autoEnrolment', 'salarySacrifice', 'employer', 'personal'].map((type) => {
+                        {['autoEnrolment', 'salarySacrifice', 'personal'].map((type) => {
                             return (
                                 <div key={type} className="pension-input">
-                                    <label htmlFor={`pensionContributions.${type}`}>{pensionLabels[type]}:</label>
+                                    <label htmlFor={`pensionContributions.${type}`}>{pensionLabels[type]}</label>
                                     <input
                                         type="number"
                                         name={`pensionContributions.${type}.value`}
                                         value={inputs.pensionContributions[type].value}
                                         onChange={handleInputChange}
                                         min={0}
-                                        step={1}
+                                        step={type === 'autoEnrolment' ? 1 : 100}
                                     />
-                                    <select
-                                        name={`pensionContributions.${type}.type`}
-                                        value={inputs.pensionContributions[type].type}
-                                        onChange={handleInputChange}
-                                    >
-                                        <option value="%">%</option>
-                                        <option value="£">£</option>
-                                    </select>
                                 </div>
                             );
                         })}

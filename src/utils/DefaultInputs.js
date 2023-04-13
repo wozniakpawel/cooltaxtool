@@ -5,12 +5,10 @@ export const defaultInputs = {
     blind: false,
     noNI: false,
     grossIncome: 0,
-    salaryPeriod: 'annual',
     pensionContributions: {
-      autoEnrolment: { value: 0, type: '%' },
-      salarySacrifice: { value: 0, type: '%' },
-      employer: { value: 0, type: '%' },
-      personal: { value: 0, type: '%' },
+      autoEnrolment: { value: 0 },
+      salarySacrifice: { value: 0 },
+      personal: { value: 0 },
     },
     studentLoan: 'none',
   };
