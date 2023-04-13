@@ -3,7 +3,8 @@ import Plot from 'react-plotly.js';
 import { calculateTaxes } from '../utils/TaxCalc';
 
 const TaxYearOverview = ({ inputs }) => {
-  const [plotData, setPlotData] = useState([]);
+  const [percentagePlotData, setPercentagePlotData] = useState([]);
+  const [amountPlotData, setAmountPlotData] = useState([]);
 
   useEffect(() => {
     const grossIncomes = Array.from({ length: 250 }, (_, i) => i * 1000);
@@ -21,6 +22,7 @@ const TaxYearOverview = ({ inputs }) => {
         studentLoanRepayments: (result.studentLoanRepayments / grossIncome) * 100,
         highIncomeChildBenefitCharge: (result.highIncomeChildBenefitCharge / grossIncome) * 100,
         combinedTaxes: (result.combinedTaxes / grossIncome) * 100,
+        takeHomePay: (result.takeHomePay / grossIncome) * 100
       };
     });
 
@@ -31,28 +33,50 @@ const TaxYearOverview = ({ inputs }) => {
       marginalCombinedTaxes.push((deltaTaxes / deltaIncome) * 100);
     }
 
-    setPlotData([
+    setPercentagePlotData([
       { x: grossIncomes, y: percentageData.map((data) => data.incomeTax), type: 'scatter', mode: 'lines', marker: { color: 'orange' }, name: 'Income Tax' },
       { x: grossIncomes, y: percentageData.map((data) => data.employeeNI), type: 'scatter', mode: 'lines', marker: { color: 'purple' }, name: 'Employee NI Contributions' },
       { x: grossIncomes, y: percentageData.map((data) => data.employerNI), type: 'scatter', mode: 'lines', marker: { color: 'purple' }, name: 'Employer NI Contributions' },
       { x: grossIncomes, y: percentageData.map((data) => data.studentLoanRepayments), type: 'scatter', mode: 'lines', marker: { color: 'brown' }, name: 'Student Loan Repayments' },
       { x: grossIncomes, y: percentageData.map((data) => data.highIncomeChildBenefitCharge), type: 'scatter', mode: 'lines', marker: { color: 'pink' }, name: 'High Income Child Benefit Charge' },
       { x: grossIncomes, y: percentageData.map((data) => data.combinedTaxes), type: 'scatter', mode: 'lines', marker: { color: 'red' }, name: 'Combined taxes (IT, EE NI, SLR)' },
+      { x: grossIncomes, y: percentageData.map((data) => data.takeHomePay), type: 'scatter', mode: 'lines', marker: { color: 'black' }, name: 'Take Home Pay' },
       { x: grossIncomes.slice(1), y: marginalCombinedTaxes, type: 'scatter', mode: 'lines', marker: { color: 'blue' }, name: 'Marginal Combined Tax Rate' },
+    ]);
+
+    setAmountPlotData([
+      { x: grossIncomes, y: taxData.map((data) => data.incomeTax), type: 'scatter', mode: 'lines', marker: { color: 'orange' }, name: 'Income Tax' },
+      { x: grossIncomes, y: taxData.map((data) => data.employeeNI), type: 'scatter', mode: 'lines', marker: { color: 'purple' }, name: 'Employee NI Contributions' },
+      { x: grossIncomes, y: taxData.map((data) => data.employerNI), type: 'scatter', mode: 'lines', marker: { color: 'purple' }, name: 'Employer NI Contributions' },
+      { x: grossIncomes, y: taxData.map((data) => data.studentLoanRepayments), type: 'scatter', mode: 'lines', marker: { color: 'brown' }, name: 'Student Loan Repayments' },
+      { x: grossIncomes, y: taxData.map((data) => data.highIncomeChildBenefitCharge), type: 'scatter', mode: 'lines', marker: { color: 'pink' }, name: 'High Income Child Benefit Charge' },
+      { x: grossIncomes, y: taxData.map((data) => data.combinedTaxes), type: 'scatter', mode: 'lines', marker: { color: 'red' }, name: 'Combined taxes (IT, EE NI, SLR)' },
+      { x: grossIncomes, y: taxData.map((data) => data.takeHomePay), type: 'scatter', mode: 'lines', marker: { color: 'black' }, name: 'Take Home Pay' },
     ]);
   }, [inputs]);
 
   return (
     <div className="TaxYearOverview">
       <Plot
-        data={plotData}
+        data={percentagePlotData}
         layout={{
-          title: 'Gross Income vs Income Tax',
+          title: 'Gross Income vs Tax as Percentage',
           hovermode: 'x',
           xaxis: { title: 'Gross Income (£)' },
           yaxis: { title: 'Percentage of Income (%)' },
         }}
       />
+
+      <Plot
+        data={amountPlotData}
+        layout={{
+          title: 'Gross Income vs Tax Amounts',
+          hovermode: 'x',
+          xaxis: { title: 'Gross Income (£)' },
+          yaxis: { title: 'Percentage of Income (%)' },
+        }}
+      />
+
     </div>
   );
 };
