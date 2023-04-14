@@ -5,7 +5,6 @@ import { calculateTaxes } from '../utils/TaxCalc';
 const TaxYearOverview = ({ inputs }) => {
   const [percentagePlotData, setPercentagePlotData] = useState([]);
   const [amountPlotData, setAmountPlotData] = useState([]);
-  const { noNI, studentLoan } = inputs;
 
   useEffect(() => {
     const grossIncomes = Array.from({ length: 1000 }, (_, i) => i * 250);
@@ -49,7 +48,7 @@ const TaxYearOverview = ({ inputs }) => {
       { x: grossIncomes, y: taxData.map((data) => data.takeHomePay), type: 'scatter', mode: 'lines', marker: { color: 'black' }, name: 'Take Home Pay' },
     ];
 
-    if (!noNI) {
+    if (!inputs.noNI) {
       percentagePlotData.push(
         { x: grossIncomes, y: percentageData.map((data) => data.employeeNI), type: 'scatter', mode: 'lines', marker: { color: 'purple' }, name: 'Employee NI Contributions' },
         { x: grossIncomes, y: percentageData.map((data) => data.employerNI), type: 'scatter', mode: 'lines', marker: { color: 'purple' }, name: 'Employer NI Contributions' },
@@ -60,7 +59,7 @@ const TaxYearOverview = ({ inputs }) => {
       );
     }
 
-    if (studentLoan !== 'none') {
+    if (inputs.studentLoan !== 'none') {
       percentagePlotData.push(
         { x: grossIncomes, y: percentageData.map((data) => data.studentLoanRepayments), type: 'scatter', mode: 'lines', marker: { color: 'brown' }, name: 'Student Loan Repayments' },
       );
