@@ -74,48 +74,47 @@ export function calculateEmployerNI(income, constants, noNI) {
     if (noNI) return { total: 0, breakdown: [] };
 
     const { secondaryThreshold, upperEarningsLimit, employerRates } = constants.nationalInsurance;
-  
+
     let remainingIncome = Math.max(0, income - secondaryThreshold);
     let employerNITotal = 0;
     const employerNIBreakdown = [];
-  
+
     if (remainingIncome > 0) {
-      const incomeInFirstBand = Math.min(remainingIncome, upperEarningsLimit - secondaryThreshold);
-      if (incomeInFirstBand > 0) {
-        const niInFirstBand = incomeInFirstBand * employerRates[0];
-        employerNITotal += niInFirstBand;
-        remainingIncome -= incomeInFirstBand;
-        employerNIBreakdown.push({ rate: employerRates[0], amount: niInFirstBand });
-      }
+        const incomeInFirstBand = Math.min(remainingIncome, upperEarningsLimit - secondaryThreshold);
+        if (incomeInFirstBand > 0) {
+            const niInFirstBand = incomeInFirstBand * employerRates[0];
+            employerNITotal += niInFirstBand;
+            remainingIncome -= incomeInFirstBand;
+            employerNIBreakdown.push({ rate: employerRates[0], amount: niInFirstBand });
+        }
     }
-  
-    if (remainingIncome > upperEarningsLimit) {
-      const incomeInSecondBand = remainingIncome - upperEarningsLimit;
-      const niInSecondBand = incomeInSecondBand * employerRates[1];
-      employerNITotal += niInSecondBand;
-      employerNIBreakdown.push({ rate: employerRates[1], amount: niInSecondBand });
+
+    if (remainingIncome > 0) {
+        const niInSecondBand = remainingIncome * employerRates[1];
+        employerNITotal += niInSecondBand;
+        employerNIBreakdown.push({ rate: employerRates[1], amount: niInSecondBand });
     }
-  
+
     return {
-      total: employerNITotal,
-      breakdown: employerNIBreakdown,
+        total: employerNITotal,
+        breakdown: employerNIBreakdown,
     };
-  }
-  
+}
+
 // Calculate student loan repayments
 export function calculateStudentLoanRepayments(income, studentLoanPlan, constants) {
     const { defaultRate, postgradRate, thresholds } = constants.studentLoan;
-  
+
     if (studentLoanPlan === 'none') return 0;
-  
+
     const planThreshold = thresholds[studentLoanPlan];
     const rate = studentLoanPlan === 'postgrad' ? postgradRate : defaultRate;
-  
+
     if (income <= planThreshold) return 0;
-  
+
     return (income - planThreshold) * rate;
-  }
-  
+}
+
 
 // Calculate the High Income Child Benefit Charge
 export function calculateHighIncomeChildBenefitCharge(income, childBenefitAmount) {
@@ -150,14 +149,14 @@ export function calculateTaxes(grossIncome, options) {
             personal: { value: personalContributionValue } = {},
             salarySacrifice: { value: salarySacrificeValue } = {},
         } = {},
-    } = options;    
-    
+    } = options;
+
     // Calculate auto enrolment pension contribution
     const autoEnrolmentContribution = grossIncome * (autoEnrolmentValue / 100);
-    
+
     // Calculate total pension contributions
     const totalPensionContributions = autoEnrolmentContribution + personalContributionValue;
-    
+
     // Apply salary sacrifice
     const incomeAfterSalarySacrifice = calculateSalarySacrifice(grossIncome - totalPensionContributions, salarySacrificeValue);
 
