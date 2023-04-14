@@ -9,11 +9,11 @@ export const defaultInputs = {
     blind: false,
     noNI: false,
     pensionContributions: {
-      autoEnrolment: { value: 0 },
-      salarySacrifice: { value: 0 },
-      personal: { value: 0 },
+        autoEnrolment: { value: 0 },
+        salarySacrifice: { value: 0 },
+        personal: { value: 0 },
     },
-  };
+};
 
 const ToggleButton = ({ name, label, checked, onChange }) => {
     const handleClick = () => {
@@ -34,8 +34,9 @@ const ToggleButton = ({ name, label, checked, onChange }) => {
     );
 };
 
-export function UserMenu ({ onUserInputsChange }) {
+export function UserMenu({ onUserInputsChange }) {
     const [inputs, setInputs] = useState(defaultInputs);
+    const [warningMessage, setWarningMessage] = useState('');
 
     const pensionLabels = {
         autoEnrolment: 'Auto Enrolment (%)',
@@ -60,6 +61,14 @@ export function UserMenu ({ onUserInputsChange }) {
         } else {
             setInputs((prevState) => ({ ...prevState, [name]: input }));
         }
+
+        if (name === 'taxYear' && value === '2022/23') {
+            setWarningMessage('\
+            Warning: NI calculations for the 2022/23 tax year might not be accurate due to the varying rates and thresholds.\
+            Effective rates and thresholds are being used to estimate the Employer and Employee NI contributions.');
+        } else if (name === 'taxYear') {
+            setWarningMessage('');
+        }
     };
 
     return (
@@ -68,8 +77,14 @@ export function UserMenu ({ onUserInputsChange }) {
                 <div className="form-group">
                     <select name="taxYear" value={inputs.taxYear} onChange={handleInputChange}>
                         <option value="2023/24">Tax Year 2023/24</option>
-                        {/* Add more tax years if needed */}
+                        <option value="2022/23">Tax Year 2022/23</option>
+                        <option value="2021/22">Tax Year 2021/22</option>
+                        <option value="2020/21">Tax Year 2020/21</option>
+                        <option value="2019/20">Tax Year 2019/20</option>
+                        <option value="2018/19">Tax Year 2018/19</option>
+                        <option value="2017/18">Tax Year 2017/18</option>
                     </select>
+                    {warningMessage && <p className="warning-message">{warningMessage}</p>}
                 </div>
 
                 <div className="form-group">

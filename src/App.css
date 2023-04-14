@@ -108,3 +108,9 @@ fieldset legend {
 .pension-input select {
   margin-left: 8px;
 }
+
+.warning-message {
+  color: rgb(255, 147, 147);
+  font-size: 0.9em;
+  margin-top: 5px;
+}
