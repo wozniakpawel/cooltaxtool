@@ -5,8 +5,6 @@ export const defaultInputs = {
     studentLoan: 'none',
     grossIncome: 0,
     residentInScotland: false,
-    married: false,
-    blind: false,
     noNI: false,
     pensionContributions: {
         autoEnrolment: { value: 0 },
@@ -17,8 +15,6 @@ export const defaultInputs = {
 
 const ToggleButton = ({ name, label, checked, onChange }) => {
     const handleClick = () => {
-        // disable married and blind toggles, at least until they actually do something
-        if (name === "married" || name === "blind") return;
         onChange({ target: { name, type: 'checkbox', checked: !checked } });
     };
 
@@ -118,20 +114,6 @@ export function UserMenu({ onUserInputsChange }) {
                             name="residentInScotland"
                             label="Resident in Scotland"
                             checked={inputs.residentInScotland}
-                            onChange={handleInputChange}
-                        />
-
-                        <ToggleButton
-                            name="married"
-                            label="Married"
-                            checked={inputs.married}
-                            onChange={handleInputChange}
-                        />
-
-                        <ToggleButton
-                            name="blind"
-                            label="Blind"
-                            checked={inputs.blind}
                             onChange={handleInputChange}
                         />
 
