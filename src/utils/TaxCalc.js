@@ -16,88 +16,56 @@ export function calculateIncomeTax(taxableIncome, constants, residentInScotland 
 
     let incomeTax = 0;
     let remainingIncome = taxableIncome;
-    const taxBreakdown = {};
+    const incomeTaxBreakdown = [];
 
     let previousLimit = 0;
 
-    taxBands.forEach(([rate, limit]) => {
+    taxBands.forEach(([currentRate, currentLimit]) => {
         if (remainingIncome > 0) {
-            const range = limit - previousLimit;
+            const range = currentLimit - previousLimit;
             const taxableAtCurrentRate = Math.min(remainingIncome, range);
-            const taxAtCurrentRate = taxableAtCurrentRate * rate;
+            const taxAtCurrentRate = taxableAtCurrentRate * currentRate;
             incomeTax += taxAtCurrentRate;
             remainingIncome -= taxableAtCurrentRate;
-
-            taxBreakdown[rate] = (taxBreakdown[rate] || 0) + taxAtCurrentRate;
-
-            previousLimit = limit;
+            incomeTaxBreakdown.push({ rate: currentRate, amount: taxAtCurrentRate });
+            previousLimit = currentLimit;
         }
     });
 
-    return { total: incomeTax, breakdown: taxBreakdown };
+    return { total: incomeTax, breakdown: incomeTaxBreakdown };
 };
 
-// Calculate employee national insurance contributions
-export function calculateEmployeeNI(income, constants, noNI) {
+// Calculate national insurance contributions (employee and employer)
+export function calculateNationalInsurance(income, constants, employer=false, noNI=false) {
     if (noNI) return { total: 0, breakdown: [] };
 
-    const { primaryThreshold, upperEarningsLimit, employeeRates } = constants.nationalInsurance;
+    const { primaryThreshold, secondaryThreshold, upperEarningsLimit, employeeRates, employerRates } = constants.nationalInsurance;
+    const firstThreshold = employer ? secondaryThreshold : primaryThreshold;
+    const rates = employer ? employerRates : employeeRates;
 
-    let remainingIncome = Math.max(0, income - primaryThreshold);
-    let employeeNITotal = 0;
-    const employeeNIBreakdown = [];
+    let remainingIncome = Math.max(0, income - firstThreshold);
+    let nationalInsuranceTotal = 0;
+    const nationalInsuranceBreakdown = [];
 
     if (remainingIncome > 0) {
-        const incomeInFirstBand = Math.min(remainingIncome, upperEarningsLimit - primaryThreshold);
+        const incomeInFirstBand = Math.min(remainingIncome, upperEarningsLimit - firstThreshold);
         if (incomeInFirstBand > 0) {
-            const niInFirstBand = incomeInFirstBand * employeeRates[0];
-            employeeNITotal += niInFirstBand;
+            const niInFirstBand = incomeInFirstBand * rates[0];
+            nationalInsuranceTotal += niInFirstBand;
             remainingIncome -= incomeInFirstBand;
-            employeeNIBreakdown.push({ rate: employeeRates[0], amount: niInFirstBand });
+            nationalInsuranceBreakdown.push({ rate: rates[0], amount: niInFirstBand });
         }
     }
 
     if (remainingIncome > 0) {
-        const niInSecondBand = remainingIncome * employeeRates[1];
-        employeeNITotal += niInSecondBand;
-        employeeNIBreakdown.push({ rate: employeeRates[1], amount: niInSecondBand });
+        const niInSecondBand = remainingIncome * rates[1];
+        nationalInsuranceTotal += niInSecondBand;
+        nationalInsuranceBreakdown.push({ rate: rates[1], amount: niInSecondBand });
     }
 
     return {
-        total: employeeNITotal,
-        breakdown: employeeNIBreakdown,
-    };
-}
-
-// Calculate employer national insurance contributions
-export function calculateEmployerNI(income, constants, noNI) {
-    if (noNI) return { total: 0, breakdown: [] };
-
-    const { secondaryThreshold, upperEarningsLimit, employerRates } = constants.nationalInsurance;
-
-    let remainingIncome = Math.max(0, income - secondaryThreshold);
-    let employerNITotal = 0;
-    const employerNIBreakdown = [];
-
-    if (remainingIncome > 0) {
-        const incomeInFirstBand = Math.min(remainingIncome, upperEarningsLimit - secondaryThreshold);
-        if (incomeInFirstBand > 0) {
-            const niInFirstBand = incomeInFirstBand * employerRates[0];
-            employerNITotal += niInFirstBand;
-            remainingIncome -= incomeInFirstBand;
-            employerNIBreakdown.push({ rate: employerRates[0], amount: niInFirstBand });
-        }
-    }
-
-    if (remainingIncome > 0) {
-        const niInSecondBand = remainingIncome * employerRates[1];
-        employerNITotal += niInSecondBand;
-        employerNIBreakdown.push({ rate: employerRates[1], amount: niInSecondBand });
-    }
-
-    return {
-        total: employerNITotal,
-        breakdown: employerNIBreakdown,
+        total: nationalInsuranceTotal,
+        breakdown: nationalInsuranceBreakdown,
     };
 }
 
@@ -170,10 +138,10 @@ export function calculateTaxes(grossIncome, options) {
     const incomeTax = calculateIncomeTax(taxableIncome, constants, options.residentInScotland);
 
     // Calculate employee national insurance contributions
-    const employeeNI = calculateEmployeeNI(incomeAfterSalarySacrifice, constants, options.noNI);
+    const employeeNI = calculateNationalInsurance(incomeAfterSalarySacrifice, constants, false, options.noNI);
 
     // Calculate employer national insurance contributions
-    const employerNI = calculateEmployerNI(incomeAfterSalarySacrifice, constants, options.noNI);
+    const employerNI = calculateNationalInsurance(incomeAfterSalarySacrifice, constants, true, options.noNI);
 
     // Calculate student loan repayments
     const studentLoanRepayments = calculateStudentLoanRepayments(incomeAfterSalarySacrifice, options.studentLoan, constants);
@@ -204,28 +172,29 @@ export function calculateTaxes(grossIncome, options) {
     };
 }
 
+// Calculate the difference in taxes with and without a voluntary pension contribution
 export const calculateTaxSavings = (grossIncome, inputs, voluntaryPensionContribution) => {
-    // Calculate taxes without voluntary pension contribution
-    const taxesWithoutVoluntaryPension = calculateTaxes(grossIncome, inputs);
+    const { pensionContributions } = inputs;
 
-    // Update the inputs object to include the voluntary pension contribution
-    const updatedInputs = {
+    const defaultInputs = {
         ...inputs,
         pensionContributions: {
-            ...inputs.pensionContributions,
-            personal: { value: voluntaryPensionContribution, type: '%' },
+            ...pensionContributions,
+            personal: {
+                ...pensionContributions.personal,
+                value: voluntaryPensionContribution,
+            },
         },
     };
 
-    // Calculate taxes with voluntary pension contribution
-    const taxesWithVoluntaryPension = calculateTaxes(grossIncome, updatedInputs);
+    const defaultTaxes = calculateTaxes(grossIncome, defaultInputs);
+    const currentTaxes = calculateTaxes(grossIncome, inputs);
 
-    // Calculate tax savings
-    const taxSavings = {
-        incomeTax: taxesWithoutVoluntaryPension.incomeTax - taxesWithVoluntaryPension.incomeTax,
-        employeeNI: taxesWithoutVoluntaryPension.employeeNI - taxesWithVoluntaryPension.employeeNI,
-        employerNI: taxesWithoutVoluntaryPension.employerNI - taxesWithVoluntaryPension.employerNI,
+    const taxSavings = currentTaxes.combinedTaxes - defaultTaxes.combinedTaxes;
+
+    return {
+        taxSavings,
+        defaultTaxes,
+        currentTaxes,
     };
-
-    return taxSavings;
 };
