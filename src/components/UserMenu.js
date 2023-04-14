@@ -17,6 +17,8 @@ export const defaultInputs = {
 
 const ToggleButton = ({ name, label, checked, onChange }) => {
     const handleClick = () => {
+        // disable married and blind toggles, at least until they actually do something
+        if (name === "married" || name === "blind") return;
         onChange({ target: { name, type: 'checkbox', checked: !checked } });
     };
 
