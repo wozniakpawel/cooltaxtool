@@ -16,9 +16,9 @@ const TaxYearOverview = ({ inputs }) => {
     const percentageData = taxData.map((result, index) => {
       const grossIncome = grossIncomes[index];
       return {
-        incomeTax: (result.incomeTax / grossIncome) * 100,
-        employeeNI: (result.employeeNI / grossIncome) * 100,
-        employerNI: (result.employerNI / grossIncome) * 100,
+        incomeTax: (result.incomeTax.total / grossIncome) * 100,
+        employeeNI: (result.employeeNI.total / grossIncome) * 100,
+        employerNI: (result.employerNI.total / grossIncome) * 100,
         studentLoanRepayments: (result.studentLoanRepayments / grossIncome) * 100,
         highIncomeChildBenefitCharge: (result.highIncomeChildBenefitCharge / grossIncome) * 100,
         combinedTaxes: (result.combinedTaxes / grossIncome) * 100,
@@ -45,9 +45,9 @@ const TaxYearOverview = ({ inputs }) => {
     ]);
 
     setAmountPlotData([
-      { x: grossIncomes, y: taxData.map((data) => data.incomeTax), type: 'scatter', mode: 'lines', marker: { color: 'orange' }, name: 'Income Tax' },
-      { x: grossIncomes, y: taxData.map((data) => data.employeeNI), type: 'scatter', mode: 'lines', marker: { color: 'purple' }, name: 'Employee NI Contributions' },
-      { x: grossIncomes, y: taxData.map((data) => data.employerNI), type: 'scatter', mode: 'lines', marker: { color: 'purple' }, name: 'Employer NI Contributions' },
+      { x: grossIncomes, y: taxData.map((data) => data.incomeTax.total), type: 'scatter', mode: 'lines', marker: { color: 'orange' }, name: 'Income Tax' },
+      { x: grossIncomes, y: taxData.map((data) => data.employeeNI.total), type: 'scatter', mode: 'lines', marker: { color: 'purple' }, name: 'Employee NI Contributions' },
+      { x: grossIncomes, y: taxData.map((data) => data.employerNI.total), type: 'scatter', mode: 'lines', marker: { color: 'purple' }, name: 'Employer NI Contributions' },
       { x: grossIncomes, y: taxData.map((data) => data.studentLoanRepayments), type: 'scatter', mode: 'lines', marker: { color: 'brown' }, name: 'Student Loan Repayments' },
       { x: grossIncomes, y: taxData.map((data) => data.highIncomeChildBenefitCharge), type: 'scatter', mode: 'lines', marker: { color: 'pink' }, name: 'High Income Child Benefit Charge' },
       { x: grossIncomes, y: taxData.map((data) => data.combinedTaxes), type: 'scatter', mode: 'lines', marker: { color: 'red' }, name: 'Combined taxes (IT, EE NI, SLR)' },

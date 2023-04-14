@@ -23,7 +23,7 @@ const UserMenu = ({ onUserInputsChange }) => {
 
     const pensionLabels = {
         autoEnrolment: 'Auto Enrolment (%)',
-        salarySacrifice: 'Salary Sacrifice (£)',
+        salarySacrifice: 'Salary/Bonus Sacrifice (£)',
         personal: 'Personal Contributions (£)',
     };
 

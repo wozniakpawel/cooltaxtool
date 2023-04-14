@@ -39,7 +39,7 @@ export function calculateIncomeTax(taxableIncome, constants, residentInScotland 
 
 // Calculate employee national insurance contributions
 export function calculateEmployeeNI(income, constants) {
-    const { lowerEarningsLimit, primaryThreshold, upperEarningsLimit, employeeRates } = constants.nationalInsurance;
+    const { primaryThreshold, upperEarningsLimit, employeeRates } = constants.nationalInsurance;
 
     let remainingIncome = Math.max(0, income - primaryThreshold);
     let employeeNITotal = 0;
@@ -66,7 +66,6 @@ export function calculateEmployeeNI(income, constants) {
         breakdown: employeeNIBreakdown,
     };
 }
-
 
 // Calculate employer national insurance contributions
 export function calculateEmployerNI(income, constants) {
@@ -165,13 +164,13 @@ export function calculateTaxes(grossIncome, options) {
     const taxableIncome = Math.max(0, incomeAfterSalarySacrifice - personalAllowance);
 
     // Calculate income tax
-    const { total: incomeTax, breakdown: incomeTaxBreakdown } = calculateIncomeTax(taxableIncome, constants, options.residentInScotland);
+    const incomeTax = calculateIncomeTax(taxableIncome, constants, options.residentInScotland);
 
     // Calculate employee national insurance contributions
-    const { total: employeeNI, breakdown: employeeNIBreakdown } = calculateEmployeeNI(incomeAfterSalarySacrifice, constants);
+    const employeeNI = calculateEmployeeNI(incomeAfterSalarySacrifice, constants);
 
     // Calculate employer national insurance contributions
-    const { total: employerNI, breakdown: employerNIBreakdown } = calculateEmployerNI(incomeAfterSalarySacrifice, constants);
+    const employerNI = calculateEmployerNI(incomeAfterSalarySacrifice, constants);
 
     // Calculate student loan repayments
     const studentLoanRepayments = calculateStudentLoanRepayments(incomeAfterSalarySacrifice, options.studentLoan, constants);
@@ -182,10 +181,10 @@ export function calculateTaxes(grossIncome, options) {
         : 0;
 
     // Calculate combined taxes
-    const combinedTaxes = incomeTax + employeeNI + studentLoanRepayments + highIncomeChildBenefitCharge;
+    const combinedTaxes = incomeTax.total + employeeNI.total + studentLoanRepayments + highIncomeChildBenefitCharge;
 
     // Calculate take-home pay
-    const takeHomePay = grossIncome - combinedTaxes;
+    const takeHomePay = incomeAfterSalarySacrifice - combinedTaxes;
 
     // Return all calculated values
     return {
@@ -193,11 +192,8 @@ export function calculateTaxes(grossIncome, options) {
         personalAllowance,
         taxableIncome,
         incomeTax,
-        incomeTaxBreakdown,
         employeeNI,
-        employeeNIBreakdown,
         employerNI,
-        employerNIBreakdown,
         studentLoanRepayments,
         highIncomeChildBenefitCharge,
         combinedTaxes,
