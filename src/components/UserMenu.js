@@ -1,5 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { defaultInputs } from '../utils/DefaultInputs';
+
+export const defaultInputs = {
+    taxYear: '2023/24',
+    residentInScotland: false,
+    married: false,
+    blind: false,
+    noNI: false,
+    grossIncome: 0,
+    pensionContributions: {
+      autoEnrolment: { value: 0 },
+      salarySacrifice: { value: 0 },
+      personal: { value: 0 },
+    },
+    studentLoan: 'none',
+  };
 
 const ToggleButton = ({ name, label, checked, onChange }) => {
     const handleClick = () => {
@@ -18,7 +32,7 @@ const ToggleButton = ({ name, label, checked, onChange }) => {
     );
 };
 
-const UserMenu = ({ onUserInputsChange }) => {
+export function UserMenu ({ onUserInputsChange }) {
     const [inputs, setInputs] = useState(defaultInputs);
 
     const pensionLabels = {
@@ -138,5 +152,3 @@ const UserMenu = ({ onUserInputsChange }) => {
         </div>
     );
 };
-
-export default UserMenu;
