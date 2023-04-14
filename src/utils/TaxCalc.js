@@ -38,7 +38,9 @@ export function calculateIncomeTax(taxableIncome, constants, residentInScotland 
 };
 
 // Calculate employee national insurance contributions
-export function calculateEmployeeNI(income, constants) {
+export function calculateEmployeeNI(income, constants, noNI) {
+    if (noNI) return { total: 0, breakdown: [] };
+
     const { primaryThreshold, upperEarningsLimit, employeeRates } = constants.nationalInsurance;
 
     let remainingIncome = Math.max(0, income - primaryThreshold);
@@ -68,7 +70,9 @@ export function calculateEmployeeNI(income, constants) {
 }
 
 // Calculate employer national insurance contributions
-export function calculateEmployerNI(income, constants) {
+export function calculateEmployerNI(income, constants, noNI) {
+    if (noNI) return { total: 0, breakdown: [] };
+
     const { secondaryThreshold, upperEarningsLimit, employerRates } = constants.nationalInsurance;
   
     let remainingIncome = Math.max(0, income - secondaryThreshold);
@@ -167,10 +171,10 @@ export function calculateTaxes(grossIncome, options) {
     const incomeTax = calculateIncomeTax(taxableIncome, constants, options.residentInScotland);
 
     // Calculate employee national insurance contributions
-    const employeeNI = calculateEmployeeNI(incomeAfterSalarySacrifice, constants);
+    const employeeNI = calculateEmployeeNI(incomeAfterSalarySacrifice, constants, options.noNI);
 
     // Calculate employer national insurance contributions
-    const employerNI = calculateEmployerNI(incomeAfterSalarySacrifice, constants);
+    const employerNI = calculateEmployerNI(incomeAfterSalarySacrifice, constants, options.noNI);
 
     // Calculate student loan repayments
     const studentLoanRepayments = calculateStudentLoanRepayments(incomeAfterSalarySacrifice, options.studentLoan, constants);

@@ -120,7 +120,7 @@ export function UserMenu ({ onUserInputsChange }) {
 
                         <ToggleButton
                             name="noNI"
-                            label="Not paying NI"
+                            label="Exclude NI"
                             checked={inputs.noNI}
                             onChange={handleInputChange}
                         />

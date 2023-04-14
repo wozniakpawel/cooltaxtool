@@ -5,6 +5,7 @@ import { calculateTaxes } from '../utils/TaxCalc';
 const TaxYearOverview = ({ inputs }) => {
   const [percentagePlotData, setPercentagePlotData] = useState([]);
   const [amountPlotData, setAmountPlotData] = useState([]);
+  const { noNI, studentLoan } = inputs;
 
   useEffect(() => {
     const grossIncomes = Array.from({ length: 1000 }, (_, i) => i * 250);
@@ -33,26 +34,43 @@ const TaxYearOverview = ({ inputs }) => {
       marginalCombinedTaxes.push((deltaTaxes / deltaIncome) * 100);
     }
 
-    setPercentagePlotData([
+    const percentagePlotData = [
       { x: grossIncomes, y: percentageData.map((data) => data.incomeTax), type: 'scatter', mode: 'lines', marker: { color: 'orange' }, name: 'Income Tax' },
-      { x: grossIncomes, y: percentageData.map((data) => data.employeeNI), type: 'scatter', mode: 'lines', marker: { color: 'purple' }, name: 'Employee NI Contributions' },
-      { x: grossIncomes, y: percentageData.map((data) => data.employerNI), type: 'scatter', mode: 'lines', marker: { color: 'purple' }, name: 'Employer NI Contributions' },
-      { x: grossIncomes, y: percentageData.map((data) => data.studentLoanRepayments), type: 'scatter', mode: 'lines', marker: { color: 'brown' }, name: 'Student Loan Repayments' },
       { x: grossIncomes, y: percentageData.map((data) => data.highIncomeChildBenefitCharge), type: 'scatter', mode: 'lines', marker: { color: 'pink' }, name: 'High Income Child Benefit Charge' },
       { x: grossIncomes, y: percentageData.map((data) => data.combinedTaxes), type: 'scatter', mode: 'lines', marker: { color: 'red' }, name: 'Combined taxes (IT, EE NI, SLR)' },
       { x: grossIncomes, y: percentageData.map((data) => data.takeHomePay), type: 'scatter', mode: 'lines', marker: { color: 'black' }, name: 'Take Home Pay' },
       { x: grossIncomes.slice(1), y: marginalCombinedTaxes, type: 'scatter', mode: 'lines', marker: { color: 'blue' }, name: 'Marginal Combined Tax Rate' },
-    ]);
+    ];
 
-    setAmountPlotData([
+    const amountPlotData = [
       { x: grossIncomes, y: taxData.map((data) => data.incomeTax.total), type: 'scatter', mode: 'lines', marker: { color: 'orange' }, name: 'Income Tax' },
-      { x: grossIncomes, y: taxData.map((data) => data.employeeNI.total), type: 'scatter', mode: 'lines', marker: { color: 'purple' }, name: 'Employee NI Contributions' },
-      { x: grossIncomes, y: taxData.map((data) => data.employerNI.total), type: 'scatter', mode: 'lines', marker: { color: 'purple' }, name: 'Employer NI Contributions' },
-      { x: grossIncomes, y: taxData.map((data) => data.studentLoanRepayments), type: 'scatter', mode: 'lines', marker: { color: 'brown' }, name: 'Student Loan Repayments' },
       { x: grossIncomes, y: taxData.map((data) => data.highIncomeChildBenefitCharge), type: 'scatter', mode: 'lines', marker: { color: 'pink' }, name: 'High Income Child Benefit Charge' },
       { x: grossIncomes, y: taxData.map((data) => data.combinedTaxes), type: 'scatter', mode: 'lines', marker: { color: 'red' }, name: 'Combined taxes (IT, EE NI, SLR)' },
       { x: grossIncomes, y: taxData.map((data) => data.takeHomePay), type: 'scatter', mode: 'lines', marker: { color: 'black' }, name: 'Take Home Pay' },
-    ]);
+    ];
+
+    if (!noNI) {
+      percentagePlotData.push(
+        { x: grossIncomes, y: percentageData.map((data) => data.employeeNI), type: 'scatter', mode: 'lines', marker: { color: 'purple' }, name: 'Employee NI Contributions' },
+        { x: grossIncomes, y: percentageData.map((data) => data.employerNI), type: 'scatter', mode: 'lines', marker: { color: 'purple' }, name: 'Employer NI Contributions' },
+      );
+      amountPlotData.push(
+        { x: grossIncomes, y: taxData.map((data) => data.employeeNI.total), type: 'scatter', mode: 'lines', marker: { color: 'purple' }, name: 'Employee NI Contributions' },
+        { x: grossIncomes, y: taxData.map((data) => data.employerNI.total), type: 'scatter', mode: 'lines', marker: { color: 'purple' }, name: 'Employer NI Contributions' },
+      );
+    }
+
+    if (studentLoan !== 'none') {
+      percentagePlotData.push(
+        { x: grossIncomes, y: percentageData.map((data) => data.studentLoanRepayments), type: 'scatter', mode: 'lines', marker: { color: 'brown' }, name: 'Student Loan Repayments' },
+      );
+      amountPlotData.push(
+        { x: grossIncomes, y: taxData.map((data) => data.studentLoanRepayments), type: 'scatter', mode: 'lines', marker: { color: 'brown' }, name: 'Student Loan Repayments' },
+      );
+    }
+
+    setPercentagePlotData(percentagePlotData);
+    setAmountPlotData(amountPlotData);
   }, [inputs]);
 
   return (
@@ -60,7 +78,7 @@ const TaxYearOverview = ({ inputs }) => {
       <Plot
         data={percentagePlotData}
         layout={{
-          title: 'Gross Income vs Tax as Percentage',
+          title: 'Taxes as a percentage of gross income',
           hovermode: 'x',
           xaxis: { title: 'Annual Gross Income (£)' },
           yaxis: { title: 'Percentage of Income (%)' },
@@ -70,7 +88,7 @@ const TaxYearOverview = ({ inputs }) => {
       <Plot
         data={amountPlotData}
         layout={{
-          title: 'Gross Income vs Tax Amounts',
+          title: 'Annual total amounts',
           hovermode: 'x',
           xaxis: { title: 'Annual Gross Income (£)' },
           yaxis: { title: 'Annual Total Amount (£)' },
