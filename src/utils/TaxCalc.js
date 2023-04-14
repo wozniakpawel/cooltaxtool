@@ -1,4 +1,4 @@
-import { taxConstants } from './TaxConstants';
+import { taxYears } from './TaxYears';
 
 // Calculate personal allowance taper
 export function calculateTaperedPersonalAllowance(income, constants) {
@@ -139,7 +139,7 @@ export function calculateSalarySacrifice(incomeAfterPensionContributions, salary
 
 // Top-level function to calculate taxes
 export function calculateTaxes(grossIncome, options) {
-    const constants = taxConstants[options.taxYear];
+    const constants = taxYears[options.taxYear];
     const {
         pensionContributions: {
             autoEnrolment: { value: autoEnrolmentValue } = {},

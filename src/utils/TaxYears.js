@@ -1,4 +1,4 @@
-export const taxConstants = {
+export const taxYears = {
     '2023/24': {
         personalAllowance: {
             basicAllowance: 12570,
