@@ -7,7 +7,7 @@ const TaxYearOverview = ({ inputs }) => {
   const [amountPlotData, setAmountPlotData] = useState([]);
 
   useEffect(() => {
-    const grossIncomes = Array.from({ length: 250 }, (_, i) => i * 1000);
+    const grossIncomes = Array.from({ length: 1000 }, (_, i) => i * 250);
 
     const taxData = grossIncomes.map((grossIncome) => {
       return calculateTaxes(grossIncome, inputs);
@@ -62,7 +62,7 @@ const TaxYearOverview = ({ inputs }) => {
         layout={{
           title: 'Gross Income vs Tax as Percentage',
           hovermode: 'x',
-          xaxis: { title: 'Gross Income (£)' },
+          xaxis: { title: 'Annual Gross Income (£)' },
           yaxis: { title: 'Percentage of Income (%)' },
         }}
       />
@@ -72,8 +72,8 @@ const TaxYearOverview = ({ inputs }) => {
         layout={{
           title: 'Gross Income vs Tax Amounts',
           hovermode: 'x',
-          xaxis: { title: 'Gross Income (£)' },
-          yaxis: { title: 'Percentage of Income (%)' },
+          xaxis: { title: 'Annual Gross Income (£)' },
+          yaxis: { title: 'Annual Total Amount (£)' },
         }}
       />
 
