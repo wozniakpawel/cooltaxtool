@@ -142,6 +142,7 @@ export function UserMenu({ onUserInputsChange }) {
                                         value={inputs.pensionContributions[type]}
                                         onChange={handleInputChange}
                                         min={0}
+                                        max={type === 'autoEnrolment' ? 100 : Infinity}
                                         step={type === 'autoEnrolment' ? 1 : 100}
                                     />
                                 </div>

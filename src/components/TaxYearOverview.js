@@ -20,7 +20,6 @@ const TaxYearOverview = ({ inputs }) => {
         employeeNI: (result.employeeNI.total / grossIncome) * 100,
         employerNI: (result.employerNI.total / grossIncome) * 100,
         studentLoanRepayments: (result.studentLoanRepayments / grossIncome) * 100,
-        highIncomeChildBenefitCharge: (result.highIncomeChildBenefitCharge / grossIncome) * 100,
         combinedTaxes: (result.combinedTaxes / grossIncome) * 100,
         takeHomePay: (result.takeHomePay / grossIncome) * 100
       };
@@ -35,16 +34,14 @@ const TaxYearOverview = ({ inputs }) => {
 
     const percentagePlotData = [
       { x: grossIncomes, y: percentageData.map((data) => data.incomeTax), type: 'scatter', mode: 'lines', marker: { color: 'orange' }, name: 'Income Tax' },
-      { x: grossIncomes, y: percentageData.map((data) => data.highIncomeChildBenefitCharge), type: 'scatter', mode: 'lines', marker: { color: 'pink' }, name: 'High Income Child Benefit Charge' },
-      { x: grossIncomes, y: percentageData.map((data) => data.combinedTaxes), type: 'scatter', mode: 'lines', marker: { color: 'red' }, name: 'Combined taxes (IT, EE NI, SLR)' },
+      { x: grossIncomes, y: percentageData.map((data) => data.combinedTaxes), type: 'scatter', mode: 'lines', marker: { color: 'red' }, name: 'Combined taxes (IT, EE NI, SL)' },
       { x: grossIncomes, y: percentageData.map((data) => data.takeHomePay), type: 'scatter', mode: 'lines', marker: { color: 'black' }, name: 'Take Home Pay' },
       { x: grossIncomes.slice(1), y: marginalCombinedTaxes, type: 'scatter', mode: 'lines', marker: { color: 'blue' }, name: 'Marginal Combined Tax Rate' },
     ];
 
     const amountPlotData = [
       { x: grossIncomes, y: taxData.map((data) => data.incomeTax.total), type: 'scatter', mode: 'lines', marker: { color: 'orange' }, name: 'Income Tax' },
-      { x: grossIncomes, y: taxData.map((data) => data.highIncomeChildBenefitCharge), type: 'scatter', mode: 'lines', marker: { color: 'pink' }, name: 'High Income Child Benefit Charge' },
-      { x: grossIncomes, y: taxData.map((data) => data.combinedTaxes), type: 'scatter', mode: 'lines', marker: { color: 'red' }, name: 'Combined taxes (IT, EE NI, SLR)' },
+      { x: grossIncomes, y: taxData.map((data) => data.combinedTaxes), type: 'scatter', mode: 'lines', marker: { color: 'red' }, name: 'Combined taxes (IT, EE NI, SL)' },
       { x: grossIncomes, y: taxData.map((data) => data.takeHomePay), type: 'scatter', mode: 'lines', marker: { color: 'black' }, name: 'Take Home Pay' },
     ];
 

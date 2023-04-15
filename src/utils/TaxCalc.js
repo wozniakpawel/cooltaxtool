@@ -36,7 +36,7 @@ export function calculateIncomeTax(taxableIncome, constants, residentInScotland 
 };
 
 // Calculate national insurance contributions (employee and employer)
-export function calculateNationalInsurance(income, constants, employer=false, noNI=false) {
+export function calculateNationalInsurance(income, constants, employer = false, noNI = false) {
     if (noNI) return { total: 0, breakdown: [] };
 
     const { primaryThreshold, secondaryThreshold, upperEarningsLimit, employeeRates, employerRates } = constants.nationalInsurance;
@@ -83,29 +83,19 @@ export function calculateStudentLoanRepayments(income, studentLoanPlan, constant
     return (income - planThreshold) * rate;
 }
 
-
-// Calculate the High Income Child Benefit Charge
-export function calculateHighIncomeChildBenefitCharge(income, childBenefitAmount) {
-    if (income > 50000) {
-        const chargeRate = 0.01 * Math.min(Math.floor((income - 50000) / 100), 100);
-        return childBenefitAmount * chargeRate;
-    }
-    return 0;
-}
-
 // Calculate the pension taper
 export function calculatePensionTaper(income, pensionContributions) {
-    // Add calculation logic here
+    // const { taperThreshold, taperRate } = constants.pensionTaper;
+    // if (income > taperThreshold) {
+    //     const reduction = Math.floor((income - taperThreshold) * taperRate);
+    //     return Math.max(0, pensionContributions - reduction);
+    // }
+    // return pensionContributions;
 }
 
-// Calculate tax relief at source for a sipp contribution
-export function calculateTaxReliefAtSource(income, sippContribution, constants) {
-    // Add calculation logic here
-}
-
-// Calculate salary sacrifice
-export function calculateSalarySacrifice(incomeAfterPensionContributions, salarySacrifice) {
-    return Math.max(0, incomeAfterPensionContributions - salarySacrifice);
+// Calculate personal pension contribution value, depending if the tax is relieved at source
+export function grossManualPensionContributions(personalContribution, taxReliefAtSource = true) {
+    return taxReliefAtSource ? personalContribution * 1.25 : personalContribution;
 }
 
 // Top-level function to calculate taxes
@@ -119,82 +109,81 @@ export function calculateTaxes(grossIncome, options) {
         } = {},
     } = options;
 
-    // Calculate auto enrolment pension contribution
-    const autoEnrolmentContribution = grossIncome * (autoEnrolmentValue / 100);
+    // 1. Apply salary sacrifice
+    const incomeAfterSalarySacrifice = Math.max(0, grossIncome - salarySacrificeValue);
 
-    // Calculate total pension contributions
-    const totalPensionContributions = autoEnrolmentContribution + personalContributionValue;
+    // 2. Calculate auto enrolment pension contributions
+    const autoEnrolmentContribution = incomeAfterSalarySacrifice * autoEnrolmentValue / 100;
 
-    // Apply salary sacrifice
-    const incomeAfterSalarySacrifice = calculateSalarySacrifice(grossIncome - totalPensionContributions, salarySacrificeValue);
+    // 3. Deduct auto enrolment contributions from gross income, but only if they are salary sacrificed
+    if (options.autoEnrolmentAsSalarySacrifice)
+        incomeAfterSalarySacrifice -= autoEnrolmentContribution;
 
-    // Calculate personal allowance (considering taper)
-    const personalAllowance = calculateTaperedPersonalAllowance(incomeAfterSalarySacrifice, constants);
-
-    // Calculate taxable income
-    const taxableIncome = Math.max(0, incomeAfterSalarySacrifice - personalAllowance);
-
-    // Calculate income tax
-    const incomeTax = calculateIncomeTax(taxableIncome, constants, options.residentInScotland);
-
-    // Calculate employee national insurance contributions
+    // 4. Calculate employee national insurance contributions
     const employeeNI = calculateNationalInsurance(incomeAfterSalarySacrifice, constants, false, options.noNI);
 
-    // Calculate employer national insurance contributions
+    // 5. Calculate employer national insurance contributions
     const employerNI = calculateNationalInsurance(incomeAfterSalarySacrifice, constants, true, options.noNI);
 
-    // Calculate student loan repayments
+    // 6. Calculate student loan repayments
     const studentLoanRepayments = calculateStudentLoanRepayments(incomeAfterSalarySacrifice, options.studentLoan, constants);
 
-    // Calculate High Income Child Benefit Charge (if required)
-    const highIncomeChildBenefitCharge = options.childBenefitAmount
-        ? calculateHighIncomeChildBenefitCharge(incomeAfterSalarySacrifice, options.childBenefitAmount)
-        : 0;
+    // 7. Calculate personal pension contribution (with tax relief at source)
+    const grossedPersonalContribution = grossManualPensionContributions(personalContributionValue, options.taxReliefAtSource);
 
-    // Calculate combined taxes
-    const combinedTaxes = incomeTax.total + employeeNI.total + studentLoanRepayments + highIncomeChildBenefitCharge;
+    // 8. Calculate how much you will have in your pension pot at the end of the tax year
+    const pensionPot = salarySacrificeValue + autoEnrolmentContribution + grossedPersonalContribution;
 
-    // Calculate take-home pay
-    const takeHomePay = incomeAfterSalarySacrifice - combinedTaxes;
+    // 9. Calculate adjusted net income
+    const adjustedNetIncome = Math.max(0, grossIncome - pensionPot);
+
+    // 10. Determine the personal allowance (considering taper)
+    const personalAllowance = calculateTaperedPersonalAllowance(adjustedNetIncome, constants);
+
+    // 11. Calculate taxable income
+    const taxableIncome = Math.max(0, adjustedNetIncome - personalAllowance);
+
+    // 12. Calculate income tax
+    const incomeTax = calculateIncomeTax(taxableIncome, constants, options.residentInScotland);
+
+    // 13. Calculate combined taxes
+    const combinedTaxes = incomeTax.total + employeeNI.total + studentLoanRepayments;
+
+    // 14. Calculate take-home pay
+    const takeHomePay = adjustedNetIncome - combinedTaxes;
+    const yourMoney = pensionPot + takeHomePay;
 
     // Return all calculated values
     return {
         grossIncome,
+        adjustedNetIncome,
         personalAllowance,
         taxableIncome,
         incomeTax,
         employeeNI,
         employerNI,
         studentLoanRepayments,
-        highIncomeChildBenefitCharge,
         combinedTaxes,
-        takeHomePay
+        takeHomePay,
+        pensionPot,
+        yourMoney,
     };
 }
 
 // Calculate the difference in taxes with and without a voluntary pension contribution
 export const calculateTaxSavings = (grossIncome, inputs, voluntaryPensionContribution) => {
-    const { pensionContributions } = inputs;
-
-    const defaultInputs = {
+    const inputsWithVoluntaryPension = {
         ...inputs,
         pensionContributions: {
-            ...pensionContributions,
-            personal: {
-                ...pensionContributions.personal,
-                value: voluntaryPensionContribution,
-            },
+            ...inputs.pensionContributions,
+            personal: voluntaryPensionContribution,
         },
     };
 
-    const defaultTaxes = calculateTaxes(grossIncome, defaultInputs);
-    const currentTaxes = calculateTaxes(grossIncome, inputs);
+    const taxesWithVoluntaryPension = calculateTaxes(grossIncome, inputsWithVoluntaryPension);
+    const taxesWithoutVoluntaryPension = calculateTaxes(grossIncome, inputs);
 
-    const taxSavings = currentTaxes.combinedTaxes - defaultTaxes.combinedTaxes;
+    const taxSavings = taxesWithoutVoluntaryPension.combinedTaxes - taxesWithVoluntaryPension.combinedTaxes;
 
-    return {
-        taxSavings,
-        defaultTaxes,
-        currentTaxes,
-    };
+    return taxSavings;
 };
