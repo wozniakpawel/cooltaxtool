@@ -7,9 +7,9 @@ export const defaultInputs = {
     residentInScotland: false,
     noNI: false,
     pensionContributions: {
-        autoEnrolment: { value: 0 },
-        salarySacrifice: { value: 0 },
-        personal: { value: 0 },
+        autoEnrolment: 0,
+        salarySacrifice: 0,
+        personal: 0,
     },
 };
 
@@ -46,7 +46,12 @@ export function UserMenu({ onUserInputsChange }) {
 
     const handleInputChange = (event) => {
         const { name, value, type, checked } = event.target;
-        const input = type === 'checkbox' ? checked : value;
+        let input = type === 'checkbox' ? checked : value;
+
+        // Convert pension input value to a number
+        if (name.startsWith('pensionContributions') || name === 'grossIncome') {
+            input = parseInt(value, 10);
+        }
 
         if (name.includes('.')) {
             const [parent, child] = name.split('.');
@@ -133,8 +138,8 @@ export function UserMenu({ onUserInputsChange }) {
                                     <label htmlFor={`pensionContributions.${type}`}>{pensionLabels[type]}</label>
                                     <input
                                         type="number"
-                                        name={`pensionContributions.${type}.value`}
-                                        value={inputs.pensionContributions[type].value}
+                                        name={`pensionContributions.${type}`}
+                                        value={inputs.pensionContributions[type]}
                                         onChange={handleInputChange}
                                         min={0}
                                         step={type === 'autoEnrolment' ? 1 : 100}

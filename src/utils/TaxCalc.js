@@ -113,9 +113,9 @@ export function calculateTaxes(grossIncome, options) {
     const constants = taxYears[options.taxYear];
     const {
         pensionContributions: {
-            autoEnrolment: { value: autoEnrolmentValue } = {},
-            personal: { value: personalContributionValue } = {},
-            salarySacrifice: { value: salarySacrificeValue } = {},
+            autoEnrolment: autoEnrolmentValue = {},
+            personal: personalContributionValue = {},
+            salarySacrifice: salarySacrificeValue = {},
         } = {},
     } = options;
 
