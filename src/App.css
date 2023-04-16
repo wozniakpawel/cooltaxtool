@@ -114,3 +114,13 @@ fieldset legend {
   font-size: 0.9em;
   margin-top: 5px;
 }
+
+.number-cell {
+  font-weight: bold;
+  text-align: right;
+}
+
+.breakdown-number {
+  font-weight: normal;
+  font-size: 0.8em;
+}

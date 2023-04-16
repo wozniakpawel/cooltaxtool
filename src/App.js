@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { UserMenu, defaultInputs } from './components/UserMenu';
 import TaxAnalysis from './components/TaxAnalysis';
+import TaxBreakdown from './components/TaxBreakdown';
 import TaxYearOverview from './components/TaxYearOverview';
 import './App.css';
 
@@ -18,6 +19,7 @@ function App() {
         </div>
         <div className="taxComponentsContainer">
           <TaxAnalysis inputs={userInputs} />
+          {userInputs.grossIncome > 0 && <TaxBreakdown inputs={userInputs} />}
           <TaxYearOverview inputs={userInputs} />
         </div>
       </div>
