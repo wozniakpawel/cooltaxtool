@@ -52,6 +52,11 @@ const TaxYearOverview = ({ inputs }) => {
         ) {
           return null;
         }
+
+        const hoverTemplate = isPercentage
+          ? '%{y:.1f}%'
+          : '£%{y:,.2f}';
+
         if (setting.key === 'marginalCombinedTaxRate' && isPercentage) {
           return {
             x: grossIncomes.slice(1),
@@ -60,6 +65,7 @@ const TaxYearOverview = ({ inputs }) => {
             mode: 'lines',
             line: { dash: setting.dashed ? 'dash' : null, color: setting.color },
             name: setting.label,
+            hovertemplate: hoverTemplate,
           };
         }
         return {
@@ -72,6 +78,7 @@ const TaxYearOverview = ({ inputs }) => {
           mode: 'lines',
           marker: { color: setting.color },
           name: setting.label,
+          hovertemplate: hoverTemplate,
         };
       }).filter((data) => data !== null);
     };
