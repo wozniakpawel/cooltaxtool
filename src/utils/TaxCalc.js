@@ -11,7 +11,7 @@ export function calculateTaperedPersonalAllowance(income, constants) {
 }
 
 // Calculate income tax
-export function calculateIncomeTax(taxableIncome, constants, residentInScotland = false) {
+export function calculateIncomeTax(taxableIncome, constants, residentInScotland) {
     const taxBands = residentInScotland ? constants.incomeTax.scotland : constants.incomeTax.restOfUK;
 
     let incomeTax = 0;
@@ -36,7 +36,7 @@ export function calculateIncomeTax(taxableIncome, constants, residentInScotland 
 };
 
 // Calculate national insurance contributions (employee and employer)
-export function calculateNationalInsurance(income, constants, employer = false, noNI = false) {
+export function calculateNationalInsurance(income, constants, employer, noNI) {
     if (noNI) return { total: 0, breakdown: [] };
 
     const { primaryThreshold, secondaryThreshold, upperEarningsLimit, employeeRates, employerRates } = constants.nationalInsurance;
@@ -84,83 +84,85 @@ export function calculateStudentLoanRepayments(income, studentLoanPlan, constant
 }
 
 // Calculate the pension taper
-export function calculatePensionTaper(income, pensionContributions) {
-    // const { taperThreshold, taperRate } = constants.pensionTaper;
-    // if (income > taperThreshold) {
-    //     const reduction = Math.floor((income - taperThreshold) * taperRate);
-    //     return Math.max(0, pensionContributions - reduction);
-    // }
-    // return pensionContributions;
-}
+// export function calculatePensionTaper(income, pensionContributions, constants) {
+//     const { taperThreshold, taperRate } = constants.pensionTaper;
+//     if (income > taperThreshold) {
+//         const reduction = Math.floor((income - taperThreshold) * taperRate);
+//         return Math.max(0, pensionContributions - reduction);
+//     }
+//     return pensionContributions;
+// }
 
 // Calculate personal pension contribution value, depending if the tax is relieved at source
-export function grossManualPensionContributions(personalContribution, taxReliefAtSource = true) {
+export function grossManualPensionContributions(personalContribution, taxReliefAtSource) {
     return taxReliefAtSource ? personalContribution * 1.25 : personalContribution;
 }
 
-// Top-level function to calculate taxes
-export function calculateTaxes(grossIncome, options) {
-    const constants = taxYears[options.taxYear];
-    const {
-        pensionContributions: {
-            autoEnrolment: autoEnrolmentValue = {},
-            personal: personalContributionValue = {},
-            salarySacrifice: salarySacrificeValue = {},
-        } = {},
-    } = options;
+// Work out adjusted net income & the pension pot value at the end of the tax year
+export function calculatePension(grossIncome, pensionContributions, autoEnrolmentAsSalarySacrifice, taxReliefAtSource) {
+    const { autoEnrolment, personal, salarySacrifice } = pensionContributions;
 
     // 1. Apply salary sacrifice
-    const incomeAfterSalarySacrifice = Math.max(0, grossIncome - salarySacrificeValue);
+    const incomeAfterSalarySacrifice = Math.max(0, grossIncome - salarySacrifice);
 
     // 2. Calculate auto enrolment pension contributions
-    const autoEnrolmentContribution = incomeAfterSalarySacrifice * autoEnrolmentValue / 100;
+    const autoEnrolmentContribution = incomeAfterSalarySacrifice * (autoEnrolment / 100);
 
     // 3. Deduct auto enrolment contributions from gross income, but only if they are salary sacrificed
-    if (options.autoEnrolmentAsSalarySacrifice)
+    if (autoEnrolmentAsSalarySacrifice)
         incomeAfterSalarySacrifice -= autoEnrolmentContribution;
 
-    // 4. Calculate employee national insurance contributions
-    const employeeNI = calculateNationalInsurance(incomeAfterSalarySacrifice, constants, false, options.noNI);
+    // 4. Calculate personal pension contribution (with tax relief at source)
+    const grossedPersonalContribution = grossManualPensionContributions(personal, taxReliefAtSource);
 
-    // 5. Calculate employer national insurance contributions
-    const employerNI = calculateNationalInsurance(incomeAfterSalarySacrifice, constants, true, options.noNI);
-
-    // 6. Calculate student loan repayments
-    const studentLoanRepayments = calculateStudentLoanRepayments(incomeAfterSalarySacrifice, options.studentLoan, constants);
-
-    // 7. Calculate personal pension contribution (with tax relief at source)
-    const grossedPersonalContribution = grossManualPensionContributions(personalContributionValue, options.taxReliefAtSource);
-
-    // 8. Calculate how much you will have in your pension pot at the end of the tax year
+    // 5. Calculate how much you will have in your pension pot at the end of the tax year
     const pensionPot = {
-        total: salarySacrificeValue + autoEnrolmentContribution + grossedPersonalContribution,
+        total: salarySacrifice + autoEnrolmentContribution + grossedPersonalContribution,
         breakdown: [
-            { rate: "Salary sacrifice", amount: salarySacrificeValue },
+            { rate: "Salary sacrifice", amount: salarySacrifice },
             { rate: "Auto enrolment", amount: autoEnrolmentContribution },
             { rate: "Gross Personal", amount: grossedPersonalContribution },
         ],
     };
 
-    // 9. Calculate adjusted net income
+    // 6. Calculate adjusted net income
     const adjustedNetIncome = Math.max(0, grossIncome - pensionPot.total);
 
-    // 10. Determine the personal allowance (considering taper)
+    return { incomeAfterSalarySacrifice, adjustedNetIncome, pensionPot };
+}
+
+// Top-level function to calculate taxes
+export function calculateTaxes(grossIncome, options) {
+    const constants = taxYears[options.taxYear];
+
+    // 1. Calculate the adjusted net income, and the pension pot value at the end of the tax year
+    const { incomeAfterSalarySacrifice, adjustedNetIncome, pensionPot } = calculatePension(grossIncome, options.pensionContributions, options.autoEnrolmentAsSalarySacrifice, options.taxReliefAtSource);
+
+    // 2. Calculate employee national insurance contributions
+    const employeeNI = calculateNationalInsurance(incomeAfterSalarySacrifice, constants, false, options.noNI);
+
+    // 3. Calculate employer national insurance contributions
+    const employerNI = calculateNationalInsurance(incomeAfterSalarySacrifice, constants, true, options.noNI);
+
+    // 4. Calculate student loan repayments
+    const studentLoanRepayments = calculateStudentLoanRepayments(incomeAfterSalarySacrifice, options.studentLoan, constants);
+
+    // 5. Determine the personal allowance (considering taper)
     const personalAllowance = calculateTaperedPersonalAllowance(adjustedNetIncome, constants);
 
-    // 11. Calculate taxable income
+    // 6. Calculate taxable income
     const taxableIncome = Math.max(0, adjustedNetIncome - personalAllowance);
 
-    // 12. Calculate income tax
+    // 7. Calculate income tax
     const incomeTax = calculateIncomeTax(taxableIncome, constants, options.residentInScotland);
 
-    // 13. Calculate combined taxes
+    // 8. Calculate combined taxes
     const combinedTaxes = incomeTax.total + employeeNI.total + studentLoanRepayments;
 
-    // 14. Calculate take-home pay
+    // 9. Calculate how much you actually keep
     const takeHomePay = adjustedNetIncome - combinedTaxes;
     const yourMoney = pensionPot.total + takeHomePay;
 
-    // Return all calculated values
     return {
         grossIncome,
         adjustedNetIncome,
