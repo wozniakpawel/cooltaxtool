@@ -25,11 +25,12 @@ const TaxYearOverview = ({ inputs }) => {
     const grossIncomes = Array.from({ length: 1000 }, (_, i) => i * 250);
 
     const taxData = grossIncomes.map((grossIncome) => {
-      const { incomeTax, employeeNI, employerNI, ...rest } = calculateTaxes(grossIncome, inputs);
+      const { incomeTax, employeeNI, employerNI, pensionPot, ...rest } = calculateTaxes(grossIncome, inputs);
       return {
         incomeTax: incomeTax.total,
         employeeNI: employeeNI.total,
         employerNI: employerNI.total,
+        pensionPot: pensionPot.total,
         ...rest
       };
     });

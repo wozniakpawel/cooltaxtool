@@ -118,9 +118,18 @@ fieldset legend {
 .number-cell {
   font-weight: bold;
   text-align: right;
+  width: 150px;
 }
 
 .breakdown-number {
   font-weight: normal;
+  width: 150px;
   font-size: 0.8em;
+}
+
+.breakdown-description {
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

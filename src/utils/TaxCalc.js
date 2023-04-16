@@ -132,10 +132,17 @@ export function calculateTaxes(grossIncome, options) {
     const grossedPersonalContribution = grossManualPensionContributions(personalContributionValue, options.taxReliefAtSource);
 
     // 8. Calculate how much you will have in your pension pot at the end of the tax year
-    const pensionPot = salarySacrificeValue + autoEnrolmentContribution + grossedPersonalContribution;
+    const pensionPot = {
+        total: salarySacrificeValue + autoEnrolmentContribution + grossedPersonalContribution,
+        breakdown: [
+            { rate: "Salary sacrifice", amount: salarySacrificeValue },
+            { rate: "Auto enrolment", amount: autoEnrolmentContribution },
+            { rate: "Gross Personal", amount: grossedPersonalContribution },
+        ],
+    };
 
     // 9. Calculate adjusted net income
-    const adjustedNetIncome = Math.max(0, grossIncome - pensionPot);
+    const adjustedNetIncome = Math.max(0, grossIncome - pensionPot.total);
 
     // 10. Determine the personal allowance (considering taper)
     const personalAllowance = calculateTaperedPersonalAllowance(adjustedNetIncome, constants);
@@ -151,7 +158,7 @@ export function calculateTaxes(grossIncome, options) {
 
     // 14. Calculate take-home pay
     const takeHomePay = adjustedNetIncome - combinedTaxes;
-    const yourMoney = pensionPot + takeHomePay;
+    const yourMoney = pensionPot.total + takeHomePay;
 
     // Return all calculated values
     return {
