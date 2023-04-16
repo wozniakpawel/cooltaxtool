@@ -12,7 +12,7 @@ const TaxBreakdown = ({ inputs }) => {
     function renderBreakDown(breakdown) {
         return breakdown.map((tax, i) => (
             <tr key={`it-${i}`}>
-            <td style={{ paddingLeft: '2em' }}>{`${isNaN(tax.rate) ? tax.rate : (tax.rate * 100 + '%')}`}</td>
+            <td style={{ paddingLeft: '2em' }}>{`${isNaN(tax.rate) ? tax.rate : ((tax.rate * 100).toFixed(2) + '%')}`}</td>
                 <td className="number-cell breakdown-number">{numberWithCommas(tax.amount)}</td>
             </tr>
         ));
@@ -25,7 +25,6 @@ const TaxBreakdown = ({ inputs }) => {
             <fieldset>
                 <legend>Tax breakdown for {numberWithCommas(inputs.grossIncome)}</legend>
 
-                {/* Income table */}
                 <table style={{ marginBottom: '20px' }}>
                     <tbody>
                         <tr>
@@ -48,8 +47,7 @@ const TaxBreakdown = ({ inputs }) => {
                     </tbody>
                 </table>
 
-                {/* Deductions table */}
-                <table style={{ marginBottom: '20px' }}>
+                <table style={{ marginBottom: '20px', color:"#CB4C4E" }}>
                     <thead>
                         <tr>
                             <th style={boldText}>You pay</th>
@@ -77,8 +75,7 @@ const TaxBreakdown = ({ inputs }) => {
                     </tbody>
                 </table>
 
-                {/* Final Results table */}
-                <table style={{ marginBottom: '20px' }}>
+                <table style={{ marginBottom: '20px', color:"#96D294" }}>
                     <thead>
                         <tr>
                             <th style={boldText}>You keep</th>

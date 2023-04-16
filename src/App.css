@@ -34,7 +34,7 @@ footer {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  max-width: 800px;
+  max-width: 1600px;
   padding: 20px;
   background-color: #1e3b57;
   border-radius: 5px;
@@ -59,7 +59,7 @@ footer {
 .toggle-button {
   background-color: #f1f1f1;
   border: 1px solid #ccc;
-  color: #333;
+  color: #000000;
   cursor: pointer;
   margin-right: 0.5rem;
   padding: 0.5rem 1rem;
@@ -68,8 +68,13 @@ footer {
 }
 
 .toggle-button.active {
-  background-color: #4caf50;
-  color: #fff;
+  background-color: #96D294;
+  color: #000000;
+}
+
+.toggle-button-small {
+  font-size: 0.7rem;
+  padding: 2px 4px;
 }
 
 .toggle-button:focus {
@@ -81,7 +86,7 @@ fieldset {
   border-radius: 5px;
   padding: 10px;
   margin-bottom: 10px;
-  width: 450px;
+  width: 500px;
 }
 
 fieldset legend {

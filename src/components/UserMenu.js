@@ -18,7 +18,7 @@ export const defaultInputs = {
     showTaxYearOverview: true,
 };
 
-const ToggleButton = ({ name, label, checked, onChange }) => {
+const ToggleButton = ({ name, label, checked, onChange, classname }) => {
     const handleClick = () => {
         onChange({ target: { name, type: 'checkbox', checked: !checked } });
     };
@@ -28,7 +28,7 @@ const ToggleButton = ({ name, label, checked, onChange }) => {
             type="button"
             name={name}
             onClick={handleClick}
-            className={`toggle-button ${checked ? 'active' : ''}`}
+            className={`toggle-button ${checked ? 'active' : ''} ${classname}`}
         >
             {label}
         </button>
@@ -141,6 +141,7 @@ export function UserMenu({ onUserInputsChange }) {
                                 step={1}
                             />
                             <ToggleButton
+                                classname="toggle-button-small"
                                 name="autoEnrolmentAsSalarySacrifice"
                                 label="As salary sacrifice"
                                 checked={inputs.autoEnrolmentAsSalarySacrifice}
@@ -169,18 +170,20 @@ export function UserMenu({ onUserInputsChange }) {
                                 step={100}
                             />
                             <ToggleButton
+                                classname="toggle-button-small"
                                 name="taxReliefAtSource"
-                                label="Tax relief at source"
+                                label="Relief at source"
                                 checked={inputs.taxReliefAtSource}
                                 onChange={handleInputChange}
                             />
                         </div>
+
                     </fieldset>
                 </div>
 
                 <div className="form-group">
                     <fieldset>
-                        <legend>Show results</legend>
+                        <legend>Show graphs</legend>
                         <ToggleButton
                             name="showTaxYearOverview"
                             label="Tax Year Overview"
