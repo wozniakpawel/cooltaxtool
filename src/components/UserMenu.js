@@ -11,6 +11,11 @@ export const defaultInputs = {
         salarySacrifice: 0,
         personal: 0,
     },
+    autoEnrolmentAsSalarySacrifice: true,
+    taxReliefAtSource: true,
+    showTaxBreakdown: false,
+    showPensionAnalysis: false,
+    showTaxYearOverview: true,
 };
 
 const ToggleButton = ({ name, label, checked, onChange }) => {
@@ -33,12 +38,6 @@ const ToggleButton = ({ name, label, checked, onChange }) => {
 export function UserMenu({ onUserInputsChange }) {
     const [inputs, setInputs] = useState(defaultInputs);
     const [warningMessage, setWarningMessage] = useState('');
-
-    const pensionLabels = {
-        autoEnrolment: 'Auto Enrolment (%)',
-        salarySacrifice: 'Salary/Bonus Sacrifice (£)',
-        personal: 'Personal Contributions (£)',
-    };
 
     useEffect(() => {
         onUserInputsChange(inputs);
@@ -109,7 +108,6 @@ export function UserMenu({ onUserInputsChange }) {
                     />
                 </div>
 
-
                 <div className="form-group">
                     <fieldset>
                         <legend>Additional options</legend>
@@ -119,7 +117,6 @@ export function UserMenu({ onUserInputsChange }) {
                             checked={inputs.residentInScotland}
                             onChange={handleInputChange}
                         />
-
                         <ToggleButton
                             name="noNI"
                             label="Exclude NI"
@@ -132,26 +129,80 @@ export function UserMenu({ onUserInputsChange }) {
                 <div className="pension-input-container">
                     <fieldset>
                         <legend>Pension</legend>
-                        {['autoEnrolment', 'salarySacrifice', 'personal'].map((type) => {
-                            return (
-                                <div key={type} className="pension-input">
-                                    <label htmlFor={`pensionContributions.${type}`}>{pensionLabels[type]}</label>
-                                    <input
-                                        type="number"
-                                        name={`pensionContributions.${type}`}
-                                        value={inputs.pensionContributions[type]}
-                                        onChange={handleInputChange}
-                                        min={0}
-                                        max={type === 'autoEnrolment' ? 100 : Infinity}
-                                        step={type === 'autoEnrolment' ? 1 : 100}
-                                    />
-                                </div>
-                            );
-                        })}
+                        <div className="pension-input">
+                            <label htmlFor="pensionContributions.autoEnrolment">Auto Enrolment (%)</label>
+                            <input
+                                type="number"
+                                name="pensionContributions.autoEnrolment"
+                                value={inputs.pensionContributions.autoEnrolment}
+                                onChange={handleInputChange}
+                                min={0}
+                                max={100}
+                                step={1}
+                            />
+                            <ToggleButton
+                                name="autoEnrolmentAsSalarySacrifice"
+                                label="As salary sacrifice"
+                                checked={inputs.autoEnrolmentAsSalarySacrifice}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                        <div className="pension-input">
+                            <label htmlFor="pensionContributions.salarySacrifice">Salary/Bonus Sacrifice (£)</label>
+                            <input
+                                type="number"
+                                name="pensionContributions.salarySacrifice"
+                                value={inputs.pensionContributions.salarySacrifice}
+                                onChange={handleInputChange}
+                                min={0}
+                                step={100}
+                            />
+                        </div>
+                        <div className="pension-input">
+                            <label htmlFor="pensionContributions.personal">Personal Contributions (£)</label>
+                            <input
+                                type="number"
+                                name="pensionContributions.personal"
+                                value={inputs.pensionContributions.personal}
+                                onChange={handleInputChange}
+                                min={0}
+                                step={100}
+                            />
+                            <ToggleButton
+                                name="taxReliefAtSource"
+                                label="Tax relief at source"
+                                checked={inputs.taxReliefAtSource}
+                                onChange={handleInputChange}
+                            />
+                        </div>
                     </fieldset>
                 </div>
 
-            </form>
-        </div>
+                <div className="form-group">
+                    <fieldset>
+                        <legend>Show results</legend>
+                        <ToggleButton
+                            name="showTaxYearOverview"
+                            label="Tax Year Overview"
+                            checked={inputs.showTaxYearOverview}
+                            onChange={handleInputChange}
+                        />
+                        <ToggleButton
+                            name="showTaxBreakdown"
+                            label="Tax Breakdown"
+                            checked={inputs.showTaxBreakdown}
+                            onChange={handleInputChange}
+                        />
+                        <ToggleButton
+                            name="showPensionAnalysis"
+                            label="Pension Analysis"
+                            checked={inputs.showPensionAnalysis}
+                            onChange={handleInputChange}
+                        />
+                    </fieldset>
+                </div>
+
+            </form >
+        </div >
     );
 };

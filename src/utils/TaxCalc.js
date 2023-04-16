@@ -103,7 +103,7 @@ export function calculatePension(grossIncome, pensionContributions, autoEnrolmen
     const { autoEnrolment, personal, salarySacrifice } = pensionContributions;
 
     // 1. Apply salary sacrifice
-    const incomeAfterSalarySacrifice = Math.max(0, grossIncome - salarySacrifice);
+    let incomeAfterSalarySacrifice = Math.max(0, grossIncome - salarySacrifice);
 
     // 2. Calculate auto enrolment pension contributions
     const autoEnrolmentContribution = incomeAfterSalarySacrifice * (autoEnrolment / 100);

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { UserMenu, defaultInputs } from './components/UserMenu';
-import TaxAnalysis from './components/TaxAnalysis';
+import PensionAnalysis from './components/PensionAnalysis';
 import TaxBreakdown from './components/TaxBreakdown';
 import TaxYearOverview from './components/TaxYearOverview';
 import './App.css';
@@ -18,9 +18,9 @@ function App() {
           <UserMenu onUserInputsChange={handleUserInputsChange} />
         </div>
         <div className="taxComponentsContainer">
-          <TaxAnalysis inputs={userInputs} />
-          {userInputs.grossIncome > 0 && <TaxBreakdown inputs={userInputs} />}
-          <TaxYearOverview inputs={userInputs} />
+          {(userInputs.showTaxBreakdown && userInputs.grossIncome > 0) && <TaxBreakdown inputs={userInputs}/>}
+          {(userInputs.showPensionAnalysis) && <PensionAnalysis inputs={userInputs}/>}
+          {(userInputs.showTaxYearOverview) && <TaxYearOverview inputs={userInputs}/>}
         </div>
       </div>
   );
