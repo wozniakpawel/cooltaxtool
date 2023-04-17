@@ -45,7 +45,7 @@ const TaxYearOverview = ({ inputs }) => {
     const createPlotData = (grossIncomes, dataArray, isPercentage = false) => {
       return plotSettings.map((setting) => {
         if (
-          (setting.key === 'employeeNI' || setting.key === 'employerNI') && inputs.noNI ||
+          ((setting.key === 'employeeNI' || setting.key === 'employerNI') && inputs.noNI) ||
           (setting.key === 'studentLoanRepayments' && inputs.studentLoan === 'none') ||
           (setting.key === 'personalAllowance' && isPercentage) ||
           (setting.key === 'marginalCombinedTaxRate' && !isPercentage)
