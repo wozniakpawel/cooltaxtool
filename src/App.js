@@ -3,6 +3,7 @@ import { UserMenu, defaultInputs } from './components/UserMenu';
 import PensionAnalysis from './components/PensionAnalysis';
 import TaxBreakdown from './components/TaxBreakdown';
 import TaxYearOverview from './components/TaxYearOverview';
+import Footer from './components/Footer'; // Import Footer component
 import './App.css';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
         <PensionAnalysis inputs={userInputs} />
         <TaxYearOverview inputs={userInputs} />
       </div>
+      <Footer />
     </div>
   );
 }
