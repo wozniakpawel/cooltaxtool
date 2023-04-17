@@ -13,9 +13,6 @@ export const defaultInputs = {
     },
     autoEnrolmentAsSalarySacrifice: true,
     taxReliefAtSource: true,
-    showTaxBreakdown: false,
-    showPensionAnalysis: false,
-    showTaxYearOverview: true,
 };
 
 const ToggleButton = ({ name, label, checked, onChange, classname }) => {
@@ -178,30 +175,6 @@ export function UserMenu({ onUserInputsChange }) {
                             />
                         </div>
 
-                    </fieldset>
-                </div>
-
-                <div className="form-group">
-                    <fieldset>
-                        <legend>Show graphs</legend>
-                        <ToggleButton
-                            name="showTaxYearOverview"
-                            label="Tax Year Overview"
-                            checked={inputs.showTaxYearOverview}
-                            onChange={handleInputChange}
-                        />
-                        <ToggleButton
-                            name="showTaxBreakdown"
-                            label="Tax Breakdown"
-                            checked={inputs.showTaxBreakdown}
-                            onChange={handleInputChange}
-                        />
-                        <ToggleButton
-                            name="showPensionAnalysis"
-                            label="Pension Analysis"
-                            checked={inputs.showPensionAnalysis}
-                            onChange={handleInputChange}
-                        />
                     </fieldset>
                 </div>
 

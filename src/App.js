@@ -13,16 +13,19 @@ function App() {
   };
 
   return (
-      <div className="appContainer">
-        <div className="inputContainer">
-          <UserMenu onUserInputsChange={handleUserInputsChange} />
-        </div>
-        <div className="taxComponentsContainer">
-          {(userInputs.showTaxBreakdown && userInputs.grossIncome > 0) && <TaxBreakdown inputs={userInputs}/>}
-          {(userInputs.showPensionAnalysis) && <PensionAnalysis inputs={userInputs}/>}
-          {(userInputs.showTaxYearOverview) && <TaxYearOverview inputs={userInputs}/>}
-        </div>
+    <div className="appContainer">
+      <div className="inputContainer">
+        <h1 className="appTitle">
+          Cool<span className="highlight">Tax</span>Tool
+        </h1>
+        <UserMenu onUserInputsChange={handleUserInputsChange} />
+        <TaxBreakdown inputs={userInputs} />
       </div>
+      <div className="taxComponentsContainer">
+        <PensionAnalysis inputs={userInputs} />
+        <TaxYearOverview inputs={userInputs} />
+      </div>
+    </div>
   );
 }
 
