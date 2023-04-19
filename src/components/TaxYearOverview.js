@@ -2,20 +2,39 @@ import React, { useState, useEffect } from 'react';
 import Plot from 'react-plotly.js';
 import { calculateTaxes } from '../utils/TaxCalc';
 
+const whiteColor = '#ffffff';
+const backgroundColor = 'transparent';
+
 const plotSettings = [
-  { key: 'adjustedNetIncome', color: '#f1c40f', label: 'Adjusted Net Income' },
-  { key: 'personalAllowance', color: '#95a5a6', label: 'Personal Allowance' },
-  { key: 'taxableIncome', color: '#e74c3c', label: 'Taxable Income' },
-  { key: 'incomeTax', color: '#e67e22', label: 'Income Tax' },
-  { key: 'employeeNI', color: '#9b59b6', label: 'Employee NI Contributions' },
-  { key: 'employerNI', color: '#8e44ad', label: 'Employer NI Contributions' },
-  { key: 'studentLoanRepayments', color: '#34495e', label: 'Student Loan Repayments' },
+  { key: 'adjustedNetIncome', color: '#3498db', label: 'Adjusted Net Income' },
+  { key: 'personalAllowance', color: '#1abc9c', label: 'Personal Allowance' },
+  { key: 'taxableIncome', color: '#2980b9', label: 'Taxable Income' },
+  { key: 'incomeTax', color: '#8e44ad', label: 'Income Tax' },
+  { key: 'employeeNI', color: '#e74c3c', label: 'Employee NI Contributions' },
+  { key: 'employerNI', color: '#d35400', label: 'Employer NI Contributions' },
+  { key: 'studentLoanRepayments', color: '#f39c12', label: 'Student Loan Repayments' },
   { key: 'combinedTaxes', color: '#c0392b', label: 'Combined taxes (IT, EE NI, SL)' },
-  { key: 'takeHomePay', color: '#27ae60', label: 'Take Home Pay' },
-  { key: 'pensionPot', color: '#2980b9', label: 'Pension Pot' },
-  { key: 'yourMoney', color: '#3498db', label: 'Your money (Pension Pot + Take Home)' },
-  { key: 'marginalCombinedTaxRate', color: '#2c3e50', label: 'Marginal Combined Tax Rate', dashed: true },
+  { key: 'takeHomePay', color: '#2ecc71', label: 'Take Home Pay' },
+  { key: 'pensionPot', color: '#27ae60', label: 'Pension Pot' },
+  { key: 'yourMoney', color: '#16a085', label: 'Your money (Pension Pot + Take Home)' },
+  { key: 'marginalCombinedTaxRate', color: '#f1c40f', label: 'Marginal Combined Tax Rate', dashed: true },
 ];
+
+const layoutSettings = {
+  font: { color: whiteColor },
+  xaxis: {
+    title: { font: { color: whiteColor } },
+    tickfont: { color: whiteColor },
+    linecolor: whiteColor,
+    gridcolor: whiteColor,
+  },
+  yaxis: {
+    title: { font: { color: whiteColor } },
+    tickfont: { color: whiteColor },
+    linecolor: whiteColor,
+    gridcolor: whiteColor,
+  },
+};
 
 const TaxYearOverview = ({ inputs }) => {
   const [percentagePlotData, setPercentagePlotData] = useState([]);
@@ -63,7 +82,7 @@ const TaxYearOverview = ({ inputs }) => {
             y: marginalCombinedTaxes,
             type: 'scatter',
             mode: 'lines',
-            line: { dash: setting.dashed ? 'dash' : null, color: setting.color },
+            line: { dash: 'dash', color: setting.color },
             name: setting.label,
             hovertemplate: hoverTemplate,
           };
@@ -76,7 +95,7 @@ const TaxYearOverview = ({ inputs }) => {
           }),
           type: 'scatter',
           mode: 'lines',
-          marker: { color: setting.color },
+          marker: { color: setting.color, line: { color: whiteColor } },
           name: setting.label,
           hovertemplate: hoverTemplate,
         };
@@ -95,20 +114,26 @@ const TaxYearOverview = ({ inputs }) => {
       <Plot
         data={percentagePlotData}
         layout={{
+          ...layoutSettings,
           title: 'Percentages of gross income',
           hovermode: 'x',
-          xaxis: { title: 'Annual Gross Income (£)' },
-          yaxis: { title: 'Percentage of Income (%)' },
+          xaxis: { ...layoutSettings.xaxis, title: 'Annual Gross Income (£)' },
+          yaxis: { ...layoutSettings.yaxis, title: 'Percentage of Income (%)' },
+          plot_bgcolor: backgroundColor,
+          paper_bgcolor: backgroundColor,
         }}
       />
 
       <Plot
         data={amountPlotData}
         layout={{
+          ...layoutSettings,
           title: 'Annual total amounts',
           hovermode: 'x',
-          xaxis: { title: 'Annual Gross Income (£)' },
-          yaxis: { title: 'Annual Total Amount (£)' },
+          xaxis: { ...layoutSettings.xaxis, title: 'Annual Gross Income (£)' },
+          yaxis: { ...layoutSettings.yaxis, title: 'Annual Total Amount (£)' },
+          plot_bgcolor: backgroundColor,
+          paper_bgcolor: backgroundColor,
         }}
       />
 
