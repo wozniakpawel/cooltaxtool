@@ -14,19 +14,25 @@ function App() {
   };
 
   return (
-    <div className="appContainer">
-      <div className="inputContainer">
-        <h1 className="appTitle">
-          Cool<span className="highlight">Tax</span>Tool
-        </h1>
-        <UserMenu onUserInputsChange={handleUserInputsChange} />
-        <TaxBreakdown inputs={userInputs} />
+    <div className="App">
+      <div className="main-container">
+        <aside className="sidebar">
+          <h1 className="appTitle">
+            Cool<span className="highlight">Tax</span>Tool
+          </h1>
+          <UserMenu onUserInputsChange={handleUserInputsChange} />
+          <TaxBreakdown inputs={userInputs} />
+        </aside>
+        <main className="content">
+          <PensionAnalysis inputs={userInputs} />
+          <TaxYearOverview inputs={userInputs} />
+          <PensionAnalysis inputs={userInputs} />
+          <TaxYearOverview inputs={userInputs} />
+        </main>
       </div>
-      <div className="taxComponentsContainer">
-        <PensionAnalysis inputs={userInputs} />
-        <TaxYearOverview inputs={userInputs} />
-      </div>
-      <Footer />
+      <footer className="footer">
+        <Footer />
+      </footer>
     </div>
   );
 }
