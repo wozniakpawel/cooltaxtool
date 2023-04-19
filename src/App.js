@@ -3,7 +3,7 @@ import { UserMenu, defaultInputs } from './components/UserMenu';
 import PensionAnalysis from './components/PensionAnalysis';
 import TaxBreakdown from './components/TaxBreakdown';
 import TaxYearOverview from './components/TaxYearOverview';
-import Footer from './components/Footer'; // Import Footer component
+import Footer from './components/Footer';
 import './App.css';
 
 function App() {

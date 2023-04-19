@@ -46,8 +46,8 @@ body {
 }
 
 .inputContainer {
-  flex: 0 0 300px; /* Set a fixed width for the UserMenu */
-  margin-right: 20px; /* Add some space between UserMenu and other components */
+  flex: 0 0 300px;
+  margin-right: 20px;
 }
 
 .taxComponentsContainer {
@@ -148,13 +148,13 @@ fieldset legend {
   padding: 2%;
   text-align: center;
   font-size: 14px;
-  background-color: inherit; /* Use the same background color as the body */
+  background-color: inherit;
   border-top: 1px solid #e3e3e3;
   position: absolute;
   bottom: 0;
   left: 0;
-  right: 0; /* Add this line to make the footer take the full available width */
-  box-sizing: border-box; /* Add this line to include padding in the width calculation */
+  right: 0;
+  box-sizing: border-box;
 }
 
 a, a:hover, a:active, a:visited { color: white; }
