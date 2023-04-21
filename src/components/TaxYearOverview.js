@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Plot from 'react-plotly.js';
+import { Container } from 'react-bootstrap';
 import { calculateTaxes } from '../utils/TaxCalc';
 
 const whiteColor = '#ffffff';
@@ -21,6 +22,9 @@ const plotSettings = [
 ];
 
 const layoutSettings = {
+  hovermode: 'x',
+  plot_bgcolor: backgroundColor,
+  paper_bgcolor: backgroundColor,
   font: { color: whiteColor },
   xaxis: {
     title: { font: { color: whiteColor } },
@@ -110,17 +114,14 @@ const TaxYearOverview = ({ inputs }) => {
   }, [inputs]);
 
   return (
-    <div className="TaxYearOverview">
+    <Container fluid>
       <Plot
         data={percentagePlotData}
         layout={{
           ...layoutSettings,
           title: 'Percentages of gross income',
-          hovermode: 'x',
           xaxis: { ...layoutSettings.xaxis, title: 'Annual Gross Income (£)' },
           yaxis: { ...layoutSettings.yaxis, title: 'Percentage of Income (%)' },
-          plot_bgcolor: backgroundColor,
-          paper_bgcolor: backgroundColor,
         }}
       />
 
@@ -129,15 +130,11 @@ const TaxYearOverview = ({ inputs }) => {
         layout={{
           ...layoutSettings,
           title: 'Annual total amounts',
-          hovermode: 'x',
           xaxis: { ...layoutSettings.xaxis, title: 'Annual Gross Income (£)' },
           yaxis: { ...layoutSettings.yaxis, title: 'Annual Total Amount (£)' },
-          plot_bgcolor: backgroundColor,
-          paper_bgcolor: backgroundColor,
         }}
       />
-
-    </div>
+    </Container>
   );
 };
 
