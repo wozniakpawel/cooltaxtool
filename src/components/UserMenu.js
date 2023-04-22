@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Card, Row, Col, Form, Button, ButtonGroup, Alert } from 'react-bootstrap';
+import { Container, Card, Row, Col, Form, Alert } from 'react-bootstrap';
 
 export const defaultInputs = {
     taxYear: '2023/24',
@@ -95,24 +95,22 @@ export function UserMenu({ onUserInputsChange }) {
                     </Form.Group>
 
                     <Form.Group>
-                        <ButtonGroup>
-                            <Button
-                                variant={inputs.residentInScotland ? 'primary' : 'outline-primary'}
-                                onClick={() => handleInputChange({
-                                    target: { name: 'residentInScotland', type: 'checkbox', checked: !inputs.residentInScotland }
-                                })}
-                            >
-                                Resident in Scotland
-                            </Button>
-                            <Button
-                                variant={inputs.noNI ? 'primary' : 'outline-primary'}
-                                onClick={() => handleInputChange({
-                                    target: { name: 'noNI', type: 'checkbox', checked: !inputs.noNI }
-                                })}
-                            >
-                                Exclude NI
-                            </Button>
-                        </ButtonGroup>
+                        <Form.Check
+                            type="switch"
+                            id="residentInScotland"
+                            label="Resident in Scotland"
+                            name="residentInScotland"
+                            checked={inputs.residentInScotland}
+                            onChange={handleInputChange}
+                        />
+                        <Form.Check
+                            type="switch"
+                            id="noNI"
+                            label="Exclude NI"
+                            name="noNI"
+                            checked={inputs.noNI}
+                            onChange={handleInputChange}
+                        />
                     </Form.Group>
 
                     <Card>
