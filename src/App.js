@@ -3,7 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { defaultInputs, UserMenu } from './components/UserMenu';
 import TaxBreakdown from './components/TaxBreakdown';
 import TaxYearOverview from './components/TaxYearOverview';
-// import Header from './components/Header';
+import Header from './components/Header';
 import Footer from './components/Footer';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -16,10 +16,10 @@ function App() {
 
   return (
     <Container>
-      {/* <Header /> */}
       <Container>
         <Row>
           <Col>
+            <Header />
             <UserMenu onUserInputsChange={handleUserInputsChange} />
             <TaxBreakdown inputs={userInputs} />
           </Col>
