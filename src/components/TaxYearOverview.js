@@ -3,9 +3,6 @@ import Plot from 'react-plotly.js';
 import { Container } from 'react-bootstrap';
 import { calculateTaxes } from '../utils/TaxCalc';
 
-const whiteColor = '#ffffff';
-const backgroundColor = 'transparent';
-
 const plotSettings = [
   { key: 'adjustedNetIncome', color: '#3498db', label: 'Adjusted Net Income' },
   { key: 'personalAllowance', color: '#1abc9c', label: 'Personal Allowance' },
@@ -20,25 +17,6 @@ const plotSettings = [
   { key: 'yourMoney', color: '#16a085', label: 'Your money (Pension Pot + Take Home)' },
   { key: 'marginalCombinedTaxRate', color: '#f1c40f', label: 'Marginal Combined Tax Rate', dashed: true },
 ];
-
-const layoutSettings = {
-  hovermode: 'x',
-  plot_bgcolor: backgroundColor,
-  paper_bgcolor: backgroundColor,
-  font: { color: whiteColor },
-  xaxis: {
-    title: { font: { color: whiteColor } },
-    tickfont: { color: whiteColor },
-    linecolor: whiteColor,
-    gridcolor: whiteColor,
-  },
-  yaxis: {
-    title: { font: { color: whiteColor } },
-    tickfont: { color: whiteColor },
-    linecolor: whiteColor,
-    gridcolor: whiteColor,
-  },
-};
 
 const TaxYearOverview = ({ inputs }) => {
   const [percentagePlotData, setPercentagePlotData] = useState([]);
@@ -99,7 +77,7 @@ const TaxYearOverview = ({ inputs }) => {
           }),
           type: 'scatter',
           mode: 'lines',
-          marker: { color: setting.color, line: { color: whiteColor } },
+          marker: { color: setting.color },
           name: setting.label,
           hovertemplate: hoverTemplate,
         };
@@ -118,20 +96,20 @@ const TaxYearOverview = ({ inputs }) => {
       <Plot
         data={percentagePlotData}
         layout={{
-          ...layoutSettings,
+          hovermode: 'x',
           title: 'Percentages of gross income',
-          xaxis: { ...layoutSettings.xaxis, title: 'Annual Gross Income (£)' },
-          yaxis: { ...layoutSettings.yaxis, title: 'Percentage of Income (%)' },
+          xaxis: { title: 'Annual Gross Income (£)' },
+          yaxis: { title: 'Percentage of Income (%)' },
         }}
       />
 
       <Plot
         data={amountPlotData}
         layout={{
-          ...layoutSettings,
+          hovermode: 'x',
           title: 'Annual total amounts',
-          xaxis: { ...layoutSettings.xaxis, title: 'Annual Gross Income (£)' },
-          yaxis: { ...layoutSettings.yaxis, title: 'Annual Total Amount (£)' },
+          xaxis: { title: 'Annual Gross Income (£)' },
+          yaxis: { title: 'Annual Total Amount (£)' },
         }}
       />
     </Container>
