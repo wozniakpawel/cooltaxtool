@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Card, Row, Col, Form, Button, ButtonGroup } from 'react-bootstrap';
+import { Container, Card, Row, Col, Form, Button, ButtonGroup, Alert } from 'react-bootstrap';
 
 export const defaultInputs = {
     taxYear: '2023/24',
@@ -44,7 +44,11 @@ export function UserMenu({ onUserInputsChange }) {
         }
 
         if (name === 'taxYear' && value === '2022/23') {
-            setWarningMessage('Warning: NI calculations for the 2022/23 tax year might not be accurate due to the varying rates and thresholds. Effective rates and thresholds are being used to estimate the Employer and Employee NI contributions.');
+            setWarningMessage(
+                <Alert key="warning" variant="warning">
+                    Warning: NI calculations for the 2022/23 tax year might not be accurate due to the varying rates and thresholds. Effective rates and thresholds are being used to estimate the Employer and Employee NI contributions.
+                </Alert>
+            );
         } else if (name === 'taxYear') {
             setWarningMessage('');
         }
