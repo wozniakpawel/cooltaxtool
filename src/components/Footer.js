@@ -4,7 +4,7 @@ import '../App.css';
 
 const Footer = () => {
     return (
-        <footer style={{ backgroundColor: '#f8f9fa', padding: '1rem 0' }}>
+        <footer>
             <Container>
                 <Row className="justify-content-center">
                     <Col className="text-center">
