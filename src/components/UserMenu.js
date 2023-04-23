@@ -18,7 +18,6 @@ export const defaultInputs = {
 
 export function UserMenu({ onUserInputsChange }) {
     const [inputs, setInputs] = useState(defaultInputs);
-    const [warningMessage, setWarningMessage] = useState('');
 
     useEffect(() => {
         onUserInputsChange(inputs);
@@ -30,7 +29,7 @@ export function UserMenu({ onUserInputsChange }) {
 
         // Convert pension input value to a number
         if (name.startsWith('pensionContributions') || name === 'grossIncome') {
-            input = parseInt(value, 10);
+            input = parseInt(value);
         }
 
         if (name.includes('.')) {
@@ -41,16 +40,6 @@ export function UserMenu({ onUserInputsChange }) {
             }));
         } else {
             setInputs((prevState) => ({ ...prevState, [name]: input }));
-        }
-
-        if (name === 'taxYear' && value === '2022/23') {
-            setWarningMessage(
-                <Alert key="warning" variant="warning">
-                    Warning: NI calculations for the 2022/23 tax year might not be accurate due to the varying rates and thresholds. Effective rates and thresholds are being used to estimate the Employer and Employee NI contributions.
-                </Alert>
-            );
-        } else if (name === 'taxYear') {
-            setWarningMessage('');
         }
     };
 
@@ -68,7 +57,12 @@ export function UserMenu({ onUserInputsChange }) {
                             <option value="2018/19">Tax Year 2018/19</option>
                             <option value="2017/18">Tax Year 2017/18</option>
                         </Form.Control>
-                        {warningMessage && <p className="warning-message">{warningMessage}</p>}
+                        {
+                            (inputs.taxYear === '2022/23') &&
+                            <Alert key="warning" variant="warning">
+                                Warning: NI calculations for the 2022/23 tax year might not be accurate due to the varying rates and thresholds. Effective rates and thresholds are being used to estimate the Employer and Employee NI contributions.
+                            </Alert>
+                        }
                     </Form.Group>
 
                     <Form.Group controlId="studentLoan">
