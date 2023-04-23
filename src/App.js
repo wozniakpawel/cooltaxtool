@@ -15,8 +15,8 @@ function App() {
   };
 
   return (
-    <Container>
-      <Container>
+    <Container fluid>
+      <Container fluid>
         <Row>
           <Col>
             <Header />
@@ -25,6 +25,8 @@ function App() {
           </Col>
           <Col>
             <TaxYearOverview inputs={userInputs} />
+          </Col>
+          <Col>
             <TaxYearOverview inputs={userInputs} />
           </Col>
         </Row>
