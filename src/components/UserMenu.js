@@ -47,16 +47,20 @@ export function UserMenu({ onUserInputsChange }) {
         <div className="UserInputs">
             <Container>
                 <Form>
-                    <Form.Group controlId="taxYear">
-                        <Form.Control as="select" name="taxYear" value={inputs.taxYear} onChange={handleInputChange}>
-                            <option value="2023/24">Tax Year 2023/24</option>
-                            <option value="2022/23">Tax Year 2022/23</option>
-                            <option value="2021/22">Tax Year 2021/22</option>
-                            <option value="2020/21">Tax Year 2020/21</option>
-                            <option value="2019/20">Tax Year 2019/20</option>
-                            <option value="2018/19">Tax Year 2018/19</option>
-                            <option value="2017/18">Tax Year 2017/18</option>
-                        </Form.Control>
+
+                    <Form.Group as={Row} controlId="taxYear">
+                        <Form.Label column>Tax Year</Form.Label>
+                        <Col>
+                            <Form.Control as="select" name="taxYear" value={inputs.taxYear} onChange={handleInputChange}>
+                                <option value="2023/24">2023/24</option>
+                                <option value="2022/23">2022/23</option>
+                                <option value="2021/22">2021/22</option>
+                                <option value="2020/21">2020/21</option>
+                                <option value="2019/20">2019/20</option>
+                                <option value="2018/19">2018/19</option>
+                                <option value="2017/18">2017/18</option>
+                            </Form.Control>
+                        </Col>
                         {
                             (inputs.taxYear === '2022/23') &&
                             <Alert key="warning" variant="warning">
@@ -65,27 +69,32 @@ export function UserMenu({ onUserInputsChange }) {
                         }
                     </Form.Group>
 
-                    <Form.Group controlId="studentLoan">
-                        <Form.Control as="select" name="studentLoan" value={inputs.studentLoan} onChange={handleInputChange}>
-                            <option value="none">No Student Loan</option>
-                            <option value="plan1">Student Loan Plan 1</option>
-                            <option value="plan2">Student Loan Plan 2</option>
-                            <option value="plan4">Student Loan Plan 4</option>
-                            <option value="plan5">Student Loan Plan 5</option>
-                            <option value="postgrad">Postgraduate Student Loan</option>
-                        </Form.Control>
+                    <Form.Group as={Row} controlId="studentLoan">
+                        <Form.Label column>Student Loan</Form.Label>
+                        <Col>
+                            <Form.Control as="select" name="studentLoan" value={inputs.studentLoan} onChange={handleInputChange}>
+                                <option value="none">No Student Loan</option>
+                                <option value="plan1">Plan 1</option>
+                                <option value="plan2">Plan 2</option>
+                                <option value="plan4">Plan 4</option>
+                                <option value="plan5">Plan 5</option>
+                                <option value="postgrad">Postgraduate</option>
+                            </Form.Control>
+                        </Col>
                     </Form.Group>
 
-                    <Form.Group controlId="grossIncome">
-                        <Form.Label>Annual Gross Income (£)</Form.Label>
-                        <Form.Control
-                            type="number"
-                            name="grossIncome"
-                            value={inputs.grossIncome}
-                            onChange={handleInputChange}
-                            min={0}
-                            step={1000}
-                        />
+                    <Form.Group as={Row} controlId="grossIncome">
+                        <Form.Label column>Annual Gross Income (£)</Form.Label>
+                        <Col>
+                            <Form.Control
+                                type="number"
+                                name="grossIncome"
+                                value={inputs.grossIncome}
+                                onChange={handleInputChange}
+                                min={0}
+                                step={1000}
+                            />
+                        </Col>
                     </Form.Group>
 
                     <Form.Group>
