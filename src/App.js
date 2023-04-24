@@ -24,13 +24,13 @@ function App() {
             <UserMenu onUserInputsChange={handleUserInputsChange} />
             {
               userInputs.incomeAnalysis &&
-              <TaxBreakdown inputs={userInputs} />
+              <PensionAnalysis inputs={userInputs} />
             }
           </Col>
           <Col>
             {
               userInputs.incomeAnalysis &&
-              <PensionAnalysis inputs={userInputs} />
+              <TaxBreakdown inputs={userInputs} />
             }
             {
               !userInputs.incomeAnalysis &&
