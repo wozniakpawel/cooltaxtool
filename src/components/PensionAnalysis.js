@@ -18,8 +18,16 @@ const TaxSavingsVsPensionContributions = ({ inputs }) => {
         },
       };
 
+      const inputsWithoutVoluntaryPension = {
+        ...inputs,
+        pensionContributions: {
+          ...inputs.pensionContributions,
+          personal: 0,
+        },
+      };
+
       const taxesWithVoluntaryPension = calculateTaxes(inputs.grossIncome, inputsWithVoluntaryPension);
-      const taxesWithoutVoluntaryPension = calculateTaxes(inputs.grossIncome, inputs);
+      const taxesWithoutVoluntaryPension = calculateTaxes(inputs.grossIncome, inputsWithoutVoluntaryPension);
 
       const taxSavings = taxesWithoutVoluntaryPension.combinedTaxes - taxesWithVoluntaryPension.combinedTaxes;
       const taxSavingsPercentage = Math.max(0, Math.min(100, (taxSavings / pensionContribution) * 100));
