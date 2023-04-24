@@ -1,33 +1,38 @@
-import React, { useState } from 'react';
-import { UserMenu, defaultInputs } from './components/UserMenu';
-import PensionAnalysis from './components/PensionAnalysis';
+import React from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
+import { defaultInputs, UserMenu } from './components/UserMenu';
 import TaxBreakdown from './components/TaxBreakdown';
 import TaxYearOverview from './components/TaxYearOverview';
-import Footer from './components/Footer'; // Import Footer component
-import './App.css';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
-  const [userInputs, setUserInputs] = useState(defaultInputs);
+  const [userInputs, setUserInputs] = React.useState(defaultInputs);
 
-  const handleUserInputsChange = (newInputs) => {
-    setUserInputs(newInputs);
+  const handleUserInputsChange = (inputs) => {
+    setUserInputs(inputs);
   };
 
   return (
-    <div className="appContainer">
-      <div className="inputContainer">
-        <h1 className="appTitle">
-          Cool<span className="highlight">Tax</span>Tool
-        </h1>
-        <UserMenu onUserInputsChange={handleUserInputsChange} />
-        <TaxBreakdown inputs={userInputs} />
-      </div>
-      <div className="taxComponentsContainer">
-        <PensionAnalysis inputs={userInputs} />
-        <TaxYearOverview inputs={userInputs} />
-      </div>
+    <Container fluid>
+      <Container fluid>
+        <Row>
+          <Col>
+            <Header />
+            <UserMenu onUserInputsChange={handleUserInputsChange} />
+            <TaxBreakdown inputs={userInputs} />
+          </Col>
+          <Col>
+            <TaxYearOverview inputs={userInputs} />
+          </Col>
+          <Col>
+            <TaxYearOverview inputs={userInputs} />
+          </Col>
+        </Row>
+      </Container>
       <Footer />
-    </div>
+    </Container>
   );
 }
 
