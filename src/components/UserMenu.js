@@ -170,7 +170,6 @@ export function UserMenu({ onUserInputsChange }) {
                         </Card.Body>
                     </Card>
 
-
                     <Card>
                         <Card.Body>
                             <ButtonGroup>
