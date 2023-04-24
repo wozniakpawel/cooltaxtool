@@ -178,21 +178,3 @@ export function calculateTaxes(grossIncome, options) {
         yourMoney,
     };
 }
-
-// Calculate the difference in taxes with and without a voluntary pension contribution
-export const calculateTaxSavings = (grossIncome, inputs, voluntaryPensionContribution) => {
-    const inputsWithVoluntaryPension = {
-        ...inputs,
-        pensionContributions: {
-            ...inputs.pensionContributions,
-            personal: voluntaryPensionContribution,
-        },
-    };
-
-    const taxesWithVoluntaryPension = calculateTaxes(grossIncome, inputsWithVoluntaryPension);
-    const taxesWithoutVoluntaryPension = calculateTaxes(grossIncome, inputs);
-
-    const taxSavings = taxesWithoutVoluntaryPension.combinedTaxes - taxesWithVoluntaryPension.combinedTaxes;
-
-    return taxSavings;
-};

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Card, Row, Col, Form, Alert } from 'react-bootstrap';
+import { Container, Card, Row, Col, Form, Alert, Button, ButtonGroup } from 'react-bootstrap';
 
 export const defaultInputs = {
     taxYear: '2023/24',
     studentLoan: 'none',
     grossIncome: 0,
+    salaryRange: 200000,
     residentInScotland: false,
     noNI: false,
     pensionContributions: {
@@ -14,6 +15,7 @@ export const defaultInputs = {
     },
     autoEnrolmentAsSalarySacrifice: true,
     taxReliefAtSource: true,
+    incomeAnalysis: false,
 };
 
 export function UserMenu({ onUserInputsChange }) {
@@ -27,8 +29,8 @@ export function UserMenu({ onUserInputsChange }) {
         const { name, value, type, checked } = event.target;
         let input = type === 'checkbox' ? checked : value;
 
-        // Convert pension input value to a number
-        if (name.startsWith('pensionContributions') || name === 'grossIncome') {
+        // Convert pension input value and range input to a number
+        if (name.startsWith('pensionContributions') || name === 'grossIncome' || name === 'salaryRange') {
             input = parseInt(value);
         }
 
@@ -80,20 +82,6 @@ export function UserMenu({ onUserInputsChange }) {
                                 <option value="plan5">Plan 5</option>
                                 <option value="postgrad">Postgraduate</option>
                             </Form.Control>
-                        </Col>
-                    </Form.Group>
-
-                    <Form.Group as={Row} controlId="grossIncome">
-                        <Form.Label column>Annual Gross Income (£)</Form.Label>
-                        <Col>
-                            <Form.Control
-                                type="number"
-                                name="grossIncome"
-                                value={inputs.grossIncome}
-                                onChange={handleInputChange}
-                                min={0}
-                                step={1000}
-                            />
                         </Col>
                     </Form.Group>
 
@@ -179,6 +167,61 @@ export function UserMenu({ onUserInputsChange }) {
                                     />
                                 </Col>
                             </Form.Group>
+                        </Card.Body>
+                    </Card>
+
+                    <Card>
+                        <Card.Body>
+                            <ButtonGroup>
+                                <Button
+                                    variant={!inputs.incomeAnalysis ? 'primary' : 'outline-primary'}
+                                    onClick={() => handleInputChange({
+                                        target: { name: 'incomeAnalysis', type: 'checkbox', checked: !inputs.incomeAnalysis }
+                                    })}
+                                >
+                                    Tax Year Overview
+                                </Button>
+                                <Button
+                                    variant={inputs.incomeAnalysis ? 'primary' : 'outline-primary'}
+                                    onClick={() => handleInputChange({
+                                        target: { name: 'incomeAnalysis', type: 'checkbox', checked: !inputs.incomeAnalysis }
+                                    })}
+                                >
+                                    Income analysis
+                                </Button>
+                            </ButtonGroup>
+
+                            {inputs.incomeAnalysis &&
+                                <Form.Group as={Row} controlId="grossIncome">
+                                    <Form.Label column>Annual Gross Income (£)</Form.Label>
+                                    <Col>
+                                        <Form.Control
+                                            type="number"
+                                            name="grossIncome"
+                                            value={inputs.grossIncome}
+                                            onChange={handleInputChange}
+                                            min={0}
+                                            step={1000}
+                                        />
+                                    </Col>
+                                </Form.Group>
+                            }
+
+                            {!inputs.incomeAnalysis &&
+                                <Form.Group as={Row} controlId="grossIncome">
+                                    <Form.Label column>Salary range: £{inputs.salaryRange}</Form.Label>
+                                    <Col>
+                                        <Form.Range
+                                            name="salaryRange"
+                                            value={inputs.salaryRange}
+                                            min={50000}
+                                            max={1000000}
+                                            step={50000}
+                                            onChange={handleInputChange}
+                                        />
+                                    </Col>
+                                </Form.Group>
+                            }
                         </Card.Body>
                     </Card>
 

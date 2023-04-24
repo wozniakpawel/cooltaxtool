@@ -23,7 +23,7 @@ const TaxYearOverview = ({ inputs }) => {
   const [amountPlotData, setAmountPlotData] = useState([]);
 
   useEffect(() => {
-    const grossIncomes = Array.from({ length: 1000 }, (_, i) => i * 250);
+    const grossIncomes = Array.from({ length: 1000 }, (_, i) => i * inputs.salaryRange / 1000);
 
     const taxData = grossIncomes.map((grossIncome) => {
       const { incomeTax, employeeNI, employerNI, pensionPot, ...rest } = calculateTaxes(grossIncome, inputs);
@@ -73,7 +73,7 @@ const TaxYearOverview = ({ inputs }) => {
           x: grossIncomes,
           y: dataArray.map((data) => {
             const value = isPercentage ? (data[setting.key] / data['grossIncome']) * 100 : data[setting.key];
-            return isPercentage ? Math.min(100, value) : value;
+            return isPercentage ? Math.max(0, Math.min(100, value)) : value;
           }),
           type: 'scatter',
           mode: 'lines',
