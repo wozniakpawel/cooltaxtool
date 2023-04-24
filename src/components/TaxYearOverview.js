@@ -23,7 +23,7 @@ const TaxYearOverview = ({ inputs }) => {
   const [amountPlotData, setAmountPlotData] = useState([]);
 
   useEffect(() => {
-    const grossIncomes = Array.from({ length: 1000 }, (_, i) => i * 250);
+    const grossIncomes = Array.from({ length: 1000 }, (_, i) => i * inputs.salaryRange / 1000);
 
     const taxData = grossIncomes.map((grossIncome) => {
       const { incomeTax, employeeNI, employerNI, pensionPot, ...rest } = calculateTaxes(grossIncome, inputs);
