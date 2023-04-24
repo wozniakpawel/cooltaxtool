@@ -73,7 +73,7 @@ const TaxYearOverview = ({ inputs }) => {
           x: grossIncomes,
           y: dataArray.map((data) => {
             const value = isPercentage ? (data[setting.key] / data['grossIncome']) * 100 : data[setting.key];
-            return isPercentage ? Math.min(100, value) : value;
+            return isPercentage ? Math.max(0, Math.min(100, value)) : value;
           }),
           type: 'scatter',
           mode: 'lines',
