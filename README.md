@@ -2,7 +2,7 @@
 
 You can access the live website at [https://cooltaxtool.com](https://cooltaxtool.com).
 
-The master branch is automatically deployed using Netlify, so any PR merged into master will be awailable right away.
+The master branch is automatically deployed using Netlify, so any PR merged into master will be available right away.
 
 # About CoolTaxTool
 
