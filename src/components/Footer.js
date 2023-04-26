@@ -5,7 +5,7 @@ import '../App.css';
 const Footer = () => {
     return (
         <footer>
-            <Container>
+            <Container className='mt-5'>
                 <Row className="justify-content-center">
                     <Col className="text-center">
                         <p>
