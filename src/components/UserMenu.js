@@ -31,7 +31,7 @@ export function UserMenu({ onUserInputsChange }) {
 
         // Convert pension input value and range input to a number
         if (name.startsWith('pensionContributions') || name === 'grossIncome' || name === 'salaryRange') {
-            input = parseFloat(value)
+            input = parseFloat(value);
         }
 
         if (name.includes('.')) {
