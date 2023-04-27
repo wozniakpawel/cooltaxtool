@@ -50,7 +50,7 @@ export function UserMenu({ onUserInputsChange }) {
             <Container>
                 <Form>
 
-                    <Form.Group as={Row} controlId="taxYear">
+                    <Form.Group as={Row} controlId="taxYear" className="mb-2">
                         <Form.Label column>Tax Year</Form.Label>
                         <Col>
                             <Form.Control as="select" name="taxYear" value={inputs.taxYear} onChange={handleInputChange}>
@@ -71,7 +71,7 @@ export function UserMenu({ onUserInputsChange }) {
                         }
                     </Form.Group>
 
-                    <Form.Group as={Row} controlId="studentLoan">
+                    <Form.Group as={Row} controlId="studentLoan" className="mb-2">
                         <Form.Label column>Student Loan</Form.Label>
                         <Col>
                             <Form.Control as="select" name="studentLoan" value={inputs.studentLoan} onChange={handleInputChange}>
@@ -85,26 +85,34 @@ export function UserMenu({ onUserInputsChange }) {
                         </Col>
                     </Form.Group>
 
-                    <Form.Group>
-                        <Form.Check
-                            type="switch"
-                            id="residentInScotland"
-                            label="Resident in Scotland"
-                            name="residentInScotland"
-                            checked={inputs.residentInScotland}
-                            onChange={handleInputChange}
-                        />
-                        <Form.Check
-                            type="switch"
-                            id="noNI"
-                            label="Exclude NI"
-                            name="noNI"
-                            checked={inputs.noNI}
-                            onChange={handleInputChange}
-                        />
+                    <Form.Group className="mt-4 mb-4 d-flex">
+                        <Container>
+                            <Row>
+                                <Col>
+                                    <Form.Check
+                                        type="switch"
+                                        id="residentInScotland"
+                                        label="Resident in Scotland"
+                                        name="residentInScotland"
+                                        checked={inputs.residentInScotland}
+                                        onChange={handleInputChange}
+                                    />
+                                </Col>
+                                <Col>
+                                    <Form.Check
+                                        type="switch"
+                                        id="noNI"
+                                        label="Exclude NI"
+                                        name="noNI"
+                                        checked={inputs.noNI}
+                                        onChange={handleInputChange}
+                                    />
+                                </Col>
+                            </Row>
+                        </Container>
                     </Form.Group>
 
-                    <Card>
+                    <Card className="mb-4">
                         <Card.Body>
                             <Card.Title>Pension</Card.Title>
                             <Form.Group as={Row} controlId="pensionContributions.autoEnrolment">
@@ -172,7 +180,7 @@ export function UserMenu({ onUserInputsChange }) {
 
                     <Card>
                         <Card.Body>
-                            <ButtonGroup>
+                            <ButtonGroup className="mb-2">
                                 <Button
                                     variant={!inputs.incomeAnalysis ? 'primary' : 'outline-primary'}
                                     onClick={() => handleInputChange({
