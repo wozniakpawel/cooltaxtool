@@ -225,6 +225,8 @@ export function UserMenu({ onUserInputsChange }) {
                         </Card.Body>
                     </Card>
 
+                    <iframe src="https://github.com/sponsors/wozniakpawel/button" title="Sponsor wozniakpawel" height="32" width="114" style={{ border: '0', borderRadius: "6px" }}></iframe>
+
                 </Form>
             </Container>
         </div>
