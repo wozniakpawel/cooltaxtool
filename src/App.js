@@ -16,8 +16,8 @@ function App() {
   };
 
   return (
-    <Container fluid>
-      <Container fluid>
+    <Container fluid className="d-flex flex-column min-vh-100 p-0">
+      <Container className="page-content p-0">
         <Row>
           <Col>
             <Header />
