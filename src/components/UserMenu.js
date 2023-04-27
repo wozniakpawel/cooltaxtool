@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Card, Row, Col, Form, Alert, Button, ButtonGroup } from 'react-bootstrap';
+import { numberWithCommas } from '../utils/DisplayFormat';
 
 export const defaultInputs = {
     taxYear: '2023/24',
@@ -209,7 +210,7 @@ export function UserMenu({ onUserInputsChange }) {
 
                             {!inputs.incomeAnalysis &&
                                 <Form.Group as={Row} controlId="grossIncome">
-                                    <Form.Label column>Salary range: £{inputs.salaryRange}</Form.Label>
+                                    <Form.Label column>Salary range: {numberWithCommas(inputs.salaryRange)}</Form.Label>
                                     <Col>
                                         <Form.Range
                                             name="salaryRange"
