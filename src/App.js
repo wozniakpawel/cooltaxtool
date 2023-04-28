@@ -17,24 +17,20 @@ function App() {
 
   return (
     <Container fluid className="d-flex flex-column min-vh-100 p-0">
+      <Header />
       <Container className="page-content p-0">
         <Row>
-          <Col>
-            <Header />
+          <Col lg={6}>
             <UserMenu onUserInputsChange={handleUserInputsChange} />
-            {
-              userInputs.incomeAnalysis &&
+            { userInputs.incomeAnalysis &&
               <PensionAnalysis inputs={userInputs} />
             }
           </Col>
-          <Col>
+          <Col lg={6}>
             {
-              userInputs.incomeAnalysis &&
-              <TaxBreakdown inputs={userInputs} />
-            }
-            {
-              !userInputs.incomeAnalysis &&
-              <TaxYearOverview inputs={userInputs} />
+              userInputs.incomeAnalysis
+              ? <TaxBreakdown inputs={userInputs} />
+              : <TaxYearOverview inputs={userInputs} />
             }
           </Col>
           {/* <Col>

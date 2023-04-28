@@ -7,3 +7,8 @@ body {
 .page-content {
     flex-grow: 1;
 }
+
+label.form-label {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}

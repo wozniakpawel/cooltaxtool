@@ -20,7 +20,6 @@ const TaxBreakdown = ({ inputs }) => {
             <Card>
                 <Card.Body>
                     <Card.Title>Tax breakdown for {numberWithCommas(inputs.grossIncome)}</Card.Title>
-
                     <Table size="sm">
                         <tbody>
                             <tr>
@@ -42,11 +41,10 @@ const TaxBreakdown = ({ inputs }) => {
                             {renderBreakDown(results.employerNI.breakdown)}
                         </tbody>
                     </Table>
-
                     <Table size="sm" variant="danger">
                         <thead>
                             <tr>
-                                <th>You pay</th>
+                                <th colSpan="2">You pay</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -71,10 +69,10 @@ const TaxBreakdown = ({ inputs }) => {
                         </tbody>
                     </Table>
 
-                    <Table size="sm" variant="success">
+                    <Table size="sm" variant="success" className="mb-0">
                         <thead>
                             <tr>
-                                <th>You keep</th>
+                                <th colSpan="2">You keep</th>
                             </tr>
                         </thead>
                         <tbody>
