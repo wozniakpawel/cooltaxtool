@@ -80,7 +80,7 @@ export function calculateStudentLoanRepayments(income, studentLoanPlan, constant
 
     if (income <= planThreshold) return 0;
 
-    return Math.round((income - planThreshold) * rate);
+    return Math.floor((income - planThreshold) * rate);
 }
 
 // Calculate the pension taper
