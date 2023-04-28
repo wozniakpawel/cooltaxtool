@@ -1,13 +1,10 @@
 import React from 'react';
 import { calculateTaxes } from '../utils/TaxCalc';
 import { Container, Table, Card } from 'react-bootstrap';
+import { numberWithCommas } from '../utils/DisplayFormat';
 
 const TaxBreakdown = ({ inputs }) => {
     const results = calculateTaxes(inputs.grossIncome, inputs);
-
-    function numberWithCommas(x) {
-        return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(x);
-    }
 
     function renderBreakDown(breakdown) {
         return breakdown.map((tax, i) => (
