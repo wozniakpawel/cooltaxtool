@@ -80,7 +80,7 @@ export function calculateStudentLoanRepayments(income, studentLoanPlan, constant
 
     if (income <= planThreshold) return 0;
 
-    return (income - planThreshold) * rate;
+    return Math.round((income - planThreshold) * rate);
 }
 
 // Calculate the pension taper
@@ -145,7 +145,7 @@ export function calculateTaxes(grossIncome, options) {
     const employerNI = calculateNationalInsurance(incomeAfterSalarySacrifice, constants, true, options.noNI);
 
     // 4. Calculate student loan repayments
-    const studentLoanRepayments = Math.round(calculateStudentLoanRepayments(incomeAfterSalarySacrifice, options.studentLoan, constants));
+    const studentLoanRepayments = calculateStudentLoanRepayments(incomeAfterSalarySacrifice, options.studentLoan, constants);
 
     // 5. Determine the personal allowance (considering taper)
     const personalAllowance = calculateTaperedPersonalAllowance(adjustedNetIncome, constants);
