@@ -10,15 +10,9 @@ const Header = (props) => {
             <strong>
               Cool<span className="text-danger">Tax</span>Tool
             </strong>
-            {/* <button onClick={props.themeToggleFunction}>Current theme:</button> */}
-            <Form.Check
-              type="switch"
-              id="themeToggle"
-              label="Dark mode"
-              name="themeToggle"
-              checked={props.theme === "dark"}
-              onChange={props.themeToggleFunction}
-            />
+            {/* <button onClick={props.themeToggleFunction}>
+              Toggle dark mode
+            </button> */}
           </h1>
         </Navbar.Brand>
       </Container>

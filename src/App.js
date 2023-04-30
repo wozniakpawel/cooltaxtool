@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Form } from "react-bootstrap";
 import { defaultInputs, UserMenu } from "./components/UserMenu";
 import TaxBreakdown from "./components/TaxBreakdown";
 import PensionAnalysis from "./components/PensionAnalysis";
@@ -44,6 +44,14 @@ function App() {
         <Row>
           <Col>
             <Header theme={theme} themeToggleFunction={toggleTheme} />
+            <Form.Check
+              type="switch"
+              id="themeToggle"
+              label="Dark mode"
+              name="themeToggle"
+              checked={theme === "dark"}
+              onChange={toggleTheme}
+            />
             <UserMenu onUserInputsChange={handleUserInputsChange} />
             {userInputs.incomeAnalysis && (
               <PensionAnalysis inputs={userInputs} plotThemer={setPlotTheme} />
