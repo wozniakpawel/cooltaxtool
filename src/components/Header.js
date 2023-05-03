@@ -8,7 +8,9 @@ const Header = (props) => {
         <Navbar.Brand>
           <h1>
             <strong>
-              Cool<span className="text-danger">Tax</span>Tool
+            <span className="text-primary">Cool</span>
+            <span className="text-danger">Tax</span>
+            <span className="text-primary">Tool</span>
             </strong>
           </h1>
         </Navbar.Brand>

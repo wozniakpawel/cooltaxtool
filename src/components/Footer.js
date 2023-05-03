@@ -9,7 +9,10 @@ const Footer = () => {
                 <Row className="justify-content-center">
                     <Col className="text-center">
                         <p>
-                            Cool<span className="text-danger">Tax</span>Tool does not provide financial or tax advice, and the calculations might be innacurate. Please consult a tax advisor before making any financial decisions.
+                            <span className="text-primary">Cool</span>
+                            <span className="text-danger">Tax</span>
+                            <span className="text-primary">Tool </span>
+                            does not provide financial or tax advice, and the calculations might be innacurate. Please consult a tax advisor before making any financial decisions.
                         </p>
                         <p>
                             This is an open source project, feel free to contribute: {' '}
