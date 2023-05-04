@@ -1,6 +1,6 @@
 import React from "react";
 import { calculateTaxes } from "../../utils/TaxCalc";
-import { Container, Table, Card } from "react-bootstrap";
+import { Table, Card } from "react-bootstrap";
 import { numberWithCommas } from "../../utils/DisplayFormat";
 
 const TaxBreakdown = (props) => {

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
-import { Container } from "react-bootstrap";
 import { calculateTaxes } from "../../utils/TaxCalc";
 
 const TaxSavingsVsPensionContributions = (props) => {

@@ -4,7 +4,7 @@ import TaxBreakdown from "./IncomeAnalysis/TaxBreakdown";
 
 const IncomeAnalysis = (props) => {
     return (
-        <Container fluid>
+        <Container>
             <PensionAnalysis {...props} />
             <TaxBreakdown {...props} />
         </Container>
