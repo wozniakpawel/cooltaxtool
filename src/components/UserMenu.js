@@ -30,13 +30,23 @@ export const defaultInputs = {
     incomeAnalysis: false,
 };
 
+const filterErrors = (values, errors) => {
+    return Object.keys(values).reduce((acc, key) => {
+        if (typeof values[key] === 'object' && typeof errors[key] === 'object') {
+            acc[key] = filterErrors(values[key], errors[key]);
+        } else if (!errors[key]) {
+            acc[key] = values[key];
+        }
+        return acc;
+    }, {});
+};
+
 const UseEffectWrapper = ({ onUserInputsChange }) => {
     const { values, errors } = useFormikContext();
 
     useEffect(() => {
-        if (Object.keys(errors).length === 0) {
-            onUserInputsChange(values);
-        }
+        const filteredValues = filterErrors(values, errors);
+        onUserInputsChange(filteredValues);
     }, [values, errors, onUserInputsChange]);
 
     return null;
@@ -54,8 +64,9 @@ export function UserMenu({ onUserInputsChange }) {
 
                     {({ setFieldValue, values, errors, touched }) => {
                         const handleInputChange = (event) => {
-                            const { name, value } = event.target;
-                            setFieldValue(name, value, true);
+                            const { name, value, type, checked } = event.target;
+                            const newValue = type === 'checkbox' ? checked : value;
+                            setFieldValue(name, newValue, true);
                         };
 
                         return (
