@@ -20,6 +20,7 @@ export const defaultInputs = {
     salaryRange: 150000,
     residentInScotland: false,
     noNI: false,
+    pension: false,
     pensionContributions: {
         autoEnrolment: 0,
         salarySacrifice: 0,
@@ -135,85 +136,100 @@ export function UserMenu({ onUserInputsChange }) {
 
                                     <Card>
                                         <Card.Body>
-                                            <Card.Title>Pension</Card.Title>
-                                            <Form.Group as={Row} controlId="pensionContributions.autoEnrolment">
-                                                <Form.Label column sm={4}>Auto Enrolment</Form.Label>
-                                                <Col sm={4}>
-                                                    <InputGroup>
-                                                        <InputGroup.Text>%</InputGroup.Text>
-                                                        <Form.Control
-                                                            type="number"
-                                                            name="pensionContributions.autoEnrolment"
-                                                            value={values.pensionContributions.autoEnrolment}
-                                                            onChange={handleInputChange}
-                                                            isValid={!errors.pensionContributions?.autoEnrolment}
-                                                            isInvalid={!!errors.pensionContributions?.autoEnrolment}
-                                                            min={0}
-                                                            max={30}
-                                                            step={0.1}
-                                                        />
-                                                        {errors.pensionContributions?.autoEnrolment ? <div className="text-danger">{errors.pensionContributions?.autoEnrolment}</div> : null}
-                                                    </InputGroup>
-                                                </Col>
-                                                <Col sm={4}>
-                                                    <Form.Check
-                                                        type="switch"
-                                                        id="autoEnrolmentAsSalarySacrifice"
-                                                        label="As salary sacrifice"
-                                                        name="autoEnrolmentAsSalarySacrifice"
-                                                        checked={values.autoEnrolmentAsSalarySacrifice}
-                                                        onChange={handleInputChange}
-                                                    />
-                                                </Col>
+                                            {/* <Card.Title>Pension</Card.Title> */}
+                                            <Form.Group>
+                                                <Form.Check
+                                                    type="switch"
+                                                    id="pension"
+                                                    label="Pension"
+                                                    name="pension"
+                                                    checked={values.pension}
+                                                    onChange={handleInputChange}
+                                                />
                                             </Form.Group>
-                                            <Form.Group as={Row} controlId="pensionContributions.salarySacrifice">
-                                                <Form.Label column sm={4}>Salary/Bonus Sacrifice</Form.Label>
-                                                <Col sm={4}>
-                                                    <InputGroup>
-                                                        <InputGroup.Text>£</InputGroup.Text>
-                                                        <Form.Control
-                                                            type="number"
-                                                            name="pensionContributions.salarySacrifice"
-                                                            value={values.pensionContributions.salarySacrifice}
-                                                            onChange={handleInputChange}
-                                                            isValid={!errors.pensionContributions?.salarySacrifice}
-                                                            isInvalid={!!errors.pensionContributions?.salarySacrifice}
-                                                            min={0}
-                                                            step={100}
-                                                        />
-                                                        {errors.pensionContributions?.salarySacrifice ? <div className="text-danger">{errors.pensionContributions?.salarySacrifice}</div> : null}
-                                                    </InputGroup>
-                                                </Col>
-                                            </Form.Group>
-                                            <Form.Group as={Row} controlId="pensionContributions.personal">
-                                                <Form.Label column sm={4}>Personal Contributions</Form.Label>
-                                                <Col sm={4}>
-                                                    <InputGroup>
-                                                        <InputGroup.Text>£</InputGroup.Text>
-                                                        <Form.Control
-                                                            type="number"
-                                                            name="pensionContributions.personal"
-                                                            value={values.pensionContributions.personal}
-                                                            onChange={handleInputChange}
-                                                            isValid={!errors.pensionContributions?.personal}
-                                                            isInvalid={!!errors.pensionContributions?.personal}
-                                                            min={0}
-                                                            step={100}
-                                                        />
-                                                        {errors.pensionContributions?.personal ? <div className="text-danger">{errors.pensionContributions?.personal}</div> : null}
-                                                    </InputGroup>
-                                                </Col>
-                                                <Col sm={4}>
-                                                    <Form.Check
-                                                        type="switch"
-                                                        id="taxReliefAtSource"
-                                                        label="Relief at source"
-                                                        name="taxReliefAtSource"
-                                                        checked={values.taxReliefAtSource}
-                                                        onChange={handleInputChange}
-                                                    />
-                                                </Col>
-                                            </Form.Group>
+                                            {
+                                                values.pension &&
+                                                <>
+                                                    <Form.Group as={Row} controlId="pensionContributions.autoEnrolment">
+                                                        <Form.Label column sm={4}>Auto Enrolment</Form.Label>
+                                                        <Col sm={4}>
+                                                            <InputGroup>
+                                                                <InputGroup.Text>%</InputGroup.Text>
+                                                                <Form.Control
+                                                                    type="number"
+                                                                    name="pensionContributions.autoEnrolment"
+                                                                    value={values.pensionContributions.autoEnrolment}
+                                                                    onChange={handleInputChange}
+                                                                    isValid={!errors.pensionContributions?.autoEnrolment}
+                                                                    isInvalid={!!errors.pensionContributions?.autoEnrolment}
+                                                                    min={0}
+                                                                    max={30}
+                                                                    step={0.1}
+                                                                />
+                                                                {errors.pensionContributions?.autoEnrolment ? <div className="text-danger">{errors.pensionContributions?.autoEnrolment}</div> : null}
+                                                            </InputGroup>
+                                                        </Col>
+                                                        <Col sm={4}>
+                                                            <Form.Check
+                                                                type="switch"
+                                                                id="autoEnrolmentAsSalarySacrifice"
+                                                                label="As salary sacrifice"
+                                                                name="autoEnrolmentAsSalarySacrifice"
+                                                                checked={values.autoEnrolmentAsSalarySacrifice}
+                                                                onChange={handleInputChange}
+                                                            />
+                                                        </Col>
+                                                    </Form.Group>
+                                                    <Form.Group as={Row} controlId="pensionContributions.salarySacrifice">
+                                                        <Form.Label column sm={4}>Salary/Bonus Sacrifice</Form.Label>
+                                                        <Col sm={4}>
+                                                            <InputGroup>
+                                                                <InputGroup.Text>£</InputGroup.Text>
+                                                                <Form.Control
+                                                                    type="number"
+                                                                    name="pensionContributions.salarySacrifice"
+                                                                    value={values.pensionContributions.salarySacrifice}
+                                                                    onChange={handleInputChange}
+                                                                    isValid={!errors.pensionContributions?.salarySacrifice}
+                                                                    isInvalid={!!errors.pensionContributions?.salarySacrifice}
+                                                                    min={0}
+                                                                    step={100}
+                                                                />
+                                                                {errors.pensionContributions?.salarySacrifice ? <div className="text-danger">{errors.pensionContributions?.salarySacrifice}</div> : null}
+                                                            </InputGroup>
+                                                        </Col>
+                                                    </Form.Group>
+                                                    <Form.Group as={Row} controlId="pensionContributions.personal">
+                                                        <Form.Label column sm={4}>Personal Contributions</Form.Label>
+                                                        <Col sm={4}>
+                                                            <InputGroup>
+                                                                <InputGroup.Text>£</InputGroup.Text>
+                                                                <Form.Control
+                                                                    type="number"
+                                                                    name="pensionContributions.personal"
+                                                                    value={values.pensionContributions.personal}
+                                                                    onChange={handleInputChange}
+                                                                    isValid={!errors.pensionContributions?.personal}
+                                                                    isInvalid={!!errors.pensionContributions?.personal}
+                                                                    min={0}
+                                                                    step={100}
+                                                                />
+                                                                {errors.pensionContributions?.personal ? <div className="text-danger">{errors.pensionContributions?.personal}</div> : null}
+                                                            </InputGroup>
+                                                        </Col>
+                                                        <Col sm={4}>
+                                                            <Form.Check
+                                                                type="switch"
+                                                                id="taxReliefAtSource"
+                                                                label="Relief at source"
+                                                                name="taxReliefAtSource"
+                                                                checked={values.taxReliefAtSource}
+                                                                onChange={handleInputChange}
+                                                            />
+                                                        </Col>
+                                                    </Form.Group>
+                                                </>
+                                            }
                                         </Card.Body>
                                     </Card>
 
