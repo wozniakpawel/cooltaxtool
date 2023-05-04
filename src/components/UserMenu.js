@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Container, Card, Row, Col, Form, Alert, Button, ButtonGroup, InputGroup } from 'react-bootstrap';
 import { Formik, useFormikContext } from 'formik';
 import * as yup from 'yup';
@@ -30,29 +30,34 @@ export const defaultInputs = {
     incomeAnalysis: false,
 };
 
-const filterErrors = (values, errors) => {
-    return Object.keys(values).reduce((acc, key) => {
-        if (typeof values[key] === 'object' && typeof errors[key] === 'object') {
-            acc[key] = filterErrors(values[key], errors[key]);
-        } else if (!errors[key]) {
-            acc[key] = values[key];
-        }
-        return acc;
-    }, {});
-};
-
 const UseEffectWrapper = ({ onUserInputsChange }) => {
     const { values, errors } = useFormikContext();
 
     useEffect(() => {
-        const filteredValues = filterErrors(values, errors);
-        onUserInputsChange(filteredValues);
+        if (Object.keys(errors).length === 0) {
+            onUserInputsChange(values);
+        }
     }, [values, errors, onUserInputsChange]);
 
     return null;
 };
 
 export function UserMenu({ onUserInputsChange }) {
+    const [latestErrors, setLatestErrors] = useState({});
+
+    const customValidate = async (values) => {
+        try {
+            await schema.validate(values, { abortEarly: false });
+            setLatestErrors({});
+        } catch (err) {
+            const formattedErrors = err.inner.reduce((acc, error) => {
+                acc[error.path] = error.message;
+                return acc;
+            }, {});
+            setLatestErrors(formattedErrors);
+        }
+    };
+
     return (
         <>
             <Container>
@@ -60,6 +65,7 @@ export function UserMenu({ onUserInputsChange }) {
                     validationSchema={schema}
                     initialValues={defaultInputs}
                     onSubmit={() => { }}
+                    validate={customValidate}
                 >
 
                     {({ setFieldValue, values, errors, touched }) => {
@@ -287,7 +293,7 @@ export function UserMenu({ onUserInputsChange }) {
                                     />
 
                                 </Form>
-                                <UseEffectWrapper onUserInputsChange={onUserInputsChange} />
+                                <UseEffectWrapper onUserInputsChange={onUserInputsChange} latestErrors={latestErrors} />
                             </>
                         );
                     }}
