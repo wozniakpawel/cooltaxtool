@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Card, Row, Col, Form, Alert, Button, ButtonGroup } from 'react-bootstrap';
-import { numberWithCommas } from '../utils/DisplayFormat';
+import { Container, Card, Row, Col, Form, Alert, Button, ButtonGroup, InputGroup } from 'react-bootstrap';
 
 export const defaultInputs = {
     taxYear: '2023/24',
     studentLoan: 'none',
     grossIncome: 0,
-    salaryRange: 200000,
+    salaryRange: 150000,
     residentInScotland: false,
     noNI: false,
     pensionContributions: {
@@ -109,17 +108,20 @@ export function UserMenu({ onUserInputsChange }) {
                         <Card.Body>
                             <Card.Title>Pension</Card.Title>
                             <Form.Group as={Row} controlId="pensionContributions.autoEnrolment">
-                                <Form.Label column sm={4}>Auto Enrolment (%)</Form.Label>
+                                <Form.Label column sm={4}>Auto Enrolment</Form.Label>
                                 <Col sm={4}>
-                                    <Form.Control
-                                        type="number"
-                                        name="pensionContributions.autoEnrolment"
-                                        value={inputs.pensionContributions.autoEnrolment}
-                                        onChange={handleInputChange}
-                                        min={0}
-                                        max={100}
-                                        step={1}
-                                    />
+                                    <InputGroup>
+                                        <InputGroup.Text>%</InputGroup.Text>
+                                        <Form.Control
+                                            type="number"
+                                            name="pensionContributions.autoEnrolment"
+                                            value={inputs.pensionContributions.autoEnrolment}
+                                            onChange={handleInputChange}
+                                            min={0}
+                                            max={100}
+                                            step={1}
+                                        />
+                                    </InputGroup>
                                 </Col>
                                 <Col sm={4}>
                                     <Form.Check
@@ -133,29 +135,35 @@ export function UserMenu({ onUserInputsChange }) {
                                 </Col>
                             </Form.Group>
                             <Form.Group as={Row} controlId="pensionContributions.salarySacrifice">
-                                <Form.Label column sm={4}>Salary/Bonus Sacrifice (£)</Form.Label>
+                                <Form.Label column sm={4}>Salary/Bonus Sacrifice</Form.Label>
                                 <Col sm={4}>
-                                    <Form.Control
-                                        type="number"
-                                        name="pensionContributions.salarySacrifice"
-                                        value={inputs.pensionContributions.salarySacrifice}
-                                        onChange={handleInputChange}
-                                        min={0}
-                                        step={100}
-                                    />
+                                    <InputGroup>
+                                        <InputGroup.Text>£</InputGroup.Text>
+                                        <Form.Control
+                                            type="number"
+                                            name="pensionContributions.salarySacrifice"
+                                            value={inputs.pensionContributions.salarySacrifice}
+                                            onChange={handleInputChange}
+                                            min={0}
+                                            step={100}
+                                        />
+                                    </InputGroup>
                                 </Col>
                             </Form.Group>
                             <Form.Group as={Row} controlId="pensionContributions.personal">
-                                <Form.Label column sm={4}>Personal Contributions (£)</Form.Label>
+                                <Form.Label column sm={4}>Personal Contributions</Form.Label>
                                 <Col sm={4}>
-                                    <Form.Control
-                                        type="number"
-                                        name="pensionContributions.personal"
-                                        value={inputs.pensionContributions.personal}
-                                        onChange={handleInputChange}
-                                        min={0}
-                                        step={100}
-                                    />
+                                    <InputGroup>
+                                        <InputGroup.Text>£</InputGroup.Text>
+                                        <Form.Control
+                                            type="number"
+                                            name="pensionContributions.personal"
+                                            value={inputs.pensionContributions.personal}
+                                            onChange={handleInputChange}
+                                            min={0}
+                                            step={100}
+                                        />
+                                    </InputGroup>
                                 </Col>
                                 <Col sm={4}>
                                     <Form.Check
@@ -194,32 +202,39 @@ export function UserMenu({ onUserInputsChange }) {
 
                             {inputs.incomeAnalysis &&
                                 <Form.Group as={Row} controlId="grossIncome">
-                                    <Form.Label column>Annual Gross Income (£)</Form.Label>
+                                    <Form.Label column>Annual Gross Income</Form.Label>
                                     <Col>
-                                        <Form.Control
-                                            type="number"
-                                            name="grossIncome"
-                                            value={inputs.grossIncome}
-                                            onChange={handleInputChange}
-                                            min={0}
-                                            step={1000}
-                                        />
+                                        <InputGroup>
+                                            <InputGroup.Text>£</InputGroup.Text>
+                                            <Form.Control
+                                                type="number"
+                                                name="grossIncome"
+                                                value={inputs.grossIncome}
+                                                onChange={handleInputChange}
+                                                min={0}
+                                                step={1000}
+                                            />
+                                        </InputGroup>
                                     </Col>
                                 </Form.Group>
                             }
 
                             {!inputs.incomeAnalysis &&
                                 <Form.Group as={Row} controlId="grossIncome">
-                                    <Form.Label column>Salary range: {numberWithCommas(inputs.salaryRange)}</Form.Label>
+                                    <Form.Label column>Salary range</Form.Label>
                                     <Col>
-                                        <Form.Range
-                                            name="salaryRange"
-                                            value={inputs.salaryRange}
-                                            min={50000}
-                                            max={1000000}
-                                            step={50000}
-                                            onChange={handleInputChange}
-                                        />
+                                        <InputGroup>
+                                            <InputGroup.Text>£</InputGroup.Text>
+                                            <Form.Control
+                                                type="number"
+                                                name="salaryRange"
+                                                value={inputs.salaryRange}
+                                                onChange={handleInputChange}
+                                                min={50000}
+                                                max={950000}
+                                                step={50000}
+                                            />
+                                        </InputGroup>
                                     </Col>
                                 </Form.Group>
                             }
