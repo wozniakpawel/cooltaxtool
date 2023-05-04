@@ -4,12 +4,12 @@ import { Formik, useFormikContext } from 'formik';
 import * as yup from 'yup';
 
 const schema = yup.object().shape({
-    grossIncome: yup.number().positive().integer().required(),
-    salaryRange: yup.number().positive().integer().required(),
+    grossIncome: yup.number().min(0).required(),
+    salaryRange: yup.number().min(0).required(),
     pensionContributions: yup.object().shape({
-        autoEnrolment: yup.number().positive().max(30).required(),
-        salarySacrifice: yup.number().positive().integer().required(),
-        personal: yup.number().positive().integer().required(),
+        autoEnrolment: yup.number().min(0).max(30).required(),
+        salarySacrifice: yup.number().min(0).required(),
+        personal: yup.number().min(0).required(),
     }),
 });
 
@@ -140,12 +140,13 @@ export function UserMenu({ onUserInputsChange }) {
                                                             name="pensionContributions.autoEnrolment"
                                                             value={values.pensionContributions.autoEnrolment}
                                                             onChange={handleInputChange}
-                                                            isValid={touched.pensionContributions?.autoEnrolment && !errors.pensionContributions?.autoEnrolment}
-                                                            isInvalid={touched.pensionContributions?.autoEnrolment && !!errors.pensionContributions?.autoEnrolment}
+                                                            isValid={!errors.pensionContributions?.autoEnrolment}
+                                                            isInvalid={!!errors.pensionContributions?.autoEnrolment}
                                                             min={0}
                                                             max={30}
                                                             step={0.1}
                                                         />
+                                                        {errors.pensionContributions?.autoEnrolment ? <div className="text-danger">{errors.pensionContributions?.autoEnrolment}</div> : null}
                                                     </InputGroup>
                                                 </Col>
                                                 <Col sm={4}>
@@ -169,11 +170,12 @@ export function UserMenu({ onUserInputsChange }) {
                                                             name="pensionContributions.salarySacrifice"
                                                             value={values.pensionContributions.salarySacrifice}
                                                             onChange={handleInputChange}
-                                                            isValid={touched.pensionContributions?.salarySacrifice && !errors.pensionContributions?.salarySacrifice}
-                                                            isInvalid={touched.pensionContributions?.salarySacrifice && !!errors.pensionContributions?.salarySacrifice}
+                                                            isValid={!errors.pensionContributions?.salarySacrifice}
+                                                            isInvalid={!!errors.pensionContributions?.salarySacrifice}
                                                             min={0}
                                                             step={100}
                                                         />
+                                                        {errors.pensionContributions?.salarySacrifice ? <div className="text-danger">{errors.pensionContributions?.salarySacrifice}</div> : null}
                                                     </InputGroup>
                                                 </Col>
                                             </Form.Group>
@@ -187,11 +189,12 @@ export function UserMenu({ onUserInputsChange }) {
                                                             name="pensionContributions.personal"
                                                             value={values.pensionContributions.personal}
                                                             onChange={handleInputChange}
-                                                            isValid={touched.pensionContributions?.personal && !errors.pensionContributions?.personal}
-                                                            isInvalid={touched.pensionContributions?.personal && !!errors.pensionContributions?.personal}
+                                                            isValid={!errors.pensionContributions?.personal}
+                                                            isInvalid={!!errors.pensionContributions?.personal}
                                                             min={0}
                                                             step={100}
                                                         />
+                                                        {errors.pensionContributions?.personal ? <div className="text-danger">{errors.pensionContributions?.personal}</div> : null}
                                                     </InputGroup>
                                                 </Col>
                                                 <Col sm={4}>
@@ -240,11 +243,12 @@ export function UserMenu({ onUserInputsChange }) {
                                                                 name="grossIncome"
                                                                 value={values.grossIncome}
                                                                 onChange={handleInputChange}
-                                                                isValid={touched.grossIncome && !errors.grossIncome}
-                                                                isInvalid={touched.grossIncome && !!errors.grossIncome}
+                                                                isValid={!errors.grossIncome}
+                                                                isInvalid={!!errors.grossIncome}
                                                                 min={0}
                                                                 step={1000}
                                                             />
+                                                            {errors.grossIncome ? <div className="text-danger">{errors.grossIncome}</div> : null}
                                                         </InputGroup>
                                                     </Col>
                                                 </Form.Group>
@@ -261,11 +265,12 @@ export function UserMenu({ onUserInputsChange }) {
                                                                 name="salaryRange"
                                                                 value={values.salaryRange}
                                                                 onChange={handleInputChange}
-                                                                isValid={touched.salaryRange && !errors.salaryRange}
-                                                                isInvalid={touched.salaryRange && !!errors.salaryRange}
+                                                                isValid={!errors.salaryRange}
+                                                                isInvalid={!!errors.salaryRange}
                                                                 min={10000}
                                                                 step={10000}
                                                             />
+                                                            {errors.salaryRange ? <div className="text-danger">{errors.salaryRange}</div> : null}
                                                         </InputGroup>
                                                     </Col>
                                                 </Form.Group>
