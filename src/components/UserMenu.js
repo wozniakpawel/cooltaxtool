@@ -8,8 +8,8 @@ const schema = yup.object().shape({
     salaryRange: yup.number().integer().required(),
     pensionContributions: yup.object().shape({
         autoEnrolment: yup.number().required(),
-        salarySacrifice: yup.number().required(),
-        personal: yup.number().required(),
+        salarySacrifice: yup.number().integer().required(),
+        personal: yup.number().integer().required(),
     }),
 });
 
@@ -43,6 +43,8 @@ const filterErrors = (values, errors) => {
 
 const UseEffectWrapper = ({ onUserInputsChange }) => {
     const { values, errors } = useFormikContext();
+
+    console.log(values, errors);
 
     useEffect(() => {
         const filteredValues = filterErrors(values, errors);
@@ -144,7 +146,7 @@ export function UserMenu({ onUserInputsChange }) {
                                                             isInvalid={touched.pensionContributions?.autoEnrolment && !!errors.pensionContributions?.autoEnrolment}
                                                             min={0}
                                                             max={100}
-                                                            step={1}
+                                                            step={0.1}
                                                         />
                                                     </InputGroup>
                                                 </Col>
