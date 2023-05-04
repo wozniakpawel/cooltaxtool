@@ -4,12 +4,12 @@ import { Formik, useFormikContext } from 'formik';
 import * as yup from 'yup';
 
 const schema = yup.object().shape({
-    grossIncome: yup.number().integer().required(),
-    salaryRange: yup.number().integer().required(),
+    grossIncome: yup.number().integer().min(0).required(),
+    salaryRange: yup.number().integer().min(0).required(),
     pensionContributions: yup.object().shape({
-        autoEnrolment: yup.number().required(),
-        salarySacrifice: yup.number().integer().required(),
-        personal: yup.number().integer().required(),
+        autoEnrolment: yup.number().min(0).max(100).required(),
+        salarySacrifice: yup.number().integer().min(0).required(),
+        personal: yup.number().integer().min(0).required(),
     }),
 });
 
@@ -43,8 +43,6 @@ const filterErrors = (values, errors) => {
 
 const UseEffectWrapper = ({ onUserInputsChange }) => {
     const { values, errors } = useFormikContext();
-
-    console.log(values, errors);
 
     useEffect(() => {
         const filteredValues = filterErrors(values, errors);
@@ -265,9 +263,8 @@ export function UserMenu({ onUserInputsChange }) {
                                                                 onChange={handleInputChange}
                                                                 isValid={touched.salaryRange && !errors.salaryRange}
                                                                 isInvalid={touched.salaryRange && !!errors.salaryRange}
-                                                                min={50000}
-                                                                max={950000}
-                                                                step={50000}
+                                                                min={10000}
+                                                                step={10000}
                                                             />
                                                         </InputGroup>
                                                     </Col>
