@@ -4,12 +4,12 @@ import { Formik, useFormikContext } from 'formik';
 import * as yup from 'yup';
 
 const schema = yup.object().shape({
-    grossIncome: yup.number().integer().min(0).required(),
-    salaryRange: yup.number().integer().min(0).required(),
+    grossIncome: yup.number().positive().integer().required(),
+    salaryRange: yup.number().positive().integer().required(),
     pensionContributions: yup.object().shape({
-        autoEnrolment: yup.number().min(0).max(100).required(),
-        salarySacrifice: yup.number().integer().min(0).required(),
-        personal: yup.number().integer().min(0).required(),
+        autoEnrolment: yup.number().positive().max(30).required(),
+        salarySacrifice: yup.number().positive().integer().required(),
+        personal: yup.number().positive().integer().required(),
     }),
 });
 
@@ -143,7 +143,7 @@ export function UserMenu({ onUserInputsChange }) {
                                                             isValid={touched.pensionContributions?.autoEnrolment && !errors.pensionContributions?.autoEnrolment}
                                                             isInvalid={touched.pensionContributions?.autoEnrolment && !!errors.pensionContributions?.autoEnrolment}
                                                             min={0}
-                                                            max={100}
+                                                            max={30}
                                                             step={0.1}
                                                         />
                                                     </InputGroup>
