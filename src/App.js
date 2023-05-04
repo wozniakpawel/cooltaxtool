@@ -15,10 +15,6 @@ function App() {
     document.body.className = theme;
   }, [theme]);
 
-  const handleUserInputsChange = (inputs) => {
-    setUserInputs(inputs);
-  };
-
   function toggleTheme() {
     if (theme === "light") {
       setTheme("dark");
@@ -53,7 +49,7 @@ function App() {
                 onChange={toggleTheme}
               />
             </Container>
-            <UserMenu onUserInputsChange={handleUserInputsChange} />
+            <UserMenu onUserInputsChange={setUserInputs} />
           </Col>
           <Col>
             {userInputs.incomeAnalysis && (
