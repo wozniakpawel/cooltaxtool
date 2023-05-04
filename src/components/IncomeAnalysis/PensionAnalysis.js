@@ -62,7 +62,7 @@ const TaxSavingsVsPensionContributions = (props) => {
       type: "scatter",
       mode: "lines",
       marker: { color: "#2ecc71" },
-      name: "Tax Savings (%)",
+      name: "Tax Savings as % of contributions",
       hovertemplate: "%{y:.1f}%",
     };
 
@@ -72,7 +72,7 @@ const TaxSavingsVsPensionContributions = (props) => {
       type: "scatter",
       mode: "lines",
       marker: { color: "#3498db" },
-      name: "Effective Tax Rate (%)",
+      name: "Effective Tax Rate",
       hovertemplate: "%{y:.1f}%",
     };
 
