@@ -43,14 +43,16 @@ function App() {
         <Row>
           <Col>
             <Header theme={theme} themeToggleFunction={toggleTheme} />
-            <Form.Check
-              type="switch"
-              id="themeToggle"
-              label="Dark mode"
-              name="themeToggle"
-              checked={theme === "dark"}
-              onChange={toggleTheme}
-            />
+            <Container>
+              <Form.Check
+                type="switch"
+                id="themeToggle"
+                label="Dark mode"
+                name="themeToggle"
+                checked={theme === "dark"}
+                onChange={toggleTheme}
+              />
+            </Container>
             <UserMenu onUserInputsChange={handleUserInputsChange} />
           </Col>
           <Col>
@@ -61,8 +63,6 @@ function App() {
               <TaxYearOverview inputs={userInputs} plotThemer={setPlotTheme} />
             )}
           </Col>
-          {/* <Col>
-          </Col> */}
         </Row>
       </Container>
       <Footer />
