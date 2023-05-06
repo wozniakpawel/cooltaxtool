@@ -3,14 +3,14 @@ import { Container, Card, Row, Col, Form, Alert, Button, ButtonGroup, InputGroup
 import { Formik, useFormikContext } from 'formik';
 import * as yup from 'yup';
 
-const positiveDecimalNumber = yup.number().min(0).required().test(
-    "is-decimal",
-    "Should be a number with up to 2 decimal places",
+const positiveDecimalNumber = yup.number().min(0).test(
+    "is-required-and-decimal",
+    "Should be a decimal number with up to 2 decimal places",
     (val) => {
-        if (val !== undefined) {
-            return /^\d+(\.\d{0,2})?$/.test(val);
+        if (val === undefined || val === null || val === "") {
+            return false;
         }
-        return true;
+        return /^\d+(\.\d{0,2})?$/.test(val);
     }
 );
 
