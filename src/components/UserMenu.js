@@ -45,9 +45,19 @@ export const defaultInputs = {
 const UseEffectWrapper = ({ onUserInputsChange }) => {
     const { values, errors } = useFormikContext();
 
+    const parseValuesToFloats = (values) => {
+        let parsedValues = { ...values };
+        parsedValues.grossIncome = parseFloat(parsedValues.grossIncome) || 0;
+        parsedValues.salaryRange = parseFloat(parsedValues.salaryRange) || 0;
+        parsedValues.pensionContributions.autoEnrolment = parseFloat(parsedValues.pensionContributions.autoEnrolment) || 0;
+        parsedValues.pensionContributions.salarySacrifice = parseFloat(parsedValues.pensionContributions.salarySacrifice) || 0;
+        parsedValues.pensionContributions.personal = parseFloat(parsedValues.pensionContributions.personal) || 0;
+        return parsedValues;
+    };
+
     useEffect(() => {
         if (Object.keys(errors).length === 0) {
-            onUserInputsChange(values);
+            onUserInputsChange(parseValuesToFloats(values));
         }
     }, [values, errors, onUserInputsChange]);
 
