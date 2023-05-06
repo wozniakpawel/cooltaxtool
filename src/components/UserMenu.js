@@ -3,13 +3,24 @@ import { Container, Card, Row, Col, Form, Alert, Button, ButtonGroup, InputGroup
 import { Formik, useFormikContext } from 'formik';
 import * as yup from 'yup';
 
+const positiveDecimalNumber = yup.number().min(0).required().test(
+    "is-decimal",
+    "Should be a number with up to 2 decimal places",
+    (val) => {
+        if (val !== undefined) {
+            return /^\d+(\.\d{0,2})?$/.test(val);
+        }
+        return true;
+    }
+);
+
 const schema = yup.object().shape({
-    grossIncome: yup.number().min(0).required(),
-    salaryRange: yup.number().min(0).required(),
+    grossIncome: positiveDecimalNumber,
+    salaryRange: positiveDecimalNumber,
     pensionContributions: yup.object().shape({
-        autoEnrolment: yup.number().min(0).max(30).required(),
-        salarySacrifice: yup.number().min(0).required(),
-        personal: yup.number().min(0).required(),
+        autoEnrolment: positiveDecimalNumber.max(30),
+        salarySacrifice: positiveDecimalNumber,
+        personal: positiveDecimalNumber,
     }),
 });
 
