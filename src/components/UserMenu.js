@@ -153,6 +153,7 @@ export function UserMenu({ onUserInputsChange }) {
                                                         <InputGroup.Text>%</InputGroup.Text>
                                                         <Form.Control
                                                             type="number"
+                                                            inputmode="decimal"
                                                             name="pensionContributions.autoEnrolment"
                                                             value={values.pensionContributions.autoEnrolment}
                                                             onChange={handleInputChange}
@@ -183,6 +184,7 @@ export function UserMenu({ onUserInputsChange }) {
                                                         <InputGroup.Text>£</InputGroup.Text>
                                                         <Form.Control
                                                             type="number"
+                                                            inputmode="decimal"
                                                             name="pensionContributions.salarySacrifice"
                                                             value={values.pensionContributions.salarySacrifice}
                                                             onChange={handleInputChange}
@@ -202,6 +204,7 @@ export function UserMenu({ onUserInputsChange }) {
                                                         <InputGroup.Text>£</InputGroup.Text>
                                                         <Form.Control
                                                             type="number"
+                                                            inputmode="decimal"
                                                             name="pensionContributions.personal"
                                                             value={values.pensionContributions.personal}
                                                             onChange={handleInputChange}
@@ -256,6 +259,7 @@ export function UserMenu({ onUserInputsChange }) {
                                                             <InputGroup.Text>£</InputGroup.Text>
                                                             <Form.Control
                                                                 type="number"
+                                                                inputmode="decimal"
                                                                 name="grossIncome"
                                                                 value={values.grossIncome}
                                                                 onChange={handleInputChange}
@@ -278,6 +282,7 @@ export function UserMenu({ onUserInputsChange }) {
                                                             <InputGroup.Text>£</InputGroup.Text>
                                                             <Form.Control
                                                                 type="number"
+                                                                inputmode="decimal"
                                                                 name="salaryRange"
                                                                 value={values.salaryRange}
                                                                 onChange={handleInputChange}
