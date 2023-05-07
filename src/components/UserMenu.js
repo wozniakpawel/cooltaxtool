@@ -30,12 +30,35 @@ export const defaultInputs = {
     incomeAnalysis: false,
 };
 
+const hasEmptyString = (obj) => {
+    return Object.values(obj).some(value => {
+        if (typeof value === 'string') {
+            return value === '';
+        } else if (typeof value === 'object') {
+            return hasEmptyString(value);
+        }
+        return false;
+    });
+};
+
 const UseEffectWrapper = ({ onUserInputsChange }) => {
     const { values, errors } = useFormikContext();
 
+    const parseValuesToFloats = (values) => {
+        let parsedValues = { ...values };
+        parsedValues.grossIncome = parseFloat(parsedValues.grossIncome);
+        parsedValues.salaryRange = parseFloat(parsedValues.salaryRange);
+        parsedValues.pensionContributions.autoEnrolment = parseFloat(parsedValues.pensionContributions.autoEnrolment);
+        parsedValues.pensionContributions.salarySacrifice = parseFloat(parsedValues.pensionContributions.salarySacrifice);
+        parsedValues.pensionContributions.personal = parseFloat(parsedValues.pensionContributions.personal);
+        return parsedValues;
+    };
+
+    console.log(values, errors);
+
     useEffect(() => {
-        if (Object.keys(errors).length === 0) {
-            onUserInputsChange(values);
+        if (Object.keys(errors).length === 0 && !hasEmptyString(values)) {
+            onUserInputsChange(parseValuesToFloats(values));
         }
     }, [values, errors, onUserInputsChange]);
 
