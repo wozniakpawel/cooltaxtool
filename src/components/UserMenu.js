@@ -163,7 +163,9 @@ export function UserMenu({ onUserInputsChange }) {
                                                             max={30}
                                                             step={0.1}
                                                         />
-                                                        {errors.pensionContributions?.autoEnrolment ? <div className="text-danger">{errors.pensionContributions?.autoEnrolment}</div> : null}
+                                                        <Form.Control.Feedback type="invalid">
+                                                            {errors.pensionContributions?.autoEnrolment}
+                                                        </Form.Control.Feedback>
                                                     </InputGroup>
                                                 </Col>
                                                 <Col sm={4}>
@@ -193,7 +195,9 @@ export function UserMenu({ onUserInputsChange }) {
                                                             min={0}
                                                             step={100}
                                                         />
-                                                        {errors.pensionContributions?.salarySacrifice ? <div className="text-danger">{errors.pensionContributions?.salarySacrifice}</div> : null}
+                                                        <Form.Control.Feedback type="invalid">
+                                                            {errors.pensionContributions?.salarySacrifice}
+                                                        </Form.Control.Feedback>
                                                     </InputGroup>
                                                 </Col>
                                             </Form.Group>
@@ -213,7 +217,9 @@ export function UserMenu({ onUserInputsChange }) {
                                                             min={0}
                                                             step={100}
                                                         />
-                                                        {errors.pensionContributions?.personal ? <div className="text-danger">{errors.pensionContributions?.personal}</div> : null}
+                                                        <Form.Control.Feedback type="invalid">
+                                                            {errors.pensionContributions?.personal}
+                                                        </Form.Control.Feedback>
                                                     </InputGroup>
                                                 </Col>
                                                 <Col sm={4}>
@@ -268,7 +274,9 @@ export function UserMenu({ onUserInputsChange }) {
                                                                 min={0}
                                                                 step={1000}
                                                             />
-                                                            {errors.grossIncome ? <div className="text-danger">{errors.grossIncome}</div> : null}
+                                                            <Form.Control.Feedback type="invalid">
+                                                                {errors.grossIncome}
+                                                            </Form.Control.Feedback>
                                                         </InputGroup>
                                                     </Col>
                                                 </Form.Group>
@@ -291,7 +299,9 @@ export function UserMenu({ onUserInputsChange }) {
                                                                 min={10000}
                                                                 step={10000}
                                                             />
-                                                            {errors.salaryRange ? <div className="text-danger">{errors.salaryRange}</div> : null}
+                                                            <Form.Control.Feedback type="invalid">
+                                                                {errors.salaryRange}
+                                                            </Form.Control.Feedback>
                                                         </InputGroup>
                                                     </Col>
                                                 </Form.Group>
