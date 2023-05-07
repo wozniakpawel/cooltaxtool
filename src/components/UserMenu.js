@@ -7,7 +7,7 @@ const schema = yup.object().shape({
     grossIncome: yup.number().min(0).required(),
     salaryRange: yup.number().min(0).required(),
     pensionContributions: yup.object().shape({
-        autoEnrolment: yup.number().min(0).max(30).required(),
+        autoEnrolment: yup.number().min(0).required().max(30),
         salarySacrifice: yup.number().min(0).required(),
         personal: yup.number().min(0).required(),
     }),
@@ -30,23 +30,13 @@ export const defaultInputs = {
     incomeAnalysis: false,
 };
 
-const filterErrors = (values, errors) => {
-    return Object.keys(values).reduce((acc, key) => {
-        if (typeof values[key] === 'object' && typeof errors[key] === 'object') {
-            acc[key] = filterErrors(values[key], errors[key]);
-        } else if (!errors[key]) {
-            acc[key] = values[key];
-        }
-        return acc;
-    }, {});
-};
-
 const UseEffectWrapper = ({ onUserInputsChange }) => {
     const { values, errors } = useFormikContext();
 
     useEffect(() => {
-        const filteredValues = filterErrors(values, errors);
-        onUserInputsChange(filteredValues);
+        if (Object.keys(errors).length === 0) {
+            onUserInputsChange(values);
+        }
     }, [values, errors, onUserInputsChange]);
 
     return null;
@@ -62,7 +52,7 @@ export function UserMenu({ onUserInputsChange }) {
                     onSubmit={() => { }}
                 >
 
-                    {({ setFieldValue, values, errors, touched }) => {
+                    {({ setFieldValue, values, errors }) => {
                         const handleInputChange = (event) => {
                             const { name, value, type, checked } = event.target;
                             const newValue = type === 'checkbox' ? checked : value;
