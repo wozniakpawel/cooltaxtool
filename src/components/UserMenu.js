@@ -3,13 +3,18 @@ import { Container, Card, Row, Col, Form, Alert, Button, ButtonGroup, InputGroup
 import { Formik, useFormikContext } from 'formik';
 import * as yup from 'yup';
 
+const requiredPositiveNumber = yup.number("Must be a number.")
+    .min(0, "Must be a positive number.")
+    .required("Field required.");
+
 const schema = yup.object().shape({
-    grossIncome: yup.number().min(0).required(),
-    salaryRange: yup.number().min(0).required(),
+    grossIncome: requiredPositiveNumber,
+    salaryRange: requiredPositiveNumber,
     pensionContributions: yup.object().shape({
-        autoEnrolment: yup.number().min(0).required().max(30),
-        salarySacrifice: yup.number().min(0).required(),
-        personal: yup.number().min(0).required(),
+        autoEnrolment: requiredPositiveNumber
+            .max(30, "Must be less than or equal to 30."),
+        salarySacrifice: requiredPositiveNumber,
+        personal: requiredPositiveNumber,
     }),
 });
 
@@ -53,8 +58,6 @@ const UseEffectWrapper = ({ onUserInputsChange }) => {
         parsedValues.pensionContributions.personal = parseFloat(parsedValues.pensionContributions.personal);
         return parsedValues;
     };
-
-    console.log(values, errors);
 
     useEffect(() => {
         if (Object.keys(errors).length === 0 && !hasEmptyString(values)) {
