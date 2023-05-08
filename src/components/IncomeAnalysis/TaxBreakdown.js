@@ -1,7 +1,7 @@
 import React from "react";
-import { calculateTaxes } from "../utils/TaxCalc";
-import { Container, Table, Card } from "react-bootstrap";
-import { numberWithCommas } from "../utils/DisplayFormat";
+import { calculateTaxes } from "../../utils/TaxCalc";
+import { Table, Card } from "react-bootstrap";
+import { numberWithCommas } from "../../utils/DisplayFormat";
 
 const TaxBreakdown = (props) => {
   const results = calculateTaxes(props.inputs.grossIncome, props.inputs);
@@ -18,7 +18,6 @@ const TaxBreakdown = (props) => {
   }
 
   return (
-    <Container>
       <Card>
         <Card.Body>
           <Card.Title>
@@ -121,7 +120,6 @@ const TaxBreakdown = (props) => {
           </Table>
         </Card.Body>
       </Card>
-    </Container>
   );
 };
 

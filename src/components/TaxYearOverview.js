@@ -118,7 +118,7 @@ const TaxYearOverview = (props) => {
   }, [props.inputs]);
 
   return (
-    <Container fluid>
+    <Container>
       <Plot
         data={percentagePlotData}
         layout={props.plotThemer({

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
-import { Container } from "react-bootstrap";
-import { calculateTaxes } from "../utils/TaxCalc";
+import { calculateTaxes } from "../../utils/TaxCalc";
 
 const TaxSavingsVsPensionContributions = (props) => {
   const [taxSavingsPlotData, setTaxSavingsPlotData] = useState([]);
@@ -63,7 +62,7 @@ const TaxSavingsVsPensionContributions = (props) => {
       type: "scatter",
       mode: "lines",
       marker: { color: "#2ecc71" },
-      name: "Tax Savings (%)",
+      name: "Tax Savings as % of contributions",
       hovertemplate: "%{y:.1f}%",
     };
 
@@ -73,7 +72,7 @@ const TaxSavingsVsPensionContributions = (props) => {
       type: "scatter",
       mode: "lines",
       marker: { color: "#3498db" },
-      name: "Effective Tax Rate (%)",
+      name: "Effective Tax Rate",
       hovertemplate: "%{y:.1f}%",
     };
 
@@ -81,7 +80,6 @@ const TaxSavingsVsPensionContributions = (props) => {
   }, [props.inputs]);
 
   return (
-    <Container fluid>
       <Plot
         data={taxSavingsPlotData}
         layout={props.plotThemer({
@@ -91,7 +89,6 @@ const TaxSavingsVsPensionContributions = (props) => {
           yaxis: { title: "Percentage (%)" },
         })}
       />
-    </Container>
   );
 };
 
