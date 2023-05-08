@@ -149,7 +149,7 @@ export function UserMenu({ onUserInputsChange }) {
                                             <Form.Group as={Row} controlId="pensionContributions.autoEnrolment">
                                                 <Form.Label column sm={4}>Auto Enrolment</Form.Label>
                                                 <Col sm={4}>
-                                                    <InputGroup>
+                                                    <InputGroup hasValidation>
                                                         <InputGroup.Text>%</InputGroup.Text>
                                                         <Form.Control
                                                             type="number"
@@ -182,7 +182,7 @@ export function UserMenu({ onUserInputsChange }) {
                                             <Form.Group as={Row} controlId="pensionContributions.salarySacrifice">
                                                 <Form.Label column sm={4}>Salary/Bonus Sacrifice</Form.Label>
                                                 <Col sm={4}>
-                                                    <InputGroup>
+                                                    <InputGroup hasValidation>
                                                         <InputGroup.Text>£</InputGroup.Text>
                                                         <Form.Control
                                                             type="number"
@@ -204,7 +204,7 @@ export function UserMenu({ onUserInputsChange }) {
                                             <Form.Group as={Row} controlId="pensionContributions.personal">
                                                 <Form.Label column sm={4}>Personal Contributions</Form.Label>
                                                 <Col sm={4}>
-                                                    <InputGroup>
+                                                    <InputGroup hasValidation>
                                                         <InputGroup.Text>£</InputGroup.Text>
                                                         <Form.Control
                                                             type="number"
@@ -261,7 +261,7 @@ export function UserMenu({ onUserInputsChange }) {
                                                 <Form.Group as={Row} controlId="grossIncome">
                                                     <Form.Label column>Annual Gross Income</Form.Label>
                                                     <Col>
-                                                        <InputGroup>
+                                                        <InputGroup hasValidation>
                                                             <InputGroup.Text>£</InputGroup.Text>
                                                             <Form.Control
                                                                 type="number"
@@ -286,7 +286,7 @@ export function UserMenu({ onUserInputsChange }) {
                                                 <Form.Group as={Row} controlId="grossIncome">
                                                     <Form.Label column>Salary range</Form.Label>
                                                     <Col>
-                                                        <InputGroup>
+                                                        <InputGroup hasValidation>
                                                             <InputGroup.Text>£</InputGroup.Text>
                                                             <Form.Control
                                                                 type="number"
