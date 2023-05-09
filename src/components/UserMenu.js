@@ -3,6 +3,14 @@ import { Container, Card, Row, Col, Form, Alert, Button, ButtonGroup, InputGroup
 import { Formik, useFormikContext } from 'formik';
 import * as yup from 'yup';
 
+export const studentLoanOptions = [
+    { plan: 'plan1', label: 'Plan 1' },
+    { plan: 'plan2', label: 'Plan 2' },
+    { plan: 'plan4', label: 'Plan 4' },
+    { plan: 'plan5', label: 'Plan 5' },
+    { plan: 'postgrad', label: 'Postgraduate' },
+];
+
 const requiredPositiveNumber = yup.number("Must be a number.")
     .min(0, "Must be a positive number.")
     .required("Field required.");
@@ -20,7 +28,7 @@ const schema = yup.object().shape({
 
 export const defaultInputs = {
     taxYear: '2023/24',
-    studentLoan: 'none',
+    studentLoan: [],
     grossIncome: 0,
     salaryRange: 150000,
     residentInScotland: false,
@@ -81,8 +89,15 @@ export function UserMenu({ onUserInputsChange }) {
                     {({ setFieldValue, values, errors }) => {
                         const handleInputChange = (event) => {
                             const { name, value, type, checked } = event.target;
-                            const newValue = type === 'checkbox' ? checked : value;
-                            setFieldValue(name, newValue, true);
+                            if (name === "studentLoan") {
+                                const newStudentLoan = checked
+                                    ? [...values.studentLoan, value]
+                                    : values.studentLoan.filter(plan => plan !== value);
+                                setFieldValue(name, newStudentLoan, true);
+                            } else {
+                                const newValue = type === "checkbox" ? checked : value;
+                                setFieldValue(name, newValue, true);
+                            }
                         };
 
                         return (
@@ -110,20 +125,6 @@ export function UserMenu({ onUserInputsChange }) {
                                         }
                                     </Form.Group>
 
-                                    <Form.Group as={Row} controlId="studentLoan">
-                                        <Form.Label column>Student Loan</Form.Label>
-                                        <Col>
-                                            <Form.Control as="select" name="studentLoan" value={values.studentLoan} onChange={handleInputChange}>
-                                                <option value="none">No Student Loan</option>
-                                                <option value="plan1">Plan 1</option>
-                                                <option value="plan2">Plan 2</option>
-                                                <option value="plan4">Plan 4</option>
-                                                <option value="plan5">Plan 5</option>
-                                                <option value="postgrad">Postgraduate</option>
-                                            </Form.Control>
-                                        </Col>
-                                    </Form.Group>
-
                                     <Form.Group>
                                         <Form.Check
                                             type="switch"
@@ -142,6 +143,28 @@ export function UserMenu({ onUserInputsChange }) {
                                             onChange={handleInputChange}
                                         />
                                     </Form.Group>
+
+                                    <Card>
+                                        <Card.Body>
+                                            <Card.Title>Student Loans</Card.Title>
+                                            <Form.Group as={Row} controlId="studentLoan">
+                                                {/* <Form.Label column>Student Loans</Form.Label> */}
+                                                <Col>
+                                                    {studentLoanOptions.map(option => (
+                                                        <Form.Check
+                                                            key={option.plan}
+                                                            type="checkbox"
+                                                            label={option.label}
+                                                            name="studentLoan"
+                                                            value={option.plan}
+                                                            checked={values.studentLoan.includes(option.plan)}
+                                                            onChange={handleInputChange}
+                                                        />
+                                                    ))}
+                                                </Col>
+                                            </Form.Group>
+                                        </Card.Body>
+                                    </Card>
 
                                     <Card>
                                         <Card.Body>

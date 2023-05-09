@@ -1,4 +1,5 @@
 import { taxYears } from './TaxYears';
+import { studentLoanOptions } from '../components/UserMenu';
 
 // Calculate personal allowance taper
 export function calculateTaperedPersonalAllowance(income, constants) {
@@ -70,17 +71,32 @@ export function calculateNationalInsurance(income, constants, employer, noNI) {
 }
 
 // Calculate student loan repayments
-export function calculateStudentLoanRepayments(income, studentLoanPlan, constants) {
+export function calculateStudentLoanRepayments(income, studentLoanPlans, constants) {
     const { defaultRate, postgradRate, thresholds } = constants.studentLoan;
+    let total = 0;
+    const breakdown = [];
 
-    if (studentLoanPlan === 'none') return 0;
+    if (studentLoanPlans.length === 0) {
+        return {
+            total,
+            breakdown,
+        };
+    }
 
-    const planThreshold = thresholds[studentLoanPlan];
-    const rate = studentLoanPlan === 'postgrad' ? postgradRate : defaultRate;
+    studentLoanPlans.forEach(plan => {
+        const planThreshold = thresholds[plan];
+        const option = studentLoanOptions.find(option => option.plan === plan);
+        const rate = plan === "postgrad" ? postgradRate : defaultRate;
+        const amount = (income <= planThreshold) ? 0 : Math.floor((income - planThreshold) * rate);
 
-    if (income <= planThreshold) return 0;
+        total += amount;
+        breakdown.push({ rate: option.label, amount });
+    });
 
-    return Math.floor((income - planThreshold) * rate);
+    return {
+        total,
+        breakdown,
+    };
 }
 
 // Calculate the pension taper
@@ -157,7 +173,7 @@ export function calculateTaxes(grossIncome, options) {
     const incomeTax = calculateIncomeTax(taxableIncome, constants, options.residentInScotland);
 
     // 8. Calculate combined taxes
-    const combinedTaxes = incomeTax.total + employeeNI.total + studentLoanRepayments;
+    const combinedTaxes = incomeTax.total + employeeNI.total + studentLoanRepayments.total;
 
     // 9. Calculate how much you actually keep
     const takeHomePay = adjustedNetIncome - combinedTaxes;
