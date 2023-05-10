@@ -33,6 +33,7 @@ export const defaultInputs = {
     salaryRange: 150000,
     residentInScotland: false,
     noNI: false,
+    blind: false,
     pensionContributions: {
         autoEnrolment: 0,
         salarySacrifice: 0,
@@ -140,6 +141,14 @@ export function UserMenu({ onUserInputsChange }) {
                                             label="Exclude NI"
                                             name="noNI"
                                             checked={values.noNI}
+                                            onChange={handleInputChange}
+                                        />
+                                        <Form.Check
+                                            type="switch"
+                                            id="blind"
+                                            label="Blind"
+                                            name="blind"
+                                            checked={values.blind}
                                             onChange={handleInputChange}
                                         />
                                     </Form.Group>
