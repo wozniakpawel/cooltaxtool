@@ -1,5 +1,9 @@
 export const taxYears = {
     '2023/24': {
+        childBenefitRates: {
+            firstChildRate: 24.00,
+            additionalChildRate: 15.90,
+        },
         personalAllowance: {
             basicAllowance: 12570,
             taperThreshold: 100000,
@@ -40,6 +44,10 @@ export const taxYears = {
         },
     },
     '2022/23': {
+        childBenefitRates: {
+            firstChildRate: 21.80,
+            additionalChildRate: 14.45,
+        },
         personalAllowance: {
             basicAllowance: 12570,
             taperThreshold: 100000,
@@ -81,6 +89,10 @@ export const taxYears = {
         },
     },
     '2021/22': {
+        childBenefitRates: {
+            firstChildRate: 21.15,
+            additionalChildRate: 14.00,
+        },
         personalAllowance: {
             basicAllowance: 12570,
             taperThreshold: 100000,
@@ -121,6 +133,10 @@ export const taxYears = {
         },
     },
     '2020/21': {
+        childBenefitRates: {
+            firstChildRate: 21.05,
+            additionalChildRate: 13.95,
+        },
         personalAllowance: {
             basicAllowance: 12500,
             taperThreshold: 100000,
@@ -161,6 +177,10 @@ export const taxYears = {
         },
     },
     '2019/20': {
+        childBenefitRates: {
+            firstChildRate: 20.70,
+            additionalChildRate: 13.70,
+        },
         personalAllowance: {
             basicAllowance: 12500,
             taperThreshold: 100000,
@@ -201,6 +221,10 @@ export const taxYears = {
         },
     },
     '2018/19': {
+        childBenefitRates: {
+            firstChildRate: 20.70,
+            additionalChildRate: 13.70,
+        },
         personalAllowance: {
             basicAllowance: 11850,
             taperThreshold: 100000,
@@ -241,6 +265,10 @@ export const taxYears = {
         },
     },
     '2017/18': {
+        childBenefitRates: {
+            firstChildRate: 20.70,
+            additionalChildRate: 13.70,
+        },
         personalAllowance: {
             basicAllowance: 11500,
             taperThreshold: 100000,

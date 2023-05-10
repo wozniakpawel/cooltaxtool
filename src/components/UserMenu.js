@@ -1,7 +1,12 @@
 import { useEffect } from 'react';
-import { Container, Card, Row, Col, Form, Alert, Button, ButtonGroup, InputGroup } from 'react-bootstrap';
 import { Formik, useFormikContext } from 'formik';
+import NumberOfChildrenSelector from './NumberOfChildrenSelector';
 import * as yup from 'yup';
+
+import {
+    Container, Card, Row, Col, Form, Alert,
+    Button, ButtonGroup, InputGroup,
+} from 'react-bootstrap';
 
 export const studentLoanOptions = [
     { plan: 'plan1', label: 'Plan 1' },
@@ -34,6 +39,10 @@ export const defaultInputs = {
     residentInScotland: false,
     noNI: false,
     blind: false,
+    childBenefits: {
+        childBenefitsTaken: false,
+        numberOfChildren: 1,
+    },
     pensionContributions: {
         autoEnrolment: 0,
         salarySacrifice: 0,
@@ -151,6 +160,20 @@ export function UserMenu({ onUserInputsChange }) {
                                             checked={values.blind}
                                             onChange={handleInputChange}
                                         />
+                                        <Form.Check
+                                            type="switch"
+                                            id="childBenefits.childBenefitsTaken"
+                                            label="Child Benefits"
+                                            name="childBenefits.childBenefitsTaken"
+                                            checked={values.childBenefits.childBenefitsTaken}
+                                            onChange={handleInputChange}
+                                        />
+                                        {values.childBenefits.childBenefitsTaken &&
+                                            <NumberOfChildrenSelector
+                                                setFieldValue={setFieldValue}
+                                                values={values}
+                                            />
+                                        }
                                     </Form.Group>
 
                                     <Card>
