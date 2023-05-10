@@ -78,9 +78,10 @@ const TaxBreakdown = (props) => {
               <tr>
                 <td>Student Loan</td>
                 <td className="text-end">
-                  {numberWithCommas(results.studentLoanRepayments)}
+                  {numberWithCommas(results.studentLoanRepayments.total)}
                 </td>
               </tr>
+              {renderBreakDown(results.studentLoanRepayments.breakdown)}
               <tr>
                 <td>Total</td>
                 <td className="text-end">

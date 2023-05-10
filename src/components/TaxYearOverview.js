@@ -46,13 +46,14 @@ const TaxYearOverview = (props) => {
     );
 
     const taxData = grossIncomes.map((grossIncome) => {
-      const { incomeTax, employeeNI, employerNI, pensionPot, ...rest } =
+      const { incomeTax, employeeNI, employerNI, pensionPot, studentLoanRepayments, ...rest } =
         calculateTaxes(grossIncome, props.inputs);
       return {
         incomeTax: incomeTax.total,
         employeeNI: employeeNI.total,
         employerNI: employerNI.total,
         pensionPot: pensionPot.total,
+        studentLoanRepayments: studentLoanRepayments.total,
         ...rest,
       };
     });
@@ -62,7 +63,7 @@ const TaxYearOverview = (props) => {
       const deltaTaxes =
         taxData[i].combinedTaxes - taxData[i - 1].combinedTaxes;
       const deltaIncome = grossIncomes[i] - grossIncomes[i - 1];
-      marginalCombinedTaxes.push((deltaTaxes / deltaIncome) * 100);
+      marginalCombinedTaxes.push(Math.ceil((deltaTaxes / deltaIncome) * 100));
     }
 
     const createPlotData = (grossIncomes, dataArray, isPercentage = false) => {
@@ -72,7 +73,7 @@ const TaxYearOverview = (props) => {
             ((setting.key === "employeeNI" || setting.key === "employerNI") &&
               props.inputs.noNI) ||
             (setting.key === "studentLoanRepayments" &&
-              props.inputs.studentLoan === "none") ||
+              props.inputs.studentLoan === []) ||
             (setting.key === "personalAllowance" && isPercentage) ||
             (setting.key === "marginalCombinedTaxRate" && !isPercentage)
           ) {
