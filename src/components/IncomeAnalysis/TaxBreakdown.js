@@ -112,6 +112,13 @@ const TaxBreakdown = (props) => {
               </tr>
               {renderBreakDown(results.pensionPot.breakdown)}
               <tr>
+                <td>Child Benefits</td>
+                <td className="text-end">
+                  {numberWithCommas(results.childBenefits.total)}
+                </td>
+              </tr>
+              {renderBreakDown(results.childBenefits.breakdown)}
+              <tr>
                 <td>Total</td>
                 <td className="text-end">
                   {numberWithCommas(results.yourMoney)}

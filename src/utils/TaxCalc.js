@@ -130,10 +130,10 @@ export function calculateChildBenefits(adjustedNetIncome, childBenefits, childBe
     if (adjustedNetIncome > HICBCThreshold) {
         const incomeExcess = adjustedNetIncome - HICBCThreshold;
         const chargePercentage = Math.min(100, Math.floor(incomeExcess / 100));
-        HICBC = (childBenefitAmount * chargePercentage) / 100;
+        HICBC = - (childBenefitAmount * chargePercentage) / 100;
     }
 
-    const total = childBenefitAmount - HICBC;
+    const total = childBenefitAmount + HICBC;
 
     return {
         total,
