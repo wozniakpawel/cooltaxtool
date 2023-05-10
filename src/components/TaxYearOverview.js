@@ -20,6 +20,7 @@ const plotSettings = [
     color: "#c0392b",
     label: "Combined taxes (IT, EE NI, SL)",
   },
+  { key: "childBenefits", color: "35cc71", label: "Child Benefits (incl. HICBC)", dashed: true },
   { key: "takeHomePay", color: "#2ecc71", label: "Take Home Pay" },
   { key: "pensionPot", color: "#27ae60", label: "Pension Pot" },
   {
@@ -46,7 +47,7 @@ const TaxYearOverview = (props) => {
     );
 
     const taxData = grossIncomes.map((grossIncome) => {
-      const { incomeTax, employeeNI, employerNI, pensionPot, studentLoanRepayments, ...rest } =
+      const { incomeTax, employeeNI, employerNI, pensionPot, studentLoanRepayments, childBenefits, ...rest } =
         calculateTaxes(grossIncome, props.inputs);
       return {
         incomeTax: incomeTax.total,
@@ -54,6 +55,7 @@ const TaxYearOverview = (props) => {
         employerNI: employerNI.total,
         pensionPot: pensionPot.total,
         studentLoanRepayments: studentLoanRepayments.total,
+        childBenefits: childBenefits.total,
         ...rest,
       };
     });
@@ -75,34 +77,24 @@ const TaxYearOverview = (props) => {
             (setting.key === "studentLoanRepayments" &&
               props.inputs.studentLoan === []) ||
             (setting.key === "personalAllowance" && isPercentage) ||
-            (setting.key === "marginalCombinedTaxRate" && !isPercentage)
+            (setting.key === "marginalCombinedTaxRate" && !isPercentage) ||
+            (setting.key === "childBenefits" && !props.inputs.childBenefits.childBenefitsTaken)
           ) {
             return null;
           }
 
           const hoverTemplate = isPercentage ? "%{y:.1f}%" : "£%{y:,.2f}";
 
-          if (setting.key === "marginalCombinedTaxRate" && isPercentage) {
-            return {
-              x: grossIncomes.slice(1),
-              y: marginalCombinedTaxes,
-              type: "scatter",
-              mode: "lines",
-              line: { dash: "dash", color: setting.color },
-              name: setting.label,
-              hovertemplate: hoverTemplate,
-            };
-          }
           return {
-            x: grossIncomes,
-            y: dataArray.map((data) => {
+            x: (setting.key === "marginalCombinedTaxRate") ? grossIncomes.slice(1) : grossIncomes,
+            y: (setting.key === "marginalCombinedTaxRate") ? marginalCombinedTaxes : dataArray.map((data) => {
               const value = isPercentage
                 ? (data[setting.key] / data["grossIncome"]) * 100
                 : data[setting.key];
               return isPercentage ? Math.max(0, Math.min(100, value)) : value;
             }),
             type: "scatter",
-            mode: "lines",
+            line: { dash: setting.dashed ? "dash" : "line"},
             marker: { color: setting.color },
             name: setting.label,
             hovertemplate: hoverTemplate,

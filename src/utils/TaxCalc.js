@@ -111,6 +111,39 @@ export function calculateStudentLoanRepayments(income, studentLoanPlans, constan
     };
 }
 
+export function calculateChildBenefits(adjustedNetIncome, childBenefits, childBenefitRates) {
+    const HICBCThreshold = 50000;
+    const { firstChildRate, additionalChildRate } = childBenefitRates;
+
+    if (!childBenefits.childBenefitsTaken) {
+        return {
+            total: 0,
+            breakdown: [],
+        };
+    }
+
+    const firstChildAmount = firstChildRate * 52;
+    const additionalChildrenAmount = (childBenefits.numberOfChildren - 1) * additionalChildRate * 52;
+    const childBenefitAmount = firstChildAmount + additionalChildrenAmount;
+
+    let HICBC = 0;
+    if (adjustedNetIncome > HICBCThreshold) {
+        const incomeExcess = adjustedNetIncome - HICBCThreshold;
+        const chargePercentage = Math.min(100, Math.floor(incomeExcess / 100));
+        HICBC = (childBenefitAmount * chargePercentage) / 100;
+    }
+
+    const total = childBenefitAmount - HICBC;
+
+    return {
+        total,
+        breakdown: [
+            { rate: "Child Benefits", amount: childBenefitAmount },
+            { rate: "HICBC", amount: HICBC },
+        ],
+    };
+}
+
 // Calculate the pension taper
 // export function calculatePensionTaper(income, pensionContributions, constants) {
 //     const { taperThreshold, taperRate } = constants.pensionTaper;
@@ -187,9 +220,12 @@ export function calculateTaxes(grossIncome, options) {
     // 8. Calculate combined taxes
     const combinedTaxes = incomeTax.total + employeeNI.total + studentLoanRepayments.total;
 
+    // Calculate child benefits
+    const childBenefits = calculateChildBenefits(adjustedNetIncome, options.childBenefits, constants.childBenefitRates);
+
     // 9. Calculate how much you actually keep
     const takeHomePay = adjustedNetIncome - combinedTaxes;
-    const yourMoney = pensionPot.total + takeHomePay;
+    const yourMoney = pensionPot.total + takeHomePay + childBenefits.total;
 
     return {
         grossIncome,
@@ -201,6 +237,7 @@ export function calculateTaxes(grossIncome, options) {
         employerNI,
         studentLoanRepayments,
         combinedTaxes,
+        childBenefits,
         takeHomePay,
         pensionPot,
         yourMoney,
