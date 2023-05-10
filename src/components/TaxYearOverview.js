@@ -63,7 +63,7 @@ const TaxYearOverview = (props) => {
       const deltaTaxes =
         taxData[i].combinedTaxes - taxData[i - 1].combinedTaxes;
       const deltaIncome = grossIncomes[i] - grossIncomes[i - 1];
-      marginalCombinedTaxes.push((deltaTaxes / deltaIncome) * 100);
+      marginalCombinedTaxes.push(Math.ceil((deltaTaxes / deltaIncome) * 100));
     }
 
     const createPlotData = (grossIncomes, dataArray, isPercentage = false) => {
