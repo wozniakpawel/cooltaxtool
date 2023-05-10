@@ -1,14 +1,26 @@
 import { taxYears } from './TaxYears';
 import { studentLoanOptions } from '../components/UserMenu';
 
-// Calculate personal allowance taper
-export function calculateTaperedPersonalAllowance(income, constants) {
-    const { basicAllowance, taperThreshold } = constants.personalAllowance;
+// Calculate allowance (considering personal allowance with taper & blind person's allowance)
+export function calculateAllowance(income, isBlind, constants) {
+    const {
+        basicAllowance,
+        taperThreshold,
+        blindPersonsAllowance,
+    } = constants.personalAllowance;
+
+    let allowance = basicAllowance;
+
     if (income > taperThreshold) {
         const reduction = Math.floor((income - taperThreshold) / 2);
-        return Math.max(0, basicAllowance - reduction);
+        allowance = Math.max(0, basicAllowance - reduction);
     }
-    return basicAllowance;
+
+    if (isBlind) {
+        allowance += blindPersonsAllowance;
+    }
+
+    return allowance;
 }
 
 // Calculate income tax
@@ -163,8 +175,8 @@ export function calculateTaxes(grossIncome, options) {
     // 4. Calculate student loan repayments
     const studentLoanRepayments = calculateStudentLoanRepayments(incomeAfterSalarySacrifice, options.studentLoan, constants);
 
-    // 5. Determine the personal allowance (considering taper)
-    const personalAllowance = calculateTaperedPersonalAllowance(adjustedNetIncome, constants);
+    // 5. Determine the personal allowance (considering taper and blind person's allowance)
+    const personalAllowance = calculateAllowance(adjustedNetIncome, options.blind, constants);
 
     // 6. Calculate taxable income
     const taxableIncome = Math.max(0, adjustedNetIncome - personalAllowance);

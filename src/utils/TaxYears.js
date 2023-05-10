@@ -3,6 +3,7 @@ export const taxYears = {
         personalAllowance: {
             basicAllowance: 12570,
             taperThreshold: 100000,
+            blindPersonsAllowance: 2870,
         },
         nationalInsurance: {
             lowerEarningsLimit: 6396,
@@ -42,6 +43,7 @@ export const taxYears = {
         personalAllowance: {
             basicAllowance: 12570,
             taperThreshold: 100000,
+            blindPersonsAllowance: 2600,
         },
         // NI for 2022/23 will just be an estimate, due to the varying rates and thresholds
         nationalInsurance: {
@@ -82,6 +84,7 @@ export const taxYears = {
         personalAllowance: {
             basicAllowance: 12570,
             taperThreshold: 100000,
+            blindPersonsAllowance: 2520,
         },
         nationalInsurance: {
             lowerEarningsLimit: 6240,
@@ -121,6 +124,7 @@ export const taxYears = {
         personalAllowance: {
             basicAllowance: 12500,
             taperThreshold: 100000,
+            blindPersonsAllowance: 2500,
         },
         nationalInsurance: {
             lowerEarningsLimit: 6240,
@@ -160,6 +164,7 @@ export const taxYears = {
         personalAllowance: {
             basicAllowance: 12500,
             taperThreshold: 100000,
+            blindPersonsAllowance: 2450,
         },
         nationalInsurance: {
             lowerEarningsLimit: 6136,
@@ -199,6 +204,7 @@ export const taxYears = {
         personalAllowance: {
             basicAllowance: 11850,
             taperThreshold: 100000,
+            blindPersonsAllowance: 2390,
         },
         nationalInsurance: {
             lowerEarningsLimit: 6032,
@@ -238,6 +244,7 @@ export const taxYears = {
         personalAllowance: {
             basicAllowance: 11500,
             taperThreshold: 100000,
+            blindPersonsAllowance: 2320,
         },
         nationalInsurance: {
             lowerEarningsLimit: 5876,
