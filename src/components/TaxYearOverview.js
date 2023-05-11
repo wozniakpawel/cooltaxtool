@@ -5,7 +5,7 @@ import { calculateTaxes } from "../utils/TaxCalc";
 
 const plotSettings = [
   { key: "adjustedNetIncome", color: "#3498db", label: "Adjusted Net Income" },
-  { key: "personalAllowance", color: "#1abc9c", label: "Personal Allowance" },
+  { key: "taxAllowance", color: "#1abc9c", label: "Tax Allowance" },
   { key: "taxableIncome", color: "#2980b9", label: "Taxable Income" },
   { key: "incomeTax", color: "#8e44ad", label: "Income Tax" },
   { key: "employeeNI", color: "#e74c3c", label: "Employee NI Contributions" },
@@ -76,7 +76,7 @@ const TaxYearOverview = (props) => {
               props.inputs.noNI) ||
             (setting.key === "studentLoanRepayments" &&
               props.inputs.studentLoan === []) ||
-            (setting.key === "personalAllowance" && isPercentage) ||
+            (setting.key === "taxAllowance" && isPercentage) ||
             (setting.key === "marginalCombinedTaxRate" && !isPercentage) ||
             (setting.key === "childBenefits" && !props.inputs.childBenefits.childBenefitsTaken)
           ) {
