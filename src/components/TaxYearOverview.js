@@ -75,7 +75,7 @@ const TaxYearOverview = (props) => {
             ((setting.key === "employeeNI" || setting.key === "employerNI") &&
               props.inputs.noNI) ||
             (setting.key === "studentLoanRepayments" &&
-              props.inputs.studentLoan === []) ||
+              props.inputs.studentLoan.length === 0) ||
             (setting.key === "taxAllowance" && isPercentage) ||
             (setting.key === "marginalCombinedTaxRate" && !isPercentage) ||
             (setting.key === "childBenefits" && !props.inputs.childBenefits.childBenefitsTaken)
