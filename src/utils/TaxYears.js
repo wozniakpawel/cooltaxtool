@@ -4,7 +4,7 @@ export const taxYears = {
             firstChildRate: 24.00,
             additionalChildRate: 15.90,
         },
-        personalAllowance: {
+        taxAllowance: {
             basicAllowance: 12570,
             taperThreshold: 100000,
             blindPersonsAllowance: 2870,
@@ -48,7 +48,7 @@ export const taxYears = {
             firstChildRate: 21.80,
             additionalChildRate: 14.45,
         },
-        personalAllowance: {
+        taxAllowance: {
             basicAllowance: 12570,
             taperThreshold: 100000,
             blindPersonsAllowance: 2600,
@@ -93,7 +93,7 @@ export const taxYears = {
             firstChildRate: 21.15,
             additionalChildRate: 14.00,
         },
-        personalAllowance: {
+        taxAllowance: {
             basicAllowance: 12570,
             taperThreshold: 100000,
             blindPersonsAllowance: 2520,
@@ -137,7 +137,7 @@ export const taxYears = {
             firstChildRate: 21.05,
             additionalChildRate: 13.95,
         },
-        personalAllowance: {
+        taxAllowance: {
             basicAllowance: 12500,
             taperThreshold: 100000,
             blindPersonsAllowance: 2500,
@@ -181,7 +181,7 @@ export const taxYears = {
             firstChildRate: 20.70,
             additionalChildRate: 13.70,
         },
-        personalAllowance: {
+        taxAllowance: {
             basicAllowance: 12500,
             taperThreshold: 100000,
             blindPersonsAllowance: 2450,
@@ -225,7 +225,7 @@ export const taxYears = {
             firstChildRate: 20.70,
             additionalChildRate: 13.70,
         },
-        personalAllowance: {
+        taxAllowance: {
             basicAllowance: 11850,
             taperThreshold: 100000,
             blindPersonsAllowance: 2390,
@@ -269,7 +269,7 @@ export const taxYears = {
             firstChildRate: 20.70,
             additionalChildRate: 13.70,
         },
-        personalAllowance: {
+        taxAllowance: {
             basicAllowance: 11500,
             taperThreshold: 100000,
             blindPersonsAllowance: 2320,

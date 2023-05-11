@@ -43,7 +43,7 @@ const TaxBreakdown = (props) => {
           <tbody>
             {renderSingleValue("Gross Income", results.grossIncome)}
             {renderSingleValue("Adjusted Net Income", results.adjustedNetIncome)}
-            {renderSingleValue("Personal Allowance", results.personalAllowance)}
+            {renderSingleValue("Tax Allowance", results.taxAllowance)}
             {renderBreakDown("Employer NI", results.employerNI)}
           </tbody>
         </Table>

@@ -7,7 +7,7 @@ export function calculateAllowance(income, isBlind, constants) {
         basicAllowance,
         taperThreshold,
         blindPersonsAllowance,
-    } = constants.personalAllowance;
+    } = constants.taxAllowance;
 
     let allowance = basicAllowance;
 
@@ -208,11 +208,11 @@ export function calculateTaxes(grossIncome, options) {
     // 4. Calculate student loan repayments
     const studentLoanRepayments = calculateStudentLoanRepayments(incomeAfterSalarySacrifice, options.studentLoan, constants);
 
-    // 5. Determine the personal allowance (considering taper and blind person's allowance)
-    const personalAllowance = calculateAllowance(adjustedNetIncome, options.blind, constants);
+    // 5. Determine the tax allowance (considering personal allowance taper and blind person's allowance)
+    const taxAllowance = calculateAllowance(adjustedNetIncome, options.blind, constants);
 
     // 6. Calculate taxable income
-    const taxableIncome = Math.max(0, adjustedNetIncome - personalAllowance);
+    const taxableIncome = Math.max(0, adjustedNetIncome - taxAllowance);
 
     // 7. Calculate income tax
     const incomeTax = calculateIncomeTax(taxableIncome, constants, options.residentInScotland);
@@ -230,7 +230,7 @@ export function calculateTaxes(grossIncome, options) {
     return {
         grossIncome,
         adjustedNetIncome,
-        personalAllowance,
+        taxAllowance,
         taxableIncome,
         incomeTax,
         employeeNI,
