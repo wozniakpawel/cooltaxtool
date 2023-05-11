@@ -94,7 +94,7 @@ const TaxYearOverview = (props) => {
               return isPercentage ? Math.max(0, Math.min(100, value)) : value;
             }),
             type: "scatter",
-            line: { dash: setting.dashed ? "dash" : "line"},
+            line: { dash: setting.dashed ? "dash" : "line" },
             marker: { color: setting.color },
             name: setting.label,
             hovertemplate: hoverTemplate,
