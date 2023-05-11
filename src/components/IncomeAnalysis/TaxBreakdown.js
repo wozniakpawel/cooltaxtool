@@ -12,7 +12,7 @@ const TaxBreakdown = (props) => {
         <td className="small" style={{ paddingLeft: "2em" }}>{`${
           isNaN(tax.rate) ? tax.rate : (tax.rate * 100).toFixed(2) + "%"
         }`}</td>
-        <td className="text-end small">{numberWithCommas(tax.amount)}</td>
+        <td className="text-end small" style={{ paddingRight: "2em" }}>{numberWithCommas(tax.amount)}</td>
       </tr>
     ));
   }
