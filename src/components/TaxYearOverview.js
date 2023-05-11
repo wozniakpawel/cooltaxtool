@@ -75,7 +75,7 @@ const TaxYearOverview = (props) => {
             ((setting.key === "employeeNI" || setting.key === "employerNI") &&
               props.inputs.noNI) ||
             (setting.key === "studentLoanRepayments" &&
-              props.inputs.studentLoan === []) ||
+              props.inputs.studentLoan.length === 0) ||
             (setting.key === "taxAllowance" && isPercentage) ||
             (setting.key === "marginalCombinedTaxRate" && !isPercentage) ||
             (setting.key === "childBenefits" && !props.inputs.childBenefits.childBenefitsTaken)
@@ -94,7 +94,8 @@ const TaxYearOverview = (props) => {
               return isPercentage ? Math.max(0, Math.min(100, value)) : value;
             }),
             type: "scatter",
-            line: { dash: setting.dashed ? "dash" : "line"},
+            mode: "lines",
+            line: { dash: setting.dashed ? "dash" : "solid" },
             marker: { color: setting.color },
             name: setting.label,
             hovertemplate: hoverTemplate,

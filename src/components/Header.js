@@ -1,18 +1,23 @@
 import React from "react";
-import { Navbar, Container } from "react-bootstrap";
+import { Navbar, Container, Row } from "react-bootstrap";
 
-const Header = (props) => {
+const Header = () => {
   return (
     <Navbar>
       <Container className="justify-content-center large">
         <Navbar.Brand>
-          <h1>
-            <strong>
-            <span className="text-primary">Cool</span>
-            <span className="text-danger">Tax</span>
-            <span className="text-primary">Tool</span>
-            </strong>
-          </h1>
+          <Row>
+            <h1>
+              <strong>
+                <span className="text-primary">Cool</span>
+                <span className="text-danger">Tax</span>
+                <span className="text-primary">Tool</span>
+              </strong>
+            </h1>
+          </Row>
+          <Row className="text-primary">
+            UK Tax Calculator & Visualiser
+          </Row>
         </Navbar.Brand>
       </Container>
     </Navbar>

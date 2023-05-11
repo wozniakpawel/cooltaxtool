@@ -49,7 +49,7 @@ const TaxSavingsVsPensionContributions = (props) => {
         Math.min(
           100,
           (taxesWithVoluntaryPension.combinedTaxes / props.inputs.grossIncome) *
-            100
+          100
         )
       );
 
@@ -80,15 +80,15 @@ const TaxSavingsVsPensionContributions = (props) => {
   }, [props.inputs]);
 
   return (
-      <Plot
-        data={taxSavingsPlotData}
-        layout={props.plotThemer({
-          hovermode: "x",
-          title: "Tax Savings and Effective Tax Rate vs Pension Contributions",
-          xaxis: { title: "Pension Contributions (£)" },
-          yaxis: { title: "Percentage (%)" },
-        })}
-      />
+    <Plot
+      data={taxSavingsPlotData}
+      layout={props.plotThemer({
+        hovermode: "x",
+        title: "Tax Savings and Effective Tax Rate vs Pension Contributions",
+        xaxis: { title: "Pension Contributions (£)" },
+        yaxis: { title: "Percentage (%)" },
+      })}
+    />
   );
 };
 
