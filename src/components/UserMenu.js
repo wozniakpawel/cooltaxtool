@@ -21,8 +21,9 @@ const requiredPositiveNumber = yup.number("Must be a number.")
     .required("Field required.");
 
 const schema = yup.object().shape({
-    grossIncome: requiredPositiveNumber,
-    salaryRange: requiredPositiveNumber,
+    annualGrossSalary: requiredPositiveNumber,
+    annualGrossBonus: requiredPositiveNumber,
+    annualGrossIncomeRange: requiredPositiveNumber,
     pensionContributions: yup.object().shape({
         autoEnrolment: requiredPositiveNumber
             .max(30, "Must be less than or equal to 30."),
@@ -34,8 +35,9 @@ const schema = yup.object().shape({
 export const defaultInputs = {
     taxYear: '2023/24',
     studentLoan: [],
-    grossIncome: 0,
-    salaryRange: 150000,
+    annualGrossSalary: 0,
+    annualGrossBonus: 0,
+    annualGrossIncomeRange: 150000,
     residentInScotland: false,
     noNI: false,
     blind: false,
@@ -69,8 +71,9 @@ const UseEffectWrapper = ({ onUserInputsChange }) => {
 
     const parseValuesToFloats = (values) => {
         let parsedValues = { ...values };
-        parsedValues.grossIncome = parseFloat(parsedValues.grossIncome);
-        parsedValues.salaryRange = parseFloat(parsedValues.salaryRange);
+        parsedValues.annualGrossSalary = parseFloat(parsedValues.annualGrossSalary);
+        parsedValues.annualGrossBonus = parseFloat(parsedValues.annualGrossBonus);
+        parsedValues.annualGrossIncomeRange = parseFloat(parsedValues.annualGrossIncomeRange);
         parsedValues.pensionContributions.autoEnrolment = parseFloat(parsedValues.pensionContributions.autoEnrolment);
         parsedValues.pensionContributions.salarySacrifice = parseFloat(parsedValues.pensionContributions.salarySacrifice);
         parsedValues.pensionContributions.personal = parseFloat(parsedValues.pensionContributions.personal);
@@ -313,49 +316,74 @@ export function UserMenu({ onUserInputsChange }) {
                                             </ButtonGroup>
 
                                             {values.incomeAnalysis &&
-                                                <Form.Group as={Row} controlId="grossIncome">
-                                                    <Form.Label column>Annual Gross Income</Form.Label>
-                                                    <Col>
-                                                        <InputGroup hasValidation>
-                                                            <InputGroup.Text>£</InputGroup.Text>
-                                                            <Form.Control
-                                                                type="number"
-                                                                inputMode="decimal"
-                                                                name="grossIncome"
-                                                                value={values.grossIncome}
-                                                                onChange={handleInputChange}
-                                                                isValid={!errors.grossIncome}
-                                                                isInvalid={!!errors.grossIncome}
-                                                                min={0}
-                                                                step={1000}
-                                                            />
-                                                            <Form.Control.Feedback type="invalid">
-                                                                {errors.grossIncome}
-                                                            </Form.Control.Feedback>
-                                                        </InputGroup>
-                                                    </Col>
-                                                </Form.Group>
+                                                <>
+                                                    <Form.Group as={Row} controlId="annualGrossSalary">
+                                                        <Form.Label column>Annual Gross Salary</Form.Label>
+                                                        <Col>
+                                                            <InputGroup hasValidation>
+                                                                <InputGroup.Text>£</InputGroup.Text>
+                                                                <Form.Control
+                                                                    type="number"
+                                                                    inputMode="decimal"
+                                                                    name="annualGrossSalary"
+                                                                    value={values.annualGrossSalary}
+                                                                    onChange={handleInputChange}
+                                                                    isValid={!errors.annualGrossSalary}
+                                                                    isInvalid={!!errors.annualGrossSalary}
+                                                                    min={0}
+                                                                    step={1000}
+                                                                />
+                                                                <Form.Control.Feedback type="invalid">
+                                                                    {errors.annualGrossSalary}
+                                                                </Form.Control.Feedback>
+                                                            </InputGroup>
+                                                        </Col>
+                                                    </Form.Group>
+
+                                                    <Form.Group as={Row} controlId="annualGrossBonus">
+                                                        <Form.Label column>Annual Gross Bonus</Form.Label>
+                                                        <Col>
+                                                            <InputGroup hasValidation>
+                                                                <InputGroup.Text>£</InputGroup.Text>
+                                                                <Form.Control
+                                                                    type="number"
+                                                                    inputMode="decimal"
+                                                                    name="annualGrossBonus"
+                                                                    value={values.annualGrossBonus}
+                                                                    onChange={handleInputChange}
+                                                                    isValid={!errors.annualGrossBonus}
+                                                                    isInvalid={!!errors.annualGrossBonus}
+                                                                    min={0}
+                                                                    step={1000}
+                                                                />
+                                                                <Form.Control.Feedback type="invalid">
+                                                                    {errors.annualGrossBonus}
+                                                                </Form.Control.Feedback>
+                                                            </InputGroup>
+                                                        </Col>
+                                                    </Form.Group>
+                                                </>
                                             }
 
                                             {!values.incomeAnalysis &&
-                                                <Form.Group as={Row} controlId="grossIncome">
-                                                    <Form.Label column>Salary range</Form.Label>
+                                                <Form.Group as={Row} controlId="annualGrossIncomeRange">
+                                                    <Form.Label column>Annual Gross Income range</Form.Label>
                                                     <Col>
                                                         <InputGroup hasValidation>
                                                             <InputGroup.Text>£</InputGroup.Text>
                                                             <Form.Control
                                                                 type="number"
                                                                 inputMode="decimal"
-                                                                name="salaryRange"
-                                                                value={values.salaryRange}
+                                                                name="annualGrossIncomeRange"
+                                                                value={values.annualGrossIncomeRange}
                                                                 onChange={handleInputChange}
-                                                                isValid={!errors.salaryRange}
-                                                                isInvalid={!!errors.salaryRange}
+                                                                isValid={!errors.annualGrossIncomeRange}
+                                                                isInvalid={!!errors.annualGrossIncomeRange}
                                                                 min={10000}
                                                                 step={10000}
                                                             />
                                                             <Form.Control.Feedback type="invalid">
-                                                                {errors.salaryRange}
+                                                                {errors.annualGrossIncomeRange}
                                                             </Form.Control.Feedback>
                                                         </InputGroup>
                                                     </Col>

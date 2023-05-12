@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
-import { calculateTaxes } from "../../utils/TaxCalc";
+import { calculateAnnualGrossIncome, calculateTaxes } from "../../utils/TaxCalc";
 
 const TaxSavingsVsPensionContributions = (props) => {
   const [taxSavingsPlotData, setTaxSavingsPlotData] = useState([]);
 
   useEffect(() => {
+    const annualGrossIncome = calculateAnnualGrossIncome(
+      props.inputs.annualGrossSalary, props.inputs.annualGrossBonus
+    ).total;
+
     const pensionContributions = Array.from(
       { length: 1000 },
-      (_, i) => (i * props.inputs.grossIncome) / 1000
+      (_, i) => (i * annualGrossIncome) / 1000
     );
 
     const taxSavingsData = pensionContributions.map((pensionContribution) => {
@@ -28,14 +32,9 @@ const TaxSavingsVsPensionContributions = (props) => {
         },
       };
 
-      const taxesWithVoluntaryPension = calculateTaxes(
-        props.inputs.grossIncome,
-        inputsWithVoluntaryPension
-      );
-      const taxesWithoutVoluntaryPension = calculateTaxes(
-        props.inputs.grossIncome,
-        inputsWithoutVoluntaryPension
-      );
+      const taxesWithVoluntaryPension = calculateTaxes(inputsWithVoluntaryPension);
+      const taxesWithoutVoluntaryPension = calculateTaxes(inputsWithoutVoluntaryPension);
+
 
       const taxSavings =
         taxesWithoutVoluntaryPension.combinedTaxes -
@@ -48,8 +47,7 @@ const TaxSavingsVsPensionContributions = (props) => {
         0,
         Math.min(
           100,
-          (taxesWithVoluntaryPension.combinedTaxes / props.inputs.grossIncome) *
-          100
+          (taxesWithVoluntaryPension.combinedTaxes / annualGrossIncome) * 100
         )
       );
 
