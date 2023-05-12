@@ -109,15 +109,37 @@ export function calculateStudentLoanRepayments(income, studentLoanPlans, constan
         };
     }
 
-    studentLoanPlans.forEach(plan => {
-        const planThreshold = thresholds[plan];
+    // Filter postgraduate plan and sort the rest in ascending order of thresholds
+    const nonPostgradPlans = studentLoanPlans
+        .filter(plan => plan !== "postgrad")
+        .sort((a, b) => thresholds[a] - thresholds[b]);
+
+    // Calculate repayments for non-postgraduate plans
+    // If you selected multiple non-postgraduate plans,
+    // you will still pay the same you would with only one non-postgraduate plan
+    // but the payments will be split between the plans based on their thresholds
+    nonPostgradPlans.forEach((plan, index) => {
         const option = studentLoanOptions.find(option => option.plan === plan);
-        const rate = plan === "postgrad" ? postgradRate : defaultRate;
-        const amount = (income <= planThreshold) ? 0 : Math.floor((income - planThreshold) * rate);
+        let amount;
+
+        if (index === nonPostgradPlans.length - 1) {
+            amount = (income <= thresholds[plan]) ? 0 : Math.floor((income - thresholds[plan]) * defaultRate);
+        } else {
+            amount = (income <= thresholds[plan]) ? 0 : Math.floor((Math.min(income, thresholds[nonPostgradPlans[index + 1]]) - thresholds[plan]) * defaultRate);
+        }
 
         total += amount;
         breakdown.push({ rate: option.label, amount });
     });
+
+    // Calculate repayments for postgraduate plan
+    // Postgraduate plan repayments are paid on top of all the other plans
+    if (studentLoanPlans.includes("postgrad")) {
+        const option = studentLoanOptions.find(option => option.plan === "postgrad");
+        const amount = (income <= thresholds["postgrad"]) ? 0 : Math.floor((income - thresholds["postgrad"]) * postgradRate);
+        total += amount;
+        breakdown.push({ rate: option.label, amount });
+    }
 
     return {
         total,
