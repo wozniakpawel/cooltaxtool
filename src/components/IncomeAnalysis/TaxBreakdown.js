@@ -4,7 +4,7 @@ import { Table, Card } from "react-bootstrap";
 import { numberWithCommas } from "../../utils/DisplayFormat";
 
 const TaxBreakdown = (props) => {
-  const results = calculateTaxes(props.inputs.grossIncome, props.inputs);
+  const results = calculateTaxes(props.inputs);
 
   function renderSingleValue(name, value) {
     return (
@@ -36,14 +36,14 @@ const TaxBreakdown = (props) => {
     <Card>
       <Card.Body>
         <Card.Title>
-          Tax breakdown for {numberWithCommas(props.inputs.grossIncome)}
+          Tax breakdown
         </Card.Title>
 
         <Table size="sm">
           <tbody>
-            {renderSingleValue("Gross Income", results.grossIncome)}
+            {renderBreakDown("Annual Gross Income", results.annualGrossIncome)}
             {renderSingleValue("Adjusted Net Income", results.adjustedNetIncome)}
-            {renderSingleValue("Tax Allowance", results.taxAllowance)}
+            {renderBreakDown("Tax Allowance", results.taxAllowance)}
             {renderBreakDown("Employer NI", results.employerNI)}
           </tbody>
         </Table>

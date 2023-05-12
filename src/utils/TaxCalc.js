@@ -1,26 +1,40 @@
 import { taxYears } from './TaxYears';
 import { studentLoanOptions } from '../components/UserMenu';
 
-// Calculate allowance (considering personal allowance with taper & blind person's allowance)
-export function calculateAllowance(income, isBlind, constants) {
+// Gross Income = Salary + Bonuses + Other Income (Dividends, Rental Income, etc.)
+export function calculateAnnualGrossIncome(annualGrossSalary, annualGrossBonus) {
+    return {
+        total: annualGrossSalary + annualGrossBonus,
+        breakdown: [
+            { rate: "Annual Gross Salary", amount: annualGrossSalary },
+            { rate: "Annual Gross Bonus", amount: annualGrossBonus },
+        ]
+    }
+}
+
+// Tax Allowance = Personal Allowance (tapered) + Blind Person's Allowance
+export function calculateTaxAllowance(income, isBlind, constants) {
     const {
         basicAllowance,
         taperThreshold,
         blindPersonsAllowance,
     } = constants.taxAllowance;
 
-    let allowance = basicAllowance;
+    const blindAllowance = isBlind ? blindPersonsAllowance : 0;
+    let personalAllowance = basicAllowance;
 
     if (income > taperThreshold) {
         const reduction = Math.floor((income - taperThreshold) / 2);
-        allowance = Math.max(0, basicAllowance - reduction);
+        personalAllowance = Math.max(0, basicAllowance - reduction);
     }
 
-    if (isBlind) {
-        allowance += blindPersonsAllowance;
+    return {
+        total: personalAllowance + blindAllowance,
+        breakdown: [
+            { rate: "Personal Allowance", amount: personalAllowance },
+            { rate: "Blind Person's Allowance", amount: blindAllowance },
+        ]
     }
-
-    return allowance;
 }
 
 // Calculate income tax
@@ -160,65 +174,67 @@ export function grossManualPensionContributions(personalContribution, taxReliefA
 }
 
 // Top-level function to calculate taxes
-export function calculateTaxes(grossIncome, options) {
-    const constants = taxYears[options.taxYear];
+export function calculateTaxes(inputs) {
+    const constants = taxYears[inputs.taxYear];
+
+    const annualGrossIncome = calculateAnnualGrossIncome(inputs.annualGrossSalary, inputs.annualGrossBonus);
 
     // Apply salary sacrifice
-    let incomeAfterSalarySacrifice = Math.max(0, grossIncome - options.pensionContributions.salarySacrifice);
+    let incomeAfterSalarySacrifice = Math.max(0, annualGrossIncome.total - inputs.pensionContributions.salarySacrifice);
 
     // Calculate auto enrolment pension contributions
-    const autoEnrolmentContribution = incomeAfterSalarySacrifice * (options.pensionContributions.autoEnrolment / 100);
+    const autoEnrolmentContribution = incomeAfterSalarySacrifice * (inputs.pensionContributions.autoEnrolment / 100);
 
     // Deduct auto enrolment contributions from gross income, but only if they are salary sacrificed
-    if (options.autoEnrolmentAsSalarySacrifice)
+    if (inputs.autoEnrolmentAsSalarySacrifice)
         incomeAfterSalarySacrifice -= autoEnrolmentContribution;
 
     // Calculate personal pension contribution (with tax relief at source)
-    const grossedPersonalContribution = grossManualPensionContributions(options.pensionContributions.personal, options.taxReliefAtSource);
+    const grossedPersonalContribution = grossManualPensionContributions(inputs.pensionContributions.personal, inputs.taxReliefAtSource);
 
     // Calculate how much you will have in your pension pot at the end of the tax year
     const pensionPot = {
-        total: options.pensionContributions.salarySacrifice + autoEnrolmentContribution + grossedPersonalContribution,
+        total: inputs.pensionContributions.salarySacrifice + autoEnrolmentContribution + grossedPersonalContribution,
         breakdown: [
-            { rate: "Salary sacrifice", amount: options.pensionContributions.salarySacrifice },
+            { rate: "Salary sacrifice", amount: inputs.pensionContributions.salarySacrifice },
             { rate: "Auto enrolment", amount: autoEnrolmentContribution },
             { rate: "Gross Personal", amount: grossedPersonalContribution },
         ],
     };
 
     // Calculate adjusted net income
-    const adjustedNetIncome = Math.max(0, grossIncome - pensionPot.total);
+    const adjustedNetIncome = Math.max(0, annualGrossIncome.total - pensionPot.total);
 
     // Calculate employee national insurance contributions
-    const employeeNI = calculateNationalInsurance(incomeAfterSalarySacrifice, constants, false, options.noNI);
+    const employeeNI = calculateNationalInsurance(incomeAfterSalarySacrifice, constants, false, inputs.noNI);
 
     // Calculate employer national insurance contributions
-    const employerNI = calculateNationalInsurance(incomeAfterSalarySacrifice, constants, true, options.noNI);
+    const employerNI = calculateNationalInsurance(incomeAfterSalarySacrifice, constants, true, inputs.noNI);
 
     // Calculate student loan repayments
-    const studentLoanRepayments = calculateStudentLoanRepayments(incomeAfterSalarySacrifice, options.studentLoan, constants);
+    const studentLoanRepayments = calculateStudentLoanRepayments(incomeAfterSalarySacrifice, inputs.studentLoan, constants);
 
     // Determine the tax allowance (considering personal allowance taper and blind person's allowance)
-    const taxAllowance = calculateAllowance(adjustedNetIncome, options.blind, constants);
+    const taxAllowance = calculateTaxAllowance(adjustedNetIncome, inputs.blind, constants);
 
     // Calculate taxable income
-    const taxableIncome = Math.max(0, adjustedNetIncome - taxAllowance);
+    const taxableIncome = Math.max(0, adjustedNetIncome - taxAllowance.total);
 
     // Calculate income tax
-    const incomeTax = calculateIncomeTax(taxableIncome, constants, options.residentInScotland);
+    const incomeTax = calculateIncomeTax(taxableIncome, constants, inputs.residentInScotland);
 
     // Calculate combined taxes
     const combinedTaxes = incomeTax.total + employeeNI.total + studentLoanRepayments.total;
 
     // Calculate child benefits
-    const childBenefits = calculateChildBenefits(adjustedNetIncome, options.childBenefits, constants.childBenefitRates);
+    const childBenefits = calculateChildBenefits(adjustedNetIncome, inputs.childBenefits, constants.childBenefitRates);
 
     // Calculate how much you actually keep
     const takeHomePay = adjustedNetIncome - combinedTaxes;
     const yourMoney = pensionPot.total + takeHomePay + childBenefits.total;
 
     return {
-        grossIncome,
+        annualGrossIncome,
         adjustedNetIncome,
         taxAllowance,
         taxableIncome,

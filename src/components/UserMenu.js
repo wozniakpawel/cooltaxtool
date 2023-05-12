@@ -21,8 +21,9 @@ const requiredPositiveNumber = yup.number("Must be a number.")
     .required("Field required.");
 
 const schema = yup.object().shape({
-    grossIncome: requiredPositiveNumber,
-    salaryRange: requiredPositiveNumber,
+    annualGrossSalary: requiredPositiveNumber,
+    annualGrossBonus: requiredPositiveNumber,
+    annualGrossSalaryRange: requiredPositiveNumber,
     pensionContributions: yup.object().shape({
         autoEnrolment: requiredPositiveNumber
             .max(30, "Must be less than or equal to 30."),
@@ -34,8 +35,9 @@ const schema = yup.object().shape({
 export const defaultInputs = {
     taxYear: '2023/24',
     studentLoan: [],
-    grossIncome: 0,
-    salaryRange: 150000,
+    annualGrossSalary: 0,
+    annualGrossBonus: 0,
+    annualGrossSalaryRange: 150000,
     residentInScotland: false,
     noNI: false,
     blind: false,
@@ -69,8 +71,9 @@ const UseEffectWrapper = ({ onUserInputsChange }) => {
 
     const parseValuesToFloats = (values) => {
         let parsedValues = { ...values };
-        parsedValues.grossIncome = parseFloat(parsedValues.grossIncome);
-        parsedValues.salaryRange = parseFloat(parsedValues.salaryRange);
+        parsedValues.annualGrossSalary = parseFloat(parsedValues.annualGrossSalary);
+        parsedValues.annualGrossBonus = parseFloat(parsedValues.annualGrossBonus);
+        parsedValues.annualGrossSalaryRange = parseFloat(parsedValues.annualGrossSalaryRange);
         parsedValues.pensionContributions.autoEnrolment = parseFloat(parsedValues.pensionContributions.autoEnrolment);
         parsedValues.pensionContributions.salarySacrifice = parseFloat(parsedValues.pensionContributions.salarySacrifice);
         parsedValues.pensionContributions.personal = parseFloat(parsedValues.pensionContributions.personal);
@@ -200,6 +203,34 @@ export function UserMenu({ onUserInputsChange }) {
 
                                     <Card>
                                         <Card.Body>
+                                            <Card.Title>Bonus</Card.Title>
+                                            <Form.Group as={Row} controlId="annualGrossBonus">
+                                                <Form.Label column>Annual Gross Bonus</Form.Label>
+                                                <Col>
+                                                    <InputGroup hasValidation>
+                                                        <InputGroup.Text>£</InputGroup.Text>
+                                                        <Form.Control
+                                                            type="number"
+                                                            inputMode="decimal"
+                                                            name="annualGrossBonus"
+                                                            value={values.annualGrossBonus}
+                                                            onChange={handleInputChange}
+                                                            isValid={!errors.annualGrossBonus}
+                                                            isInvalid={!!errors.annualGrossBonus}
+                                                            min={0}
+                                                            step={1000}
+                                                        />
+                                                        <Form.Control.Feedback type="invalid">
+                                                            {errors.annualGrossBonus}
+                                                        </Form.Control.Feedback>
+                                                    </InputGroup>
+                                                </Col>
+                                            </Form.Group>
+                                        </Card.Body>
+                                    </Card>
+
+                                    <Card>
+                                        <Card.Body>
                                             <Card.Title>Pension</Card.Title>
                                             <Form.Group as={Row} controlId="pensionContributions.autoEnrolment">
                                                 <Form.Label column sm={4}>Auto Enrolment</Form.Label>
@@ -313,24 +344,24 @@ export function UserMenu({ onUserInputsChange }) {
                                             </ButtonGroup>
 
                                             {values.incomeAnalysis &&
-                                                <Form.Group as={Row} controlId="grossIncome">
-                                                    <Form.Label column>Annual Gross Income</Form.Label>
+                                                <Form.Group as={Row} controlId="annualGrossSalary">
+                                                    <Form.Label column>Annual Gross Salary</Form.Label>
                                                     <Col>
                                                         <InputGroup hasValidation>
                                                             <InputGroup.Text>£</InputGroup.Text>
                                                             <Form.Control
                                                                 type="number"
                                                                 inputMode="decimal"
-                                                                name="grossIncome"
-                                                                value={values.grossIncome}
+                                                                name="annualGrossSalary"
+                                                                value={values.annualGrossSalary}
                                                                 onChange={handleInputChange}
-                                                                isValid={!errors.grossIncome}
-                                                                isInvalid={!!errors.grossIncome}
+                                                                isValid={!errors.annualGrossSalary}
+                                                                isInvalid={!!errors.annualGrossSalary}
                                                                 min={0}
                                                                 step={1000}
                                                             />
                                                             <Form.Control.Feedback type="invalid">
-                                                                {errors.grossIncome}
+                                                                {errors.annualGrossSalary}
                                                             </Form.Control.Feedback>
                                                         </InputGroup>
                                                     </Col>
@@ -338,24 +369,24 @@ export function UserMenu({ onUserInputsChange }) {
                                             }
 
                                             {!values.incomeAnalysis &&
-                                                <Form.Group as={Row} controlId="grossIncome">
-                                                    <Form.Label column>Salary range</Form.Label>
+                                                <Form.Group as={Row} controlId="annualGrossSalaryRange">
+                                                    <Form.Label column>Annual Gross Income range</Form.Label>
                                                     <Col>
                                                         <InputGroup hasValidation>
                                                             <InputGroup.Text>£</InputGroup.Text>
                                                             <Form.Control
                                                                 type="number"
                                                                 inputMode="decimal"
-                                                                name="salaryRange"
-                                                                value={values.salaryRange}
+                                                                name="annualGrossSalaryRange"
+                                                                value={values.annualGrossSalaryRange}
                                                                 onChange={handleInputChange}
-                                                                isValid={!errors.salaryRange}
-                                                                isInvalid={!!errors.salaryRange}
+                                                                isValid={!errors.annualGrossSalaryRange}
+                                                                isInvalid={!!errors.annualGrossSalaryRange}
                                                                 min={10000}
                                                                 step={10000}
                                                             />
                                                             <Form.Control.Feedback type="invalid">
-                                                                {errors.salaryRange}
+                                                                {errors.annualGrossSalaryRange}
                                                             </Form.Control.Feedback>
                                                         </InputGroup>
                                                     </Col>
