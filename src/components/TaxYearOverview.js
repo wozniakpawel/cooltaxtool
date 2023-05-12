@@ -41,16 +41,17 @@ const TaxYearOverview = (props) => {
   const [amountPlotData, setAmountPlotData] = useState([]);
 
   useEffect(() => {
-    const targetAnnualGrossIncomes = Array.from(
+    const grossIncomes = Array.from(
       { length: 1000 },
-      (_, i) => (i * props.inputs.annualGrossSalaryRange) / 1000
+      (_, i) => (i * props.inputs.annualGrossIncomeRange) / 1000
     );
 
-    const taxData = targetAnnualGrossIncomes.map((targetAnnualGrossIncome) => {
+    const taxData = grossIncomes.map((grossIncome) => {
       const { annualGrossIncome, taxAllowance, incomeTax, employeeNI, employerNI, pensionPot, studentLoanRepayments, childBenefits, ...rest } =
         calculateTaxes({
           ...props.inputs,
-          annualGrossSalary: (targetAnnualGrossIncome - props.inputs.annualGrossBonus)
+          annualGrossBonus: 0,
+          annualGrossSalary: grossIncome,
         });
       return {
         annualGrossIncome: annualGrossIncome.total,
@@ -93,9 +94,8 @@ const TaxYearOverview = (props) => {
           return {
             x: (setting.key === "marginalCombinedTaxRate") ? dataArray.slice(1).map(data => data.annualGrossIncome) : dataArray.map(data => data.annualGrossIncome),
             y: (setting.key === "marginalCombinedTaxRate") ? marginalCombinedTaxes : dataArray.map((data, index) => {
-              const annualGrossIncome = dataArray[index].annualGrossIncome;
               const value = isPercentage
-                ? (data[setting.key] / annualGrossIncome) * 100
+                ? (data[setting.key] / dataArray[index].annualGrossIncome) * 100
                 : data[setting.key];
               return isPercentage ? Math.max(0, Math.min(100, value)) : value;
             }),
