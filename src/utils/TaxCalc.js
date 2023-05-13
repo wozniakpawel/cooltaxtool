@@ -100,6 +100,7 @@ export function calculateNationalInsurance(income, constants, employer, noNI) {
 export function calculateStudentLoanRepayments(income, studentLoanPlans, constants) {
     const { defaultRate, postgradRate, thresholds } = constants.studentLoan;
     let total = 0;
+    let nonPostgradTotal = 0;
     const breakdown = [];
 
     if (studentLoanPlans.length === 0) {
@@ -123,14 +124,38 @@ export function calculateStudentLoanRepayments(income, studentLoanPlans, constan
         let amount;
 
         if (index === nonPostgradPlans.length - 1) {
-            amount = (income <= thresholds[plan]) ? 0 : Math.floor((income - thresholds[plan]) * defaultRate);
+            amount = (income <= thresholds[plan]) ? 0 : ((income - thresholds[plan]) * defaultRate);
         } else {
-            amount = (income <= thresholds[plan]) ? 0 : Math.floor((Math.min(income, thresholds[nonPostgradPlans[index + 1]]) - thresholds[plan]) * defaultRate);
+            amount = (income <= thresholds[plan]) ? 0 : ((Math.min(income, thresholds[nonPostgradPlans[index + 1]]) - thresholds[plan]) * defaultRate);
         }
 
-        total += amount;
+        nonPostgradTotal += amount;
         breakdown.push({ rate: option.label, amount });
     });
+
+    // round down the total amount for non-postgrad plans and adjust the last plan
+    // Loop backward through the breakdown array (from the last non-postgrad plan to the first one)
+    // until you finds a plan with an amount greater than 0. Then, try to deduct the adjustment
+    // from this amount. If the adjustment is greater than the amount, deduct the whole amount
+    // from the adjustment and set the amount to 0. Then, continue to the previous plan.
+    // Carry on until the adjustment has been completely deducted or all the plans have been processed.
+    let adjustment = nonPostgradTotal - Math.floor(nonPostgradTotal);
+    for (let i = breakdown.length - 1; i >= 0; i--) {
+        if (breakdown[i].amount > 0) {
+            if (breakdown[i].amount >= adjustment) {
+                breakdown[i].amount -= adjustment;
+                nonPostgradTotal -= adjustment;
+                adjustment = 0;
+                break;
+            } else {
+                adjustment -= breakdown[i].amount;
+                nonPostgradTotal -= breakdown[i].amount;
+                breakdown[i].amount = 0;
+            }
+        }
+    }
+
+    total += Math.floor(nonPostgradTotal);
 
     // Calculate repayments for postgraduate plan
     // Postgraduate plan repayments are paid on top of all the other plans
