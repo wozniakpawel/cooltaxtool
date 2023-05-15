@@ -205,8 +205,8 @@ export function UserMenu({ onUserInputsChange }) {
                                         <Card.Body>
                                             <Card.Title>Pension</Card.Title>
                                             <Form.Group as={Row} controlId="pensionContributions.autoEnrolment">
-                                                <Form.Label column sm={4}>Auto Enrolment</Form.Label>
-                                                <Col sm={4}>
+                                                <Form.Label column>Auto Enrolment</Form.Label>
+                                                <Col>
                                                     <InputGroup hasValidation>
                                                         <InputGroup.Text>%</InputGroup.Text>
                                                         <Form.Control
@@ -226,20 +226,21 @@ export function UserMenu({ onUserInputsChange }) {
                                                         </Form.Control.Feedback>
                                                     </InputGroup>
                                                 </Col>
-                                                <Col sm={4}>
-                                                    <Form.Check
-                                                        type="switch"
-                                                        id="autoEnrolmentAsSalarySacrifice"
-                                                        label="As salary sacrifice"
-                                                        name="autoEnrolmentAsSalarySacrifice"
-                                                        checked={values.autoEnrolmentAsSalarySacrifice}
-                                                        onChange={handleInputChange}
-                                                    />
-                                                </Col>
                                             </Form.Group>
+                                            <Form.Check
+                                                type="switch"
+                                                id="autoEnrolmentAsSalarySacrifice"
+                                                label="As salary sacrifice"
+                                                name="autoEnrolmentAsSalarySacrifice"
+                                                checked={values.autoEnrolmentAsSalarySacrifice}
+                                                onChange={handleInputChange}
+                                            />
+
+                                            <hr />
+
                                             <Form.Group as={Row} controlId="pensionContributions.salarySacrifice">
-                                                <Form.Label column sm={4}>Salary/Bonus Sacrifice</Form.Label>
-                                                <Col sm={4}>
+                                                <Form.Label column>Salary/Bonus Sacrifice</Form.Label>
+                                                <Col>
                                                     <InputGroup hasValidation>
                                                         <InputGroup.Text>£</InputGroup.Text>
                                                         <Form.Control
@@ -259,9 +260,12 @@ export function UserMenu({ onUserInputsChange }) {
                                                     </InputGroup>
                                                 </Col>
                                             </Form.Group>
+
+                                            <hr />
+
                                             <Form.Group as={Row} controlId="pensionContributions.personal">
-                                                <Form.Label column sm={4}>Personal Contributions</Form.Label>
-                                                <Col sm={4}>
+                                                <Form.Label column>Personal Contributions</Form.Label>
+                                                <Col>
                                                     <InputGroup hasValidation>
                                                         <InputGroup.Text>£</InputGroup.Text>
                                                         <Form.Control
@@ -280,17 +284,15 @@ export function UserMenu({ onUserInputsChange }) {
                                                         </Form.Control.Feedback>
                                                     </InputGroup>
                                                 </Col>
-                                                <Col sm={4}>
-                                                    <Form.Check
-                                                        type="switch"
-                                                        id="taxReliefAtSource"
-                                                        label="Relief at source"
-                                                        name="taxReliefAtSource"
-                                                        checked={values.taxReliefAtSource}
-                                                        onChange={handleInputChange}
-                                                    />
-                                                </Col>
                                             </Form.Group>
+                                            <Form.Check
+                                                type="switch"
+                                                id="taxReliefAtSource"
+                                                label="Relief at source"
+                                                name="taxReliefAtSource"
+                                                checked={values.taxReliefAtSource}
+                                                onChange={handleInputChange}
+                                            />
                                         </Card.Body>
                                     </Card>
 
