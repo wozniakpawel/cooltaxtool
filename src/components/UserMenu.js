@@ -117,7 +117,7 @@ export function UserMenu({ onUserInputsChange }) {
                             <>
                                 <Form noValidate>
 
-                                    <Form.Group as={Row} controlId="taxYear">
+                                    <Form.Group as={Row} controlId="taxYear" className="mt-2">
                                         <Form.Label column>Tax Year</Form.Label>
                                         <Col>
                                             <Form.Control as="select" name="taxYear" value={values.taxYear} onChange={handleInputChange}>
@@ -179,7 +179,7 @@ export function UserMenu({ onUserInputsChange }) {
                                         }
                                     </Form.Group>
 
-                                    <Card>
+                                    <Card className="mt-2">
                                         <Card.Body>
                                             <Card.Title>Student Loans</Card.Title>
                                             <Form.Group as={Row} controlId="studentLoan">
@@ -201,12 +201,12 @@ export function UserMenu({ onUserInputsChange }) {
                                         </Card.Body>
                                     </Card>
 
-                                    <Card>
+                                    <Card className="mt-2">
                                         <Card.Body>
                                             <Card.Title>Pension</Card.Title>
                                             <Form.Group as={Row} controlId="pensionContributions.autoEnrolment">
-                                                <Form.Label column sm={4}>Auto Enrolment</Form.Label>
-                                                <Col sm={4}>
+                                                <Form.Label column>Auto Enrolment</Form.Label>
+                                                <Col>
                                                     <InputGroup hasValidation>
                                                         <InputGroup.Text>%</InputGroup.Text>
                                                         <Form.Control
@@ -226,20 +226,21 @@ export function UserMenu({ onUserInputsChange }) {
                                                         </Form.Control.Feedback>
                                                     </InputGroup>
                                                 </Col>
-                                                <Col sm={4}>
-                                                    <Form.Check
-                                                        type="switch"
-                                                        id="autoEnrolmentAsSalarySacrifice"
-                                                        label="As salary sacrifice"
-                                                        name="autoEnrolmentAsSalarySacrifice"
-                                                        checked={values.autoEnrolmentAsSalarySacrifice}
-                                                        onChange={handleInputChange}
-                                                    />
-                                                </Col>
                                             </Form.Group>
+                                            <Form.Check
+                                                type="switch"
+                                                id="autoEnrolmentAsSalarySacrifice"
+                                                label="As salary sacrifice"
+                                                name="autoEnrolmentAsSalarySacrifice"
+                                                checked={values.autoEnrolmentAsSalarySacrifice}
+                                                onChange={handleInputChange}
+                                            />
+
+                                            <hr />
+
                                             <Form.Group as={Row} controlId="pensionContributions.salarySacrifice">
-                                                <Form.Label column sm={4}>Salary/Bonus Sacrifice</Form.Label>
-                                                <Col sm={4}>
+                                                <Form.Label column>Salary/Bonus Sacrifice</Form.Label>
+                                                <Col>
                                                     <InputGroup hasValidation>
                                                         <InputGroup.Text>£</InputGroup.Text>
                                                         <Form.Control
@@ -259,9 +260,12 @@ export function UserMenu({ onUserInputsChange }) {
                                                     </InputGroup>
                                                 </Col>
                                             </Form.Group>
+
+                                            <hr />
+
                                             <Form.Group as={Row} controlId="pensionContributions.personal">
-                                                <Form.Label column sm={4}>Personal Contributions</Form.Label>
-                                                <Col sm={4}>
+                                                <Form.Label column>Personal Contributions</Form.Label>
+                                                <Col>
                                                     <InputGroup hasValidation>
                                                         <InputGroup.Text>£</InputGroup.Text>
                                                         <Form.Control
@@ -280,23 +284,21 @@ export function UserMenu({ onUserInputsChange }) {
                                                         </Form.Control.Feedback>
                                                     </InputGroup>
                                                 </Col>
-                                                <Col sm={4}>
-                                                    <Form.Check
-                                                        type="switch"
-                                                        id="taxReliefAtSource"
-                                                        label="Relief at source"
-                                                        name="taxReliefAtSource"
-                                                        checked={values.taxReliefAtSource}
-                                                        onChange={handleInputChange}
-                                                    />
-                                                </Col>
                                             </Form.Group>
+                                            <Form.Check
+                                                type="switch"
+                                                id="taxReliefAtSource"
+                                                label="Relief at source"
+                                                name="taxReliefAtSource"
+                                                checked={values.taxReliefAtSource}
+                                                onChange={handleInputChange}
+                                            />
                                         </Card.Body>
                                     </Card>
 
-                                    <Card>
+                                    <Card className="mt-2">
                                         <Card.Body>
-                                            <ButtonGroup>
+                                            <ButtonGroup className="mb-2">
                                                 <Button
                                                     variant={!values.incomeAnalysis ? 'primary' : 'outline-primary'}
                                                     onClick={() => handleInputChange({
@@ -340,7 +342,7 @@ export function UserMenu({ onUserInputsChange }) {
                                                         </Col>
                                                     </Form.Group>
 
-                                                    <Form.Group as={Row} controlId="annualGrossBonus">
+                                                    <Form.Group as={Row} controlId="annualGrossBonus" className="mt-2">
                                                         <Form.Label column>Annual Gross Bonus</Form.Label>
                                                         <Col>
                                                             <InputGroup hasValidation>
@@ -398,6 +400,7 @@ export function UserMenu({ onUserInputsChange }) {
                                         height="32"
                                         width="114"
                                         style={{ border: '0', borderRadius: "6px" }}
+                                        className="mt-2"
                                     />
 
                                 </Form>

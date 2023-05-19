@@ -51,28 +51,32 @@ const TaxBreakdown = (props) => {
         <Table size="sm" variant="danger" style={{ color: "#000" }}>
           <thead>
             <tr>
-              <th>You pay</th>
+              <th>Total you pay</th>
+              <td style={{ fontWeight: "bold" }} className="text-end">
+                {numberWithCommas(results.combinedTaxes)}
+              </td>
             </tr>
           </thead>
           <tbody>
             {renderBreakDown("Income Tax", results.incomeTax)}
             {renderBreakDown("Employee NI", results.employeeNI)}
             {renderBreakDown("Student Loan", results.studentLoanRepayments)}
-            {renderSingleValue("Total", results.combinedTaxes)}
           </tbody>
         </Table>
 
         <Table size="sm" variant="success" style={{ color: "#000" }}>
           <thead>
             <tr>
-              <th>You keep</th>
+              <th>Total you keep</th>
+              <td style={{ fontWeight: "bold" }} className="text-end">
+                {numberWithCommas(results.yourMoney)}
+              </td>
             </tr>
           </thead>
           <tbody>
             {renderSingleValue("Take Home Pay", results.takeHomePay)}
             {renderBreakDown("Pension Pot", results.pensionPot)}
             {renderBreakDown("Child Benefits", results.childBenefits)}
-            {renderSingleValue("Total", results.yourMoney)}
           </tbody>
         </Table>
       </Card.Body>
