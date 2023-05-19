@@ -9,7 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   const [userInputs, setUserInputs] = React.useState(defaultInputs);
-  const [theme, setTheme] = React.useState("dark");
+  const [theme, setTheme] = React.useState((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? "dark" : "light");
 
   React.useEffect(() => {
     document.body.className = theme;
