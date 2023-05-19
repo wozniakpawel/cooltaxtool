@@ -20,21 +20,23 @@ export function calculateTaxAllowance(income, isBlind, constants) {
         blindPersonsAllowance,
     } = constants.taxAllowance;
 
-    const blindAllowance = isBlind ? blindPersonsAllowance : 0;
-    let personalAllowance = basicAllowance;
+    const breakdown = [];
 
+    let personalAllowance = basicAllowance;
     if (income > taperThreshold) {
         const reduction = Math.floor((income - taperThreshold) / 2);
         personalAllowance = Math.max(0, basicAllowance - reduction);
     }
+    breakdown.push({ rate: "Personal Allowance", amount: personalAllowance });
 
-    return {
-        total: personalAllowance + blindAllowance,
-        breakdown: [
-            { rate: "Personal Allowance", amount: personalAllowance },
-            { rate: "Blind Person's Allowance", amount: blindAllowance },
-        ]
+    let blindAllowance = 0;
+    if (isBlind) {
+        blindAllowance = blindPersonsAllowance;
+        breakdown.push({ rate: "Blind Person's Allowance", amount: blindAllowance })
     }
+
+    let total = personalAllowance + blindAllowance;
+    return { total, breakdown }
 }
 
 // Calculate income tax
