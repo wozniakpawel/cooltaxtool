@@ -35,7 +35,7 @@ function App() {
 
   return (
     <Container fluid className="d-flex flex-column min-vh-100 p-0">
-      <Container className="page-content p-0">
+      <Container className="page-content overflow-hidden p-0">
         <Row>
           <Col>
             <Header theme={theme} themeToggleFunction={toggleTheme} />
