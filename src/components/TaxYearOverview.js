@@ -123,20 +123,28 @@ const TaxYearOverview = (props) => {
         data={percentagePlotData}
         layout={props.plotThemer({
           hovermode: "x",
+          autosize: true,
+          responsive: true,
           title: "Percentages of gross income",
           xaxis: { title: "Annual Gross Income (£)" },
           yaxis: { title: "Percentage of Income (%)" },
         })}
+        useResizeHandler={true}
+        style={{ width: "100%", height: "100%" }}
       />
 
       <Plot
         data={amountPlotData}
         layout={props.plotThemer({
           hovermode: "x",
+          autosize: true,
+          responsive: true,
           title: "Annual total amounts",
           xaxis: { title: "Annual Gross Income (£)" },
           yaxis: { title: "Annual Total Amount (£)" },
         })}
+        useResizeHandler={true}
+        style={{ width: "100%", height: "100%" }}
       />
     </Container>
   );
