@@ -37,7 +37,7 @@ function App() {
     <Container fluid className="d-flex flex-column min-vh-100 p-0">
       <Container className="page-content p-0">
         <Row>
-          <Col>
+          <Col md={5}>
             <Header theme={theme} themeToggleFunction={toggleTheme} />
             <Container>
               <Form.Check
@@ -51,7 +51,7 @@ function App() {
             </Container>
             <UserMenu onUserInputsChange={setUserInputs} />
           </Col>
-          <Col>
+          <Col md={7}>
             {userInputs.incomeAnalysis && (
               <IncomeAnalysis inputs={userInputs} theme={theme} plotThemer={setPlotTheme} />
             )}
