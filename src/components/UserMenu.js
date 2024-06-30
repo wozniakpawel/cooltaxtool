@@ -121,6 +121,7 @@ export function UserMenu({ onUserInputsChange }) {
                                         <Form.Label column>Tax Year</Form.Label>
                                         <Col>
                                             <Form.Control as="select" name="taxYear" value={values.taxYear} onChange={handleInputChange}>
+                                                <option value="2024/25">2024/25</option>
                                                 <option value="2023/24">2023/24</option>
                                                 <option value="2022/23">2022/23</option>
                                                 <option value="2021/22">2021/22</option>
