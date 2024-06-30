@@ -33,7 +33,7 @@ const schema = yup.object().shape({
 });
 
 export const defaultInputs = {
-    taxYear: '2023/24',
+    taxYear: '2024/25',
     studentLoan: [],
     annualGrossSalary: 0,
     annualGrossBonus: 0,
