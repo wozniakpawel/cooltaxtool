@@ -12,6 +12,13 @@ The goal of the project is to help people make smarter decisions about their fin
 
 Feel free to contribute to the project by requesting features, reporting bugs, or even submitting pull requests.
 
+# 💖 Support the Project
+If you find this tool helpful, consider supporting its development:
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-wozniakpawel-orange?style=flat-square&logo=buy-me-a-coffee)](https://www.buymeacoffee.com/wozniakpawel) [![GitHub Sponsor](https://img.shields.io/badge/GitHub-wozniakpawel-green?style=flat-square&logo=github)](https://github.com/sponsors/wozniakpawel)
+
+Your support helps maintain and improve this free, open-source tool!
+
 # Get involved
 
 To start working on the improvements, you can clone the repository and start working on it locally.
