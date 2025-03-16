@@ -127,6 +127,10 @@ const TaxYearOverview = (props) => {
           xaxis: { title: "Annual Gross Income (£)" },
           yaxis: { title: "Percentage of Income (%)" },
         })}
+        autoSize = {true}
+        useResizeHandler={true}
+        style={{width: "100%",maxWidth: "850px" , height: "100%"}}
+
       />
 
       <Plot
@@ -137,6 +141,9 @@ const TaxYearOverview = (props) => {
           xaxis: { title: "Annual Gross Income (£)" },
           yaxis: { title: "Annual Total Amount (£)" },
         })}
+        autoSize = {true}
+        useResizeHandler={true}
+        style={{width: "100%",maxWidth: "850px" , height: "100%"}}
       />
     </Container>
   );
