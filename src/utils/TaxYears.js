@@ -1,4 +1,49 @@
 export const taxYears = {
+    '2025/26': {
+        childBenefitRates: {
+            firstChildRate: 26.05,
+            additionalChildRate: 17.25,
+        },
+        taxAllowance: {
+            basicAllowance: 12570,
+            taperThreshold: 100000,
+            blindPersonsAllowance: 3130,
+        },
+        nationalInsurance: {
+            lowerEarningsLimit: 6500,
+            primaryThreshold: 12570,
+            secondaryThreshold: 5000,
+            upperEarningsLimit: 50270,
+            employerRates: [0.15, 0.15],
+            employeeRates: [0.08, 0.02],
+        },
+        studentLoan: {
+            defaultRate: 0.09,
+            postgradRate: 0.06,
+            thresholds: {
+                plan1: 26065,
+                plan2: 28470,
+                plan4: 31395,
+                plan5: 25000,
+                postgrad: 21000,
+            },
+        },
+        incomeTax: {
+            scotland: [
+                [0.19, 2827],
+                [0.20, 14921],
+                [0.21, 31092],
+                [0.42, 62430],
+                [0.45, 125140],
+                [0.48, Infinity],
+            ],
+            restOfUK: [
+                [0.20, 37700],
+                [0.40, 125140],
+                [0.45, Infinity],
+            ],
+        },
+    },
     '2024/25': {
         childBenefitRates: {
             firstChildRate: 25.60,
