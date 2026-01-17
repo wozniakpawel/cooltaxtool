@@ -1,24 +1,11 @@
 import { useMemo } from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+import Chart from "react-apexcharts";
 import { Container } from "react-bootstrap";
 import { calculateTaxes } from "../utils/TaxCalc";
 import {
   formatCurrency,
   formatPercent,
-  getChartTheme,
-  getTooltipStyle,
-  axisTickStyle,
-  legendStyle,
-  chartMargin,
+  getApexChartOptions,
 } from "../utils/chartUtils";
 
 const plotSettings = [
@@ -38,9 +25,6 @@ const plotSettings = [
 ];
 
 const TaxYearOverview = (props) => {
-  const { isDark, axisColor, gridColor } = getChartTheme(props.theme);
-  const tooltipStyle = getTooltipStyle(isDark);
-
   const chartData = useMemo(() => {
     const grossIncomes = Array.from(
       { length: 200 },
@@ -113,51 +97,66 @@ const TaxYearOverview = (props) => {
     });
   }, [props.inputs.noNI, props.inputs.studentLoan.length, props.inputs.childBenefits.childBenefitsTaken]);
 
-  const renderChart = (title, data, visibleSettings, isPercentage) => (
-    <>
-      <h5 className="text-center mt-3">{title}</h5>
-      <ResponsiveContainer width="100%" height={350}>
-        <LineChart data={data} margin={chartMargin}>
-          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-          <XAxis
-            dataKey="annualGrossIncome"
-            tickFormatter={formatCurrency}
-            stroke={axisColor}
-            tick={axisTickStyle(axisColor)}
-          />
-          <YAxis
-            tickFormatter={isPercentage ? formatPercent : formatCurrency}
-            stroke={axisColor}
-            tick={axisTickStyle(axisColor)}
-            domain={isPercentage ? [0, 100] : undefined}
-          />
-          <Tooltip
-            formatter={(value, name) => [isPercentage ? formatPercent(value) : formatCurrency(value), name]}
-            labelFormatter={(label) => `Gross: ${formatCurrency(label)}`}
-            {...tooltipStyle}
-          />
-          <Legend wrapperStyle={legendStyle} />
-          {visibleSettings.map((setting) => (
-            <Line
-              key={setting.key}
-              type="monotone"
-              dataKey={setting.key}
-              name={setting.label}
-              stroke={setting.color}
-              strokeDasharray={setting.dashed ? "5 5" : "0"}
-              dot={false}
-              strokeWidth={2}
-            />
-          ))}
-        </LineChart>
-      </ResponsiveContainer>
-    </>
+  const buildSeries = (data, visibleSettings, xKey) => {
+    return visibleSettings.map((setting) => ({
+      name: setting.label,
+      data: data.map((d) => ({ x: d[xKey], y: d[setting.key] })),
+    }));
+  };
+
+  const buildOptions = (isPercentage, visibleSettings, xFormatter) => {
+    const baseOptions = getApexChartOptions(props.theme, { isPercentage });
+
+    return {
+      ...baseOptions,
+      colors: visibleSettings.map((s) => s.color),
+      stroke: {
+        ...baseOptions.stroke,
+        dashArray: visibleSettings.map((s) => (s.dashed ? 5 : 0)),
+      },
+      tooltip: {
+        ...baseOptions.tooltip,
+        x: {
+          formatter: xFormatter,
+        },
+        y: {
+          formatter: (value) => (isPercentage ? formatPercent(value) : formatCurrency(value)),
+        },
+      },
+    };
+  };
+
+  const percentOptions = buildOptions(
+    true,
+    visibleSettingsPercent,
+    (value) => `Gross: ${formatCurrency(value)}`
   );
+
+  const amountOptions = buildOptions(
+    false,
+    visibleSettingsAmount,
+    (value) => `Gross: ${formatCurrency(value)}`
+  );
+
+  const percentSeries = buildSeries(percentageData, visibleSettingsPercent, "annualGrossIncome");
+  const amountSeries = buildSeries(chartData, visibleSettingsAmount, "annualGrossIncome");
 
   return (
     <Container>
-      {renderChart("Percentages of gross income", percentageData, visibleSettingsPercent, true)}
-      {renderChart("Annual total amounts", chartData, visibleSettingsAmount, false)}
+      <h5 className="text-center mt-3">Percentages of gross income</h5>
+      <Chart
+        options={percentOptions}
+        series={percentSeries}
+        type="line"
+        height={350}
+      />
+      <h5 className="text-center mt-3">Annual total amounts</h5>
+      <Chart
+        options={amountOptions}
+        series={amountSeries}
+        type="line"
+        height={350}
+      />
     </Container>
   );
 };

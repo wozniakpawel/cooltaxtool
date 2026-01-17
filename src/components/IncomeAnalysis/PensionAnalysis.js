@@ -1,29 +1,13 @@
 import { useMemo } from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+import Chart from "react-apexcharts";
 import { calculateAnnualGrossIncome, calculateTaxes } from "../../utils/TaxCalc";
 import {
   formatCurrency,
   formatPercent,
-  getChartTheme,
-  getTooltipStyle,
-  axisTickStyle,
-  legendStyle,
-  chartMargin,
+  getApexChartOptions,
 } from "../../utils/chartUtils";
 
 const TaxSavingsVsPensionContributions = (props) => {
-  const { isDark, axisColor, gridColor } = getChartTheme(props.theme);
-  const tooltipStyle = getTooltipStyle(isDark);
-
   const chartData = useMemo(() => {
     const annualGrossIncome = calculateAnnualGrossIncome(
       props.inputs.annualGrossSalary,
@@ -75,48 +59,44 @@ const TaxSavingsVsPensionContributions = (props) => {
     });
   }, [props.inputs]);
 
+  const options = useMemo(() => {
+    const baseOptions = getApexChartOptions(props.theme, { isPercentage: true });
+
+    return {
+      ...baseOptions,
+      colors: ["#2ecc71", "#3498db"],
+      tooltip: {
+        ...baseOptions.tooltip,
+        x: {
+          formatter: (value) => `Pension Contribution: ${formatCurrency(value)}`,
+        },
+        y: {
+          formatter: (value) => formatPercent(value),
+        },
+      },
+    };
+  }, [props.theme]);
+
+  const series = [
+    {
+      name: "Tax Savings as % of contributions",
+      data: chartData.map((d) => ({ x: d.pensionContribution, y: d.taxSavingsPercentage })),
+    },
+    {
+      name: "Effective Tax Rate",
+      data: chartData.map((d) => ({ x: d.pensionContribution, y: d.effectiveTaxRate })),
+    },
+  ];
+
   return (
     <>
       <h5 className="text-center mt-3">Tax Savings and Effective Tax Rate vs Pension Contributions</h5>
-      <ResponsiveContainer width="100%" height={350}>
-        <LineChart data={chartData} margin={chartMargin}>
-          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-          <XAxis
-            dataKey="pensionContribution"
-            tickFormatter={formatCurrency}
-            stroke={axisColor}
-            tick={axisTickStyle(axisColor)}
-          />
-          <YAxis
-            tickFormatter={formatPercent}
-            stroke={axisColor}
-            tick={axisTickStyle(axisColor)}
-            domain={[0, 100]}
-          />
-          <Tooltip
-            formatter={(value, name) => [formatPercent(value), name]}
-            labelFormatter={(label) => `Pension Contribution: ${formatCurrency(label)}`}
-            {...tooltipStyle}
-          />
-          <Legend wrapperStyle={legendStyle} />
-          <Line
-            type="monotone"
-            dataKey="taxSavingsPercentage"
-            name="Tax Savings as % of contributions"
-            stroke="#2ecc71"
-            dot={false}
-            strokeWidth={2}
-          />
-          <Line
-            type="monotone"
-            dataKey="effectiveTaxRate"
-            name="Effective Tax Rate"
-            stroke="#3498db"
-            dot={false}
-            strokeWidth={2}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+      <Chart
+        options={options}
+        series={series}
+        type="line"
+        height={350}
+      />
     </>
   );
 };
