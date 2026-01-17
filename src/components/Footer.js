@@ -12,7 +12,7 @@ const Footer = () => {
                             <span className="text-primary">Cool</span>
                             <span className="text-danger">Tax</span>
                             <span className="text-primary">Tool </span>
-                            does not provide financial or tax advice, and the calculations might be innacurate. Please consult a tax advisor before making any financial decisions.
+                            does not provide financial or tax advice, and the calculations might be inaccurate. Please consult a tax advisor before making any financial decisions.
                         </p>
                         <p>
                             This is an open source project, feel free to contribute: {' '}
