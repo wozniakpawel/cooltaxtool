@@ -1,52 +1,47 @@
 import React, { useState, useEffect } from "react";
-import Plot from "react-plotly.js";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 import { Container } from "react-bootstrap";
 import { calculateTaxes } from "../utils/TaxCalc";
 
 const plotSettings = [
   { key: "adjustedNetIncome", color: "#3498db", label: "Adjusted Net Income" },
-  { key: "taxAllowance", color: "#1abc9c", label: "Tax Allowance" },
+  { key: "taxAllowance", color: "#1abc9c", label: "Tax Allowance", amountOnly: true },
   { key: "taxableIncome", color: "#2980b9", label: "Taxable Income" },
   { key: "incomeTax", color: "#8e44ad", label: "Income Tax" },
   { key: "employeeNI", color: "#e74c3c", label: "Employee NI Contributions" },
   { key: "employerNI", color: "#d35400", label: "Employer NI Contributions" },
-  {
-    key: "studentLoanRepayments",
-    color: "#f39c12",
-    label: "Student Loan Repayments",
-  },
-  {
-    key: "combinedTaxes",
-    color: "#c0392b",
-    label: "Combined taxes (IT, EE NI, SL)",
-  },
-  { key: "childBenefits", color: "35cc71", label: "Child Benefits (incl. HICBC)", dashed: true },
+  { key: "studentLoanRepayments", color: "#f39c12", label: "Student Loan Repayments" },
+  { key: "combinedTaxes", color: "#c0392b", label: "Combined taxes (IT, EE NI, SL)" },
+  { key: "childBenefits", color: "#35cc71", label: "Child Benefits (incl. HICBC)", dashed: true },
   { key: "takeHomePay", color: "#2ecc71", label: "Take Home Pay" },
   { key: "pensionPot", color: "#27ae60", label: "Pension Pot" },
-  {
-    key: "yourMoney",
-    color: "#16a085",
-    label: "Your money (Pension Pot + Take Home)",
-  },
-  {
-    key: "marginalCombinedTaxRate",
-    color: "#f1c40f",
-    label: "Marginal Combined Tax Rate",
-    dashed: true,
-  },
+  { key: "yourMoney", color: "#16a085", label: "Your money (Pension Pot + Take Home)" },
+  { key: "marginalCombinedTaxRate", color: "#f1c40f", label: "Marginal Combined Tax Rate", dashed: true, percentOnly: true },
 ];
 
 const TaxYearOverview = (props) => {
-  const [percentagePlotData, setPercentagePlotData] = useState([]);
-  const [amountPlotData, setAmountPlotData] = useState([]);
+  const [chartData, setChartData] = useState([]);
+
+  const isDark = props.theme === "dark";
+  const axisColor = isDark ? "#fff" : "#666";
+  const gridColor = isDark ? "#555" : "#ccc";
 
   useEffect(() => {
     const grossIncomes = Array.from(
-      { length: 1000 },
-      (_, i) => (i * props.inputs.annualGrossIncomeRange) / 1000
+      { length: 200 },
+      (_, i) => (i * props.inputs.annualGrossIncomeRange) / 200
     );
 
-    const taxData = grossIncomes.map((grossIncome) => {
+    const data = grossIncomes.map((grossIncome) => {
       const { annualGrossIncome, taxAllowance, incomeTax, employeeNI, employerNI, pensionPot, studentLoanRepayments, childBenefits, ...rest } =
         calculateTaxes({
           ...props.inputs,
@@ -66,78 +61,100 @@ const TaxYearOverview = (props) => {
       };
     });
 
-    const marginalCombinedTaxes = [];
-    for (let i = 1; i < taxData.length; i++) {
-      const deltaTaxes =
-        taxData[i].combinedTaxes - taxData[i - 1].combinedTaxes;
-      const deltaIncome = taxData[i].annualGrossIncome - taxData[i - 1].annualGrossIncome;
-      marginalCombinedTaxes.push(Math.ceil((deltaTaxes / deltaIncome) * 100));
+    // Calculate marginal tax rate
+    for (let i = 1; i < data.length; i++) {
+      const deltaTaxes = data[i].combinedTaxes - data[i - 1].combinedTaxes;
+      const deltaIncome = data[i].annualGrossIncome - data[i - 1].annualGrossIncome;
+      data[i].marginalCombinedTaxRate = deltaIncome > 0 ? Math.ceil((deltaTaxes / deltaIncome) * 100) : 0;
     }
+    data[0].marginalCombinedTaxRate = 0;
 
-    const createPlotData = (dataArray, isPercentage = false) => {
-      return plotSettings
-        .map((setting) => {
-          if (
-            ((setting.key === "employeeNI" || setting.key === "employerNI") &&
-              props.inputs.noNI) ||
-            (setting.key === "studentLoanRepayments" &&
-              props.inputs.studentLoan.length === 0) ||
-            (setting.key === "taxAllowance" && isPercentage) ||
-            (setting.key === "marginalCombinedTaxRate" && !isPercentage) ||
-            (setting.key === "childBenefits" && !props.inputs.childBenefits.childBenefitsTaken)
-          ) {
-            return null;
-          }
-
-          const hoverTemplate = isPercentage ? "%{y:.1f}%" : "£%{y:,.2f}";
-
-          return {
-            x: (setting.key === "marginalCombinedTaxRate") ? dataArray.slice(1).map(data => data.annualGrossIncome) : dataArray.map(data => data.annualGrossIncome),
-            y: (setting.key === "marginalCombinedTaxRate") ? marginalCombinedTaxes : dataArray.map((data, index) => {
-              const value = isPercentage
-                ? (data[setting.key] / dataArray[index].annualGrossIncome) * 100
-                : data[setting.key];
-              return isPercentage ? Math.max(0, Math.min(100, value)) : value;
-            }),
-            type: "scatter",
-            mode: "lines",
-            line: { dash: setting.dashed ? "dash" : "solid" },
-            marker: { color: setting.color },
-            name: setting.label,
-            hovertemplate: hoverTemplate,
-          };
-        })
-        .filter((data) => data !== null);
-    };
-
-    const amountPlotData = createPlotData(taxData);
-    const percentagePlotData = createPlotData(taxData, true);
-
-    setPercentagePlotData(percentagePlotData);
-    setAmountPlotData(amountPlotData);
+    setChartData(data);
   }, [props.inputs]);
+
+  const formatCurrency = (value) => `£${value.toLocaleString()}`;
+  const formatPercent = (value) => `${value.toFixed(1)}%`;
+
+  const getPercentageData = (data) => {
+    return data.map((d) => {
+      const gross = d.annualGrossIncome || 1;
+      const result = { annualGrossIncome: d.annualGrossIncome };
+      plotSettings.forEach((s) => {
+        if (!s.amountOnly) {
+          result[s.key] = s.key === "marginalCombinedTaxRate"
+            ? d[s.key]
+            : Math.max(0, Math.min(100, (d[s.key] / gross) * 100));
+        }
+      });
+      return result;
+    });
+  };
+
+  const getVisibleSettings = (isPercentage) => {
+    return plotSettings.filter((setting) => {
+      if (setting.amountOnly && isPercentage) return false;
+      if (setting.percentOnly && !isPercentage) return false;
+      if ((setting.key === "employeeNI" || setting.key === "employerNI") && props.inputs.noNI) return false;
+      if (setting.key === "studentLoanRepayments" && props.inputs.studentLoan.length === 0) return false;
+      if (setting.key === "childBenefits" && !props.inputs.childBenefits.childBenefitsTaken) return false;
+      return true;
+    });
+  };
+
+  const renderChart = (title, data, isPercentage) => (
+    <>
+      <h5 className="text-center mt-3">{title}</h5>
+      <ResponsiveContainer width="100%" height={350}>
+        <LineChart data={data} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+          <XAxis
+            dataKey="annualGrossIncome"
+            tickFormatter={formatCurrency}
+            stroke={axisColor}
+            tick={{ fill: axisColor, fontSize: 12 }}
+          />
+          <YAxis
+            tickFormatter={isPercentage ? formatPercent : formatCurrency}
+            stroke={axisColor}
+            tick={{ fill: axisColor, fontSize: 12 }}
+            domain={isPercentage ? [0, 100] : undefined}
+          />
+          <Tooltip
+            formatter={(value, name) => [isPercentage ? formatPercent(value) : formatCurrency(value), name]}
+            labelFormatter={(label) => `Gross: ${formatCurrency(label)}`}
+            contentStyle={{
+              backgroundColor: isDark ? "#333" : "#fff",
+              border: `1px solid ${isDark ? "#555" : "#ccc"}`,
+              color: isDark ? "#fff" : "#333",
+              fontSize: 11,
+              padding: "4px 8px",
+              maxHeight: 200,
+              overflowY: "auto",
+            }}
+            itemStyle={{ padding: 0, margin: 0, lineHeight: 1.2 }}
+          />
+          <Legend wrapperStyle={{ fontSize: 12 }} />
+          {getVisibleSettings(isPercentage).map((setting) => (
+            <Line
+              key={setting.key}
+              type="monotone"
+              dataKey={setting.key}
+              name={setting.label}
+              stroke={setting.color}
+              strokeDasharray={setting.dashed ? "5 5" : "0"}
+              dot={false}
+              strokeWidth={2}
+            />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
+    </>
+  );
 
   return (
     <Container>
-      <Plot
-        data={percentagePlotData}
-        layout={props.plotThemer({
-          hovermode: "x",
-          title: "Percentages of gross income",
-          xaxis: { title: "Annual Gross Income (£)" },
-          yaxis: { title: "Percentage of Income (%)" },
-        })}
-      />
-
-      <Plot
-        data={amountPlotData}
-        layout={props.plotThemer({
-          hovermode: "x",
-          title: "Annual total amounts",
-          xaxis: { title: "Annual Gross Income (£)" },
-          yaxis: { title: "Annual Total Amount (£)" },
-        })}
-      />
+      {renderChart("Percentages of gross income", getPercentageData(chartData), true)}
+      {renderChart("Annual total amounts", chartData, false)}
     </Container>
   );
 };

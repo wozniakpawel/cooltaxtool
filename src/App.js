@@ -23,21 +23,11 @@ function App() {
     }
   }
 
-  // takes plotly theme data as JSON and adds dark theme if necessary
-  function setPlotTheme(layout) {
-    if (theme === "dark") {
-      layout.paper_bgcolor = "#333";
-      layout.plot_bgcolor = "#222";
-      layout.font = { color: "#fff" };
-    }
-    return layout;
-  }
-
   return (
     <Container fluid className="d-flex flex-column min-vh-100 p-0">
       <Container className="page-content p-0">
         <Row>
-          <Col>
+          <Col xs={12} lg={6}>
             <Header theme={theme} themeToggleFunction={toggleTheme} />
             <Container>
               <Form.Check
@@ -51,12 +41,12 @@ function App() {
             </Container>
             <UserMenu onUserInputsChange={setUserInputs} />
           </Col>
-          <Col>
+          <Col xs={12} lg={6}>
             {userInputs.incomeAnalysis && (
-              <IncomeAnalysis inputs={userInputs} theme={theme} plotThemer={setPlotTheme} />
+              <IncomeAnalysis inputs={userInputs} theme={theme} />
             )}
             {!userInputs.incomeAnalysis && (
-              <TaxYearOverview inputs={userInputs} plotThemer={setPlotTheme} />
+              <TaxYearOverview inputs={userInputs} theme={theme} />
             )}
           </Col>
         </Row>
