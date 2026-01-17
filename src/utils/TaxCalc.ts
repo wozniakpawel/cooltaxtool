@@ -1,26 +1,44 @@
 import { taxYears } from './TaxYears';
 import { studentLoanOptions } from '../components/UserMenu';
+import type {
+    TaxYearConstants,
+    TaxInputs,
+    CalculationResult,
+    TaxCalculationResult,
+    BreakdownItem,
+    StudentLoanPlan,
+    ChildBenefitsInput,
+    ChildBenefitRates,
+    StudentLoanOption,
+} from '../types/tax';
 
 // Gross Income = Salary + Bonuses + Other Income (Dividends, Rental Income, etc.)
-export function calculateAnnualGrossIncome(annualGrossSalary, annualGrossBonus) {
+export function calculateAnnualGrossIncome(
+    annualGrossSalary: number,
+    annualGrossBonus: number
+): CalculationResult {
     return {
         total: annualGrossSalary + annualGrossBonus,
         breakdown: [
             { rate: "Annual Gross Salary", amount: annualGrossSalary },
             { rate: "Annual Gross Bonus", amount: annualGrossBonus },
         ]
-    }
+    };
 }
 
 // Tax Allowance = Personal Allowance (tapered) + Blind Person's Allowance
-export function calculateTaxAllowance(income, isBlind, constants) {
+export function calculateTaxAllowance(
+    income: number,
+    isBlind: boolean,
+    constants: TaxYearConstants
+): CalculationResult {
     const {
         basicAllowance,
         taperThreshold,
         blindPersonsAllowance,
     } = constants.taxAllowance;
 
-    const breakdown = [];
+    const breakdown: BreakdownItem[] = [];
     const taperRate = 0.5;
 
     let personalAllowance = basicAllowance;
@@ -33,20 +51,24 @@ export function calculateTaxAllowance(income, isBlind, constants) {
     let blindAllowance = 0;
     if (isBlind) {
         blindAllowance = blindPersonsAllowance;
-        breakdown.push({ rate: "Blind Person's Allowance", amount: blindAllowance })
+        breakdown.push({ rate: "Blind Person's Allowance", amount: blindAllowance });
     }
 
-    let total = personalAllowance + blindAllowance;
-    return { total, breakdown }
+    const total = personalAllowance + blindAllowance;
+    return { total, breakdown };
 }
 
 // Calculate income tax
-export function calculateIncomeTax(taxableIncome, constants, residentInScotland) {
+export function calculateIncomeTax(
+    taxableIncome: number,
+    constants: TaxYearConstants,
+    residentInScotland: boolean
+): CalculationResult {
     const taxBands = residentInScotland ? constants.incomeTax.scotland : constants.incomeTax.restOfUK;
 
     let incomeTax = 0;
     let remainingIncome = taxableIncome;
-    const incomeTaxBreakdown = [];
+    const incomeTaxBreakdown: BreakdownItem[] = [];
 
     let previousLimit = 0;
 
@@ -63,10 +85,15 @@ export function calculateIncomeTax(taxableIncome, constants, residentInScotland)
     });
 
     return { total: incomeTax, breakdown: incomeTaxBreakdown };
-};
+}
 
 // Calculate national insurance contributions (employee and employer)
-export function calculateNationalInsurance(income, constants, employer, noNI) {
+export function calculateNationalInsurance(
+    income: number,
+    constants: TaxYearConstants,
+    employer: boolean,
+    noNI: boolean
+): CalculationResult {
     if (noNI) return { total: 0, breakdown: [] };
 
     const { primaryThreshold, secondaryThreshold, upperEarningsLimit, employeeRates, employerRates } = constants.nationalInsurance;
@@ -75,7 +102,7 @@ export function calculateNationalInsurance(income, constants, employer, noNI) {
 
     let remainingIncome = Math.max(0, income - firstThreshold);
     let nationalInsuranceTotal = 0;
-    const nationalInsuranceBreakdown = [];
+    const nationalInsuranceBreakdown: BreakdownItem[] = [];
 
     if (remainingIncome > 0) {
         const incomeInFirstBand = Math.min(remainingIncome, upperEarningsLimit - firstThreshold);
@@ -100,11 +127,15 @@ export function calculateNationalInsurance(income, constants, employer, noNI) {
 }
 
 // Calculate student loan repayments
-export function calculateStudentLoanRepayments(income, studentLoanPlans, constants) {
+export function calculateStudentLoanRepayments(
+    income: number,
+    studentLoanPlans: StudentLoanPlan[],
+    constants: TaxYearConstants
+): CalculationResult {
     const { defaultRate, postgradRate, thresholds } = constants.studentLoan;
     let total = 0;
     let nonPostgradTotal = 0;
-    const breakdown = [];
+    const breakdown: BreakdownItem[] = [];
 
     if (studentLoanPlans.length === 0) {
         return {
@@ -115,7 +146,7 @@ export function calculateStudentLoanRepayments(income, studentLoanPlans, constan
 
     // Filter postgraduate plan and sort the rest in ascending order of thresholds
     const nonPostgradPlans = studentLoanPlans
-        .filter(plan => plan !== "postgrad")
+        .filter((plan): plan is Exclude<StudentLoanPlan, 'postgrad'> => plan !== "postgrad")
         .sort((a, b) => thresholds[a] - thresholds[b]);
 
     // Calculate repayments for non-postgraduate plans
@@ -123,8 +154,8 @@ export function calculateStudentLoanRepayments(income, studentLoanPlans, constan
     // you will still pay the same you would with only one non-postgraduate plan
     // but the payments will be split between the plans based on their thresholds
     nonPostgradPlans.forEach((plan, index) => {
-        const option = studentLoanOptions.find(option => option.plan === plan);
-        let amount;
+        const option = (studentLoanOptions as StudentLoanOption[]).find(option => option.plan === plan);
+        let amount: number;
 
         if (index === nonPostgradPlans.length - 1) {
             amount = (income <= thresholds[plan]) ? 0 : ((income - thresholds[plan]) * defaultRate);
@@ -133,7 +164,7 @@ export function calculateStudentLoanRepayments(income, studentLoanPlans, constan
         }
 
         nonPostgradTotal += amount;
-        breakdown.push({ rate: option.label, amount });
+        breakdown.push({ rate: option?.label ?? plan, amount });
     });
 
     // round down the total amount for non-postgrad plans and adjust the last plan
@@ -163,10 +194,10 @@ export function calculateStudentLoanRepayments(income, studentLoanPlans, constan
     // Calculate repayments for postgraduate plan
     // Postgraduate plan repayments are paid on top of all the other plans
     if (studentLoanPlans.includes("postgrad")) {
-        const option = studentLoanOptions.find(option => option.plan === "postgrad");
+        const option = (studentLoanOptions as StudentLoanOption[]).find(option => option.plan === "postgrad");
         const amount = (income <= thresholds["postgrad"]) ? 0 : Math.floor((income - thresholds["postgrad"]) * postgradRate);
         total += amount;
-        breakdown.push({ rate: option.label, amount });
+        breakdown.push({ rate: option?.label ?? "Postgraduate", amount });
     }
 
     return {
@@ -175,7 +206,11 @@ export function calculateStudentLoanRepayments(income, studentLoanPlans, constan
     };
 }
 
-export function calculateChildBenefits(adjustedNetIncome, childBenefits, childBenefitRates) {
+export function calculateChildBenefits(
+    adjustedNetIncome: number,
+    childBenefits: ChildBenefitsInput,
+    childBenefitRates: ChildBenefitRates
+): CalculationResult {
     const HICBCThreshold = 50000;
     const { firstChildRate, additionalChildRate } = childBenefitRates;
 
@@ -208,23 +243,16 @@ export function calculateChildBenefits(adjustedNetIncome, childBenefits, childBe
     };
 }
 
-// Calculate the pension taper
-// export function calculatePensionTaper(income, pensionContributions, constants) {
-//     const { taperThreshold, taperRate } = constants.pensionTaper;
-//     if (income > taperThreshold) {
-//         const reduction = Math.floor((income - taperThreshold) * taperRate);
-//         return Math.max(0, pensionContributions - reduction);
-//     }
-//     return pensionContributions;
-// }
-
 // Calculate personal pension contribution value, depending if the tax is relieved at source
-export function grossManualPensionContributions(personalContribution, taxReliefAtSource) {
+export function grossManualPensionContributions(
+    personalContribution: number,
+    taxReliefAtSource: boolean
+): number {
     return taxReliefAtSource ? personalContribution * 1.25 : personalContribution;
 }
 
 // Top-level function to calculate taxes
-export function calculateTaxes(inputs) {
+export function calculateTaxes(inputs: TaxInputs): TaxCalculationResult {
     const constants = taxYears[inputs.taxYear];
 
     const annualGrossIncome = calculateAnnualGrossIncome(inputs.annualGrossSalary, inputs.annualGrossBonus);
@@ -243,7 +271,7 @@ export function calculateTaxes(inputs) {
     const grossedPersonalContribution = grossManualPensionContributions(inputs.pensionContributions.personal, inputs.taxReliefAtSource);
 
     // Calculate how much you will have in your pension pot at the end of the tax year
-    const pensionPot = {
+    const pensionPot: CalculationResult = {
         total: inputs.pensionContributions.salarySacrifice + autoEnrolmentContribution + grossedPersonalContribution,
         breakdown: [
             { rate: "Salary sacrifice", amount: inputs.pensionContributions.salarySacrifice },
