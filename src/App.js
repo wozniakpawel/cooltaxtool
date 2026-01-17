@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import { defaultInputs, UserMenu } from "./components/UserMenu";
 import TaxYearOverview from "./components/TaxYearOverview";
@@ -7,20 +7,25 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-function App() {
-  const [userInputs, setUserInputs] = React.useState(defaultInputs);
-  const [theme, setTheme] = React.useState((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? "dark" : "light");
+const getInitialTheme = () => {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme) {
+    return savedTheme;
+  }
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+};
 
-  React.useEffect(() => {
+function App() {
+  const [userInputs, setUserInputs] = useState(defaultInputs);
+  const [theme, setTheme] = useState(getInitialTheme);
+
+  useEffect(() => {
     document.body.className = theme;
+    localStorage.setItem("theme", theme);
   }, [theme]);
 
   function toggleTheme() {
-    if (theme === "light") {
-      setTheme("dark");
-    } else {
-      setTheme("light");
-    }
+    setTheme(theme === "light" ? "dark" : "light");
   }
 
   return (
