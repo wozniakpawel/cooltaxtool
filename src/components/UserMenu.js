@@ -2,11 +2,13 @@ import { useEffect } from 'react';
 import { Formik, useFormikContext } from 'formik';
 import NumberOfChildrenSelector from './NumberOfChildrenSelector';
 import * as yup from 'yup';
-
+import { taxYears } from '../utils/TaxYears';
 import {
     Container, Card, Row, Col, Form, Alert,
     Button, ButtonGroup, InputGroup,
 } from 'react-bootstrap';
+
+const taxYearOptions = Object.keys(taxYears);
 
 export const studentLoanOptions = [
     { plan: 'plan1', label: 'Plan 1' },
@@ -33,7 +35,7 @@ const schema = yup.object().shape({
 });
 
 export const defaultInputs = {
-    taxYear: '2025/26',
+    taxYear: taxYearOptions[0],
     studentLoan: [],
     annualGrossSalary: 0,
     annualGrossBonus: 0,
@@ -121,14 +123,9 @@ export function UserMenu({ onUserInputsChange }) {
                                         <Form.Label column>Tax Year</Form.Label>
                                         <Col>
                                             <Form.Control as="select" name="taxYear" value={values.taxYear} onChange={handleInputChange}>
-                                                <option value="2024/25">2024/25</option>
-                                                <option value="2023/24">2023/24</option>
-                                                <option value="2022/23">2022/23</option>
-                                                <option value="2021/22">2021/22</option>
-                                                <option value="2020/21">2020/21</option>
-                                                <option value="2019/20">2019/20</option>
-                                                <option value="2018/19">2018/19</option>
-                                                <option value="2017/18">2017/18</option>
+                                                {taxYearOptions.map(year => (
+                                                    <option key={year} value={year}>{year}</option>
+                                                ))}
                                             </Form.Control>
                                         </Col>
                                         {
