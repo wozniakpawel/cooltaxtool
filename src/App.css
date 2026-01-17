@@ -21,3 +21,21 @@ body {
   color: #333;
   border-color: black;
 }
+
+/* Set minimum width based on Plotly's default chart width (700px) */
+.page-content,
+footer {
+  min-width: 700px;
+}
+
+/* On mobile, disable Bootstrap's fluid behavior and let content overflow */
+@media (max-width: 991px) {
+  .page-content .row {
+    flex-direction: column;
+  }
+
+  .page-content .row > [class*="col"] {
+    width: 100%;
+    max-width: 100%;
+  }
+}
