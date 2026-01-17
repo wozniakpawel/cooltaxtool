@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import {
   LineChart,
   Line,
@@ -38,12 +38,10 @@ const plotSettings = [
 ];
 
 const TaxYearOverview = (props) => {
-  const [chartData, setChartData] = useState([]);
-
   const { isDark, axisColor, gridColor } = getChartTheme(props.theme);
   const tooltipStyle = getTooltipStyle(isDark);
 
-  useEffect(() => {
+  const chartData = useMemo(() => {
     const grossIncomes = Array.from(
       { length: 200 },
       (_, i) => (i * props.inputs.annualGrossIncomeRange) / 200
@@ -77,11 +75,11 @@ const TaxYearOverview = (props) => {
     }
     data[0].marginalCombinedTaxRate = 0;
 
-    setChartData(data);
+    return data;
   }, [props.inputs]);
 
-  const getPercentageData = (data) => {
-    return data.map((d) => {
+  const percentageData = useMemo(() => {
+    return chartData.map((d) => {
       const gross = d.annualGrossIncome || 1;
       const result = { annualGrossIncome: d.annualGrossIncome };
       plotSettings.forEach((s) => {
@@ -93,20 +91,29 @@ const TaxYearOverview = (props) => {
       });
       return result;
     });
-  };
+  }, [chartData]);
 
-  const getVisibleSettings = (isPercentage) => {
+  const visibleSettingsAmount = useMemo(() => {
     return plotSettings.filter((setting) => {
-      if (setting.amountOnly && isPercentage) return false;
-      if (setting.percentOnly && !isPercentage) return false;
+      if (setting.percentOnly) return false;
       if ((setting.key === "employeeNI" || setting.key === "employerNI") && props.inputs.noNI) return false;
       if (setting.key === "studentLoanRepayments" && props.inputs.studentLoan.length === 0) return false;
       if (setting.key === "childBenefits" && !props.inputs.childBenefits.childBenefitsTaken) return false;
       return true;
     });
-  };
+  }, [props.inputs.noNI, props.inputs.studentLoan.length, props.inputs.childBenefits.childBenefitsTaken]);
 
-  const renderChart = (title, data, isPercentage) => (
+  const visibleSettingsPercent = useMemo(() => {
+    return plotSettings.filter((setting) => {
+      if (setting.amountOnly) return false;
+      if ((setting.key === "employeeNI" || setting.key === "employerNI") && props.inputs.noNI) return false;
+      if (setting.key === "studentLoanRepayments" && props.inputs.studentLoan.length === 0) return false;
+      if (setting.key === "childBenefits" && !props.inputs.childBenefits.childBenefitsTaken) return false;
+      return true;
+    });
+  }, [props.inputs.noNI, props.inputs.studentLoan.length, props.inputs.childBenefits.childBenefitsTaken]);
+
+  const renderChart = (title, data, visibleSettings, isPercentage) => (
     <>
       <h5 className="text-center mt-3">{title}</h5>
       <ResponsiveContainer width="100%" height={350}>
@@ -130,7 +137,7 @@ const TaxYearOverview = (props) => {
             {...tooltipStyle}
           />
           <Legend wrapperStyle={legendStyle} />
-          {getVisibleSettings(isPercentage).map((setting) => (
+          {visibleSettings.map((setting) => (
             <Line
               key={setting.key}
               type="monotone"
@@ -149,8 +156,8 @@ const TaxYearOverview = (props) => {
 
   return (
     <Container>
-      {renderChart("Percentages of gross income", getPercentageData(chartData), true)}
-      {renderChart("Annual total amounts", chartData, false)}
+      {renderChart("Percentages of gross income", percentageData, visibleSettingsPercent, true)}
+      {renderChart("Annual total amounts", chartData, visibleSettingsAmount, false)}
     </Container>
   );
 };

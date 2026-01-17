@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import {
   LineChart,
   Line,
@@ -21,41 +21,37 @@ import {
 } from "../../utils/chartUtils";
 
 const TaxSavingsVsPensionContributions = (props) => {
-  const [chartData, setChartData] = useState([]);
-
   const { isDark, axisColor, gridColor } = getChartTheme(props.theme);
   const tooltipStyle = getTooltipStyle(isDark);
 
-  useEffect(() => {
+  const chartData = useMemo(() => {
     const annualGrossIncome = calculateAnnualGrossIncome(
       props.inputs.annualGrossSalary,
       props.inputs.annualGrossBonus
     ).total;
+
+    // Calculate baseline taxes once (without voluntary pension)
+    const taxesWithoutVoluntaryPension = calculateTaxes({
+      ...props.inputs,
+      pensionContributions: {
+        ...props.inputs.pensionContributions,
+        personal: 0,
+      },
+    });
 
     const pensionContributions = Array.from(
       { length: 200 },
       (_, i) => (i * annualGrossIncome) / 200
     );
 
-    const data = pensionContributions.map((pensionContribution) => {
-      const inputsWithVoluntaryPension = {
+    return pensionContributions.map((pensionContribution) => {
+      const taxesWithVoluntaryPension = calculateTaxes({
         ...props.inputs,
         pensionContributions: {
           ...props.inputs.pensionContributions,
           personal: pensionContribution,
         },
-      };
-
-      const inputsWithoutVoluntaryPension = {
-        ...props.inputs,
-        pensionContributions: {
-          ...props.inputs.pensionContributions,
-          personal: 0,
-        },
-      };
-
-      const taxesWithVoluntaryPension = calculateTaxes(inputsWithVoluntaryPension);
-      const taxesWithoutVoluntaryPension = calculateTaxes(inputsWithoutVoluntaryPension);
+      });
 
       const taxSavings =
         taxesWithoutVoluntaryPension.combinedTaxes -
@@ -77,8 +73,6 @@ const TaxSavingsVsPensionContributions = (props) => {
         effectiveTaxRate,
       };
     });
-
-    setChartData(data);
   }, [props.inputs]);
 
   return (
