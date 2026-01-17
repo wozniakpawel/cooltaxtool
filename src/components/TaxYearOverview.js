@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -11,6 +11,15 @@ import {
 } from "recharts";
 import { Container } from "react-bootstrap";
 import { calculateTaxes } from "../utils/TaxCalc";
+import {
+  formatCurrency,
+  formatPercent,
+  getChartTheme,
+  getTooltipStyle,
+  axisTickStyle,
+  legendStyle,
+  chartMargin,
+} from "../utils/chartUtils";
 
 const plotSettings = [
   { key: "adjustedNetIncome", color: "#3498db", label: "Adjusted Net Income" },
@@ -31,9 +40,8 @@ const plotSettings = [
 const TaxYearOverview = (props) => {
   const [chartData, setChartData] = useState([]);
 
-  const isDark = props.theme === "dark";
-  const axisColor = isDark ? "#fff" : "#666";
-  const gridColor = isDark ? "#555" : "#ccc";
+  const { isDark, axisColor, gridColor } = getChartTheme(props.theme);
+  const tooltipStyle = getTooltipStyle(isDark);
 
   useEffect(() => {
     const grossIncomes = Array.from(
@@ -72,9 +80,6 @@ const TaxYearOverview = (props) => {
     setChartData(data);
   }, [props.inputs]);
 
-  const formatCurrency = (value) => `£${value.toLocaleString()}`;
-  const formatPercent = (value) => `${value.toFixed(1)}%`;
-
   const getPercentageData = (data) => {
     return data.map((d) => {
       const gross = d.annualGrossIncome || 1;
@@ -105,35 +110,26 @@ const TaxYearOverview = (props) => {
     <>
       <h5 className="text-center mt-3">{title}</h5>
       <ResponsiveContainer width="100%" height={350}>
-        <LineChart data={data} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
+        <LineChart data={data} margin={chartMargin}>
           <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <XAxis
             dataKey="annualGrossIncome"
             tickFormatter={formatCurrency}
             stroke={axisColor}
-            tick={{ fill: axisColor, fontSize: 12 }}
+            tick={axisTickStyle(axisColor)}
           />
           <YAxis
             tickFormatter={isPercentage ? formatPercent : formatCurrency}
             stroke={axisColor}
-            tick={{ fill: axisColor, fontSize: 12 }}
+            tick={axisTickStyle(axisColor)}
             domain={isPercentage ? [0, 100] : undefined}
           />
           <Tooltip
             formatter={(value, name) => [isPercentage ? formatPercent(value) : formatCurrency(value), name]}
             labelFormatter={(label) => `Gross: ${formatCurrency(label)}`}
-            contentStyle={{
-              backgroundColor: isDark ? "#333" : "#fff",
-              border: `1px solid ${isDark ? "#555" : "#ccc"}`,
-              color: isDark ? "#fff" : "#333",
-              fontSize: 11,
-              padding: "4px 8px",
-              maxHeight: 200,
-              overflowY: "auto",
-            }}
-            itemStyle={{ padding: 0, margin: 0, lineHeight: 1.2 }}
+            {...tooltipStyle}
           />
-          <Legend wrapperStyle={{ fontSize: 12 }} />
+          <Legend wrapperStyle={legendStyle} />
           {getVisibleSettings(isPercentage).map((setting) => (
             <Line
               key={setting.key}

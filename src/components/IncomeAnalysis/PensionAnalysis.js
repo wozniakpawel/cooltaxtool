@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -10,13 +10,21 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { calculateAnnualGrossIncome, calculateTaxes } from "../../utils/TaxCalc";
+import {
+  formatCurrency,
+  formatPercent,
+  getChartTheme,
+  getTooltipStyle,
+  axisTickStyle,
+  legendStyle,
+  chartMargin,
+} from "../../utils/chartUtils";
 
 const TaxSavingsVsPensionContributions = (props) => {
   const [chartData, setChartData] = useState([]);
 
-  const isDark = props.theme === "dark";
-  const axisColor = isDark ? "#fff" : "#666";
-  const gridColor = isDark ? "#555" : "#ccc";
+  const { isDark, axisColor, gridColor } = getChartTheme(props.theme);
+  const tooltipStyle = getTooltipStyle(isDark);
 
   useEffect(() => {
     const annualGrossIncome = calculateAnnualGrossIncome(
@@ -73,42 +81,30 @@ const TaxSavingsVsPensionContributions = (props) => {
     setChartData(data);
   }, [props.inputs]);
 
-  const formatCurrency = (value) => `£${value.toLocaleString()}`;
-  const formatPercent = (value) => `${value.toFixed(1)}%`;
-
   return (
     <>
       <h5 className="text-center mt-3">Tax Savings and Effective Tax Rate vs Pension Contributions</h5>
       <ResponsiveContainer width="100%" height={350}>
-        <LineChart data={chartData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
+        <LineChart data={chartData} margin={chartMargin}>
           <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <XAxis
             dataKey="pensionContribution"
             tickFormatter={formatCurrency}
             stroke={axisColor}
-            tick={{ fill: axisColor, fontSize: 12 }}
+            tick={axisTickStyle(axisColor)}
           />
           <YAxis
             tickFormatter={formatPercent}
             stroke={axisColor}
-            tick={{ fill: axisColor, fontSize: 12 }}
+            tick={axisTickStyle(axisColor)}
             domain={[0, 100]}
           />
           <Tooltip
             formatter={(value, name) => [formatPercent(value), name]}
             labelFormatter={(label) => `Pension Contribution: ${formatCurrency(label)}`}
-            contentStyle={{
-              backgroundColor: isDark ? "#333" : "#fff",
-              border: `1px solid ${isDark ? "#555" : "#ccc"}`,
-              color: isDark ? "#fff" : "#333",
-              fontSize: 11,
-              padding: "4px 8px",
-              maxHeight: 200,
-              overflowY: "auto",
-            }}
-            itemStyle={{ padding: 0, margin: 0, lineHeight: 1.2 }}
+            {...tooltipStyle}
           />
-          <Legend wrapperStyle={{ fontSize: 12 }} />
+          <Legend wrapperStyle={legendStyle} />
           <Line
             type="monotone"
             dataKey="taxSavingsPercentage"
