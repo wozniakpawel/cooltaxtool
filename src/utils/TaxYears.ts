@@ -1,4 +1,6 @@
-export const taxYears = {
+import type { TaxYearsData } from '../types/tax';
+
+export const taxYears: TaxYearsData = {
     '2025/26': {
         childBenefitRates: {
             firstChildRate: 26.05,
