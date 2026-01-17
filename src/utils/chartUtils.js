@@ -56,7 +56,6 @@ export const getApexChartOptions = (theme, { isPercentage = false, xAxisTitle = 
       labels: {
         style: {
           colors: axisColor,
-          fontSize: "12px",
         },
         formatter: formatCurrency,
       },
@@ -77,7 +76,6 @@ export const getApexChartOptions = (theme, { isPercentage = false, xAxisTitle = 
       labels: {
         style: {
           colors: axisColor,
-          fontSize: "12px",
         },
         formatter: isPercentage ? formatPercent : formatCurrency,
       },
@@ -92,9 +90,6 @@ export const getApexChartOptions = (theme, { isPercentage = false, xAxisTitle = 
     },
     tooltip: {
       theme: isDark ? "dark" : "light",
-      style: {
-        fontSize: "11px",
-      },
       x: {
         formatter: (value) => `Gross: ${formatCurrency(value)}`,
       },
@@ -105,7 +100,6 @@ export const getApexChartOptions = (theme, { isPercentage = false, xAxisTitle = 
     legend: {
       show: true,
       position: "bottom",
-      fontSize: "12px",
       labels: {
         colors: textColor,
       },
