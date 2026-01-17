@@ -21,10 +21,11 @@ export function calculateTaxAllowance(income, isBlind, constants) {
     } = constants.taxAllowance;
 
     const breakdown = [];
+    const taperRate = 0.5;
 
     let personalAllowance = basicAllowance;
     if (income > taperThreshold) {
-        const reduction = Math.floor((income - taperThreshold) / 2);
+        const reduction = Math.floor((income - taperThreshold) * taperRate);
         personalAllowance = Math.max(0, basicAllowance - reduction);
     }
     breakdown.push({ rate: "Personal Allowance", amount: personalAllowance });
