@@ -35,6 +35,16 @@ const schema = yup.object().shape({
 export const defaultInputs = {
     taxYear: '2025/26',
     studentLoan: [],
+    prevStudentLoanValue: [],
+    studentLoanToggle: false,
+    pensionToggle: false,
+    prevPensionContributionValues: {
+        prevAutoEnrolment: 0,
+        prevSalarySacrifice: 0,
+        prevPersonal: 0,
+        prevAutoEnrolmentAsSalarySacrifice: true,
+        prevTaxReliefAtSource: true,
+    },
     annualGrossSalary: 0,
     annualGrossBonus: 0,
     annualGrossIncomeRange: 150000,
@@ -107,7 +117,43 @@ export function UserMenu({ onUserInputsChange }) {
                                     ? [...values.studentLoan, value]
                                     : values.studentLoan.filter(plan => plan !== value);
                                 setFieldValue(name, newStudentLoan, true);
-                            } else {
+                            } else if (name === "studentLoanToggle") {
+                                const newStudentLoanToggle = type === "checkbox" ? checked : value;
+                                setFieldValue(name, newStudentLoanToggle, true);
+
+                                if (values.studentLoanToggle === true) {
+                                    values.prevStudentLoanValue = values.studentLoan;
+                                    values.studentLoan = [];
+                                }
+                                else {
+                                    values.studentLoan = values.prevStudentLoanValue;
+                                }
+                            } else if (name === "pensionToggle") {
+                                const newPensionToggle = type === "checkbox" ? checked : value;
+                                setFieldValue(name, newPensionToggle, true);
+
+                                if (values.pensionToggle === true) {
+                                    values.prevPensionContributionValues.prevAutoEnrolment = values.pensionContributions.autoEnrolment;
+                                    values.prevPensionContributionValues.prevSalarySacrifice = values.pensionContributions.salarySacrifice;
+                                    values.prevPensionContributionValues.prevPersonal = values.pensionContributions.personal;
+                                    values.prevPensionContributionValues.prevAutoEnrolmentAsSalarySacrifice = values.autoEnrolmentAsSalarySacrifice;
+                                    values.prevPensionContributionValues.prevTaxReliefAtSource = values.taxReliefAtSource;
+
+                                    values.pensionContributions.autoEnrolment = 0;
+                                    values.pensionContributions.salarySacrifice = 0;
+                                    values.pensionContributions.personal = 0;
+                                    values.autoEnrolmentAsSalarySacrifice = true;
+                                    values.taxReliefAtSource = true;
+                                }
+                                else {
+                                    values.pensionContributions.autoEnrolment = values.prevPensionContributionValues.prevAutoEnrolment;
+                                    values.pensionContributions.salarySacrifice = values.prevPensionContributionValues.prevSalarySacrifice;
+                                    values.pensionContributions.personal = values.prevPensionContributionValues.prevPersonal;
+                                    values.autoEnrolmentAsSalarySacrifice = values.prevPensionContributionValues.prevAutoEnrolmentAsSalarySacrifice;
+                                    values.taxReliefAtSource = values.prevPensionContributionValues.prevTaxReliefAtSource;
+                                }
+                            }
+                            else {
                                 const newValue = type === "checkbox" ? checked : value;
                                 setFieldValue(name, newValue, true);
                             }
@@ -182,118 +228,141 @@ export function UserMenu({ onUserInputsChange }) {
 
                                     <Card className="mt-2">
                                         <Card.Body>
-                                            <Card.Title>Student Loans</Card.Title>
-                                            <Form.Group as={Row} controlId="studentLoan">
-                                                {/* <Form.Label column>Student Loans</Form.Label> */}
-                                                <Col>
-                                                    {studentLoanOptions.map(option => (
-                                                        <Form.Check
-                                                            key={option.plan}
-                                                            type="checkbox"
-                                                            label={option.label}
-                                                            name="studentLoan"
-                                                            value={option.plan}
-                                                            checked={values.studentLoan.includes(option.plan)}
-                                                            onChange={handleInputChange}
-                                                        />
-                                                    ))}
-                                                </Col>
-                                            </Form.Group>
+                                            {/* <Card.Title>Student Loans 123</Card.Title> */}
+                                            <Form.Check
+                                                type="switch"
+                                                id="studentLoanToggle"
+                                                label="Student Loans"
+                                                name="studentLoanToggle"
+                                                checked={values.studentLoanToggle}
+                                                onChange={handleInputChange}
+                                            />
+                                            {values.studentLoanToggle &&
+                                                <Form.Group as={Row} controlId="studentLoan">
+                                                    {/* <Form.Label column>Student Loans</Form.Label> */}
+                                                    <Col>
+                                                        {studentLoanOptions.map(option => (
+                                                            <Form.Check
+                                                                key={option.plan}
+                                                                type="checkbox"
+                                                                label={option.label}
+                                                                name="studentLoan"
+                                                                value={option.plan}
+                                                                checked={values.studentLoan.includes(option.plan)}
+                                                                onChange={handleInputChange}
+                                                            />
+                                                        ))}
+                                                    </Col>
+                                                </Form.Group>
+                                            }
                                         </Card.Body>
                                     </Card>
 
                                     <Card className="mt-2">
                                         <Card.Body>
-                                            <Card.Title>Pension</Card.Title>
-                                            <Form.Group as={Row} controlId="pensionContributions.autoEnrolment">
-                                                <Form.Label column>Auto Enrolment</Form.Label>
-                                                <Col>
-                                                    <InputGroup hasValidation>
-                                                        <InputGroup.Text>%</InputGroup.Text>
-                                                        <Form.Control
-                                                            type="number"
-                                                            inputMode="decimal"
-                                                            name="pensionContributions.autoEnrolment"
-                                                            value={values.pensionContributions.autoEnrolment}
-                                                            onChange={handleInputChange}
-                                                            isValid={!errors.pensionContributions?.autoEnrolment}
-                                                            isInvalid={!!errors.pensionContributions?.autoEnrolment}
-                                                            min={0}
-                                                            max={30}
-                                                            step={0.1}
-                                                        />
-                                                        <Form.Control.Feedback type="invalid">
-                                                            {errors.pensionContributions?.autoEnrolment}
-                                                        </Form.Control.Feedback>
-                                                    </InputGroup>
-                                                </Col>
-                                            </Form.Group>
+                                            {/* <Card.Title>Pension</Card.Title> */}
                                             <Form.Check
                                                 type="switch"
-                                                id="autoEnrolmentAsSalarySacrifice"
-                                                label="As salary sacrifice"
-                                                name="autoEnrolmentAsSalarySacrifice"
-                                                checked={values.autoEnrolmentAsSalarySacrifice}
+                                                id="pensionToggle"
+                                                label="Pension"
+                                                name="pensionToggle"
+                                                checked={values.pensionToggle}
                                                 onChange={handleInputChange}
                                             />
 
-                                            <hr />
+                                            {values.pensionToggle &&
+                                                <>
+                                                    <Form.Group as={Row} controlId="pensionContributions.autoEnrolment">
+                                                        <Form.Label column>Auto Enrolment</Form.Label>
+                                                        <Col>
+                                                            <InputGroup hasValidation>
+                                                                <InputGroup.Text>%</InputGroup.Text>
+                                                                <Form.Control
+                                                                    type="number"
+                                                                    inputMode="decimal"
+                                                                    name="pensionContributions.autoEnrolment"
+                                                                    value={values.pensionContributions.autoEnrolment}
+                                                                    onChange={handleInputChange}
+                                                                    isValid={!errors.pensionContributions?.autoEnrolment}
+                                                                    isInvalid={!!errors.pensionContributions?.autoEnrolment}
+                                                                    min={0}
+                                                                    max={30}
+                                                                    step={0.1}
+                                                                />
+                                                                <Form.Control.Feedback type="invalid">
+                                                                    {errors.pensionContributions?.autoEnrolment}
+                                                                </Form.Control.Feedback>
+                                                            </InputGroup>
+                                                        </Col>
+                                                    </Form.Group>
+                                                    <Form.Check
+                                                        type="switch"
+                                                        id="autoEnrolmentAsSalarySacrifice"
+                                                        label="As salary sacrifice"
+                                                        name="autoEnrolmentAsSalarySacrifice"
+                                                        checked={values.autoEnrolmentAsSalarySacrifice}
+                                                        onChange={handleInputChange}
+                                                    />
 
-                                            <Form.Group as={Row} controlId="pensionContributions.salarySacrifice">
-                                                <Form.Label column>Salary/Bonus Sacrifice</Form.Label>
-                                                <Col>
-                                                    <InputGroup hasValidation>
-                                                        <InputGroup.Text>£</InputGroup.Text>
-                                                        <Form.Control
-                                                            type="number"
-                                                            inputMode="decimal"
-                                                            name="pensionContributions.salarySacrifice"
-                                                            value={values.pensionContributions.salarySacrifice}
-                                                            onChange={handleInputChange}
-                                                            isValid={!errors.pensionContributions?.salarySacrifice}
-                                                            isInvalid={!!errors.pensionContributions?.salarySacrifice}
-                                                            min={0}
-                                                            step={100}
-                                                        />
-                                                        <Form.Control.Feedback type="invalid">
-                                                            {errors.pensionContributions?.salarySacrifice}
-                                                        </Form.Control.Feedback>
-                                                    </InputGroup>
-                                                </Col>
-                                            </Form.Group>
+                                                    <hr />
 
-                                            <hr />
+                                                    <Form.Group as={Row} controlId="pensionContributions.salarySacrifice">
+                                                        <Form.Label column>Salary/Bonus Sacrifice</Form.Label>
+                                                        <Col>
+                                                            <InputGroup hasValidation>
+                                                                <InputGroup.Text>£</InputGroup.Text>
+                                                                <Form.Control
+                                                                    type="number"
+                                                                    inputMode="decimal"
+                                                                    name="pensionContributions.salarySacrifice"
+                                                                    value={values.pensionContributions.salarySacrifice}
+                                                                    onChange={handleInputChange}
+                                                                    isValid={!errors.pensionContributions?.salarySacrifice}
+                                                                    isInvalid={!!errors.pensionContributions?.salarySacrifice}
+                                                                    min={0}
+                                                                    step={100}
+                                                                />
+                                                                <Form.Control.Feedback type="invalid">
+                                                                    {errors.pensionContributions?.salarySacrifice}
+                                                                </Form.Control.Feedback>
+                                                            </InputGroup>
+                                                        </Col>
+                                                    </Form.Group>
 
-                                            <Form.Group as={Row} controlId="pensionContributions.personal">
-                                                <Form.Label column>Personal Contributions</Form.Label>
-                                                <Col>
-                                                    <InputGroup hasValidation>
-                                                        <InputGroup.Text>£</InputGroup.Text>
-                                                        <Form.Control
-                                                            type="number"
-                                                            inputMode="decimal"
-                                                            name="pensionContributions.personal"
-                                                            value={values.pensionContributions.personal}
-                                                            onChange={handleInputChange}
-                                                            isValid={!errors.pensionContributions?.personal}
-                                                            isInvalid={!!errors.pensionContributions?.personal}
-                                                            min={0}
-                                                            step={100}
-                                                        />
-                                                        <Form.Control.Feedback type="invalid">
-                                                            {errors.pensionContributions?.personal}
-                                                        </Form.Control.Feedback>
-                                                    </InputGroup>
-                                                </Col>
-                                            </Form.Group>
-                                            <Form.Check
-                                                type="switch"
-                                                id="taxReliefAtSource"
-                                                label="Relief at source"
-                                                name="taxReliefAtSource"
-                                                checked={values.taxReliefAtSource}
-                                                onChange={handleInputChange}
-                                            />
+                                                    <hr />
+
+                                                    <Form.Group as={Row} controlId="pensionContributions.personal">
+                                                        <Form.Label column>Personal Contributions</Form.Label>
+                                                        <Col>
+                                                            <InputGroup hasValidation>
+                                                                <InputGroup.Text>£</InputGroup.Text>
+                                                                <Form.Control
+                                                                    type="number"
+                                                                    inputMode="decimal"
+                                                                    name="pensionContributions.personal"
+                                                                    value={values.pensionContributions.personal}
+                                                                    onChange={handleInputChange}
+                                                                    isValid={!errors.pensionContributions?.personal}
+                                                                    isInvalid={!!errors.pensionContributions?.personal}
+                                                                    min={0}
+                                                                    step={100}
+                                                                />
+                                                                <Form.Control.Feedback type="invalid">
+                                                                    {errors.pensionContributions?.personal}
+                                                                </Form.Control.Feedback>
+                                                            </InputGroup>
+                                                        </Col>
+                                                    </Form.Group>
+                                                    <Form.Check
+                                                        type="switch"
+                                                        id="taxReliefAtSource"
+                                                        label="Relief at source"
+                                                        name="taxReliefAtSource"
+                                                        checked={values.taxReliefAtSource}
+                                                        onChange={handleInputChange}
+                                                    />
+                                                </>
+                                            }
                                         </Card.Body>
                                     </Card>
 
