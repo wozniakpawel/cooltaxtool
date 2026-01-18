@@ -1,11 +1,11 @@
 import {
-  calculateAnnualGrossIncome,
+  calculateGrossEarnings,
   calculateTaxAllowance,
   calculateIncomeTax,
   calculateNationalInsurance,
   calculateStudentLoanRepayments,
   calculateChildBenefits,
-  grossManualPensionContributions,
+  grossPensionContribution,
   calculateTaxes,
 } from './TaxCalc';
 import { taxYears } from './TaxYears';
@@ -14,20 +14,20 @@ import type { TaxInputs } from '../types/tax';
 // Use 2024/25 tax year for consistent test results
 const constants = taxYears['2024/25'];
 
-describe('calculateAnnualGrossIncome', () => {
-  it('should calculate total gross income from salary and bonus', () => {
-    const result = calculateAnnualGrossIncome(50000, 5000);
+describe('calculateGrossEarnings', () => {
+  it('should calculate total gross earnings from salary and bonus', () => {
+    const result = calculateGrossEarnings(50000, 5000);
     expect(result.total).toBe(55000);
     expect(result.breakdown).toHaveLength(2);
   });
 
   it('should handle zero values', () => {
-    const result = calculateAnnualGrossIncome(0, 0);
+    const result = calculateGrossEarnings(0, 0);
     expect(result.total).toBe(0);
   });
 
   it('should handle salary only', () => {
-    const result = calculateAnnualGrossIncome(30000, 0);
+    const result = calculateGrossEarnings(30000, 0);
     expect(result.total).toBe(30000);
   });
 });
@@ -223,15 +223,15 @@ describe('calculateChildBenefits', () => {
   });
 });
 
-describe('grossManualPensionContributions', () => {
+describe('grossPensionContribution', () => {
   it('should gross up contributions with tax relief at source', () => {
     // £800 contribution becomes £1,000 with 25% tax relief
-    const result = grossManualPensionContributions(800, true);
+    const result = grossPensionContribution(800, true);
     expect(result).toBe(1000);
   });
 
   it('should not gross up contributions without tax relief at source', () => {
-    const result = grossManualPensionContributions(800, false);
+    const result = grossPensionContribution(800, false);
     expect(result).toBe(800);
   });
 });
@@ -242,7 +242,7 @@ describe('calculateTaxes', () => {
     studentLoan: [],
     annualGrossSalary: 50000,
     annualGrossBonus: 0,
-    annualGrossIncomeRange: 150000,
+    grossEarningsRange: 150000,
     residentInScotland: false,
     noNI: false,
     blind: false,
@@ -256,7 +256,7 @@ describe('calculateTaxes', () => {
   it('should calculate taxes for a basic salary', () => {
     const result = calculateTaxes(baseInputs);
 
-    expect(result.annualGrossIncome.total).toBe(50000);
+    expect(result.grossEarnings.total).toBe(50000);
     expect(result.adjustedNetIncome).toBe(50000);
     expect(result.taxAllowance.total).toBe(12570);
     expect(result.taxableIncome).toBe(37430);

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import Chart from "react-apexcharts";
-import { calculateAnnualGrossIncome, calculateTaxes } from "../../utils/TaxCalc";
+import { calculateGrossEarnings, calculateTaxes } from "../../utils/TaxCalc";
 import {
   formatCurrency,
   formatPercent,
@@ -9,7 +9,7 @@ import {
 
 const TaxSavingsVsPensionContributions = (props) => {
   const chartData = useMemo(() => {
-    const annualGrossIncome = calculateAnnualGrossIncome(
+    const grossEarnings = calculateGrossEarnings(
       props.inputs.annualGrossSalary,
       props.inputs.annualGrossBonus
     ).total;
@@ -25,7 +25,7 @@ const TaxSavingsVsPensionContributions = (props) => {
 
     const pensionContributions = Array.from(
       { length: 200 },
-      (_, i) => (i * annualGrossIncome) / 200
+      (_, i) => (i * grossEarnings) / 200
     );
 
     return pensionContributions.map((pensionContribution) => {
@@ -47,7 +47,7 @@ const TaxSavingsVsPensionContributions = (props) => {
         0,
         Math.min(
           100,
-          (taxesWithVoluntaryPension.combinedTaxes / annualGrossIncome) * 100
+          (taxesWithVoluntaryPension.combinedTaxes / grossEarnings) * 100
         )
       );
 

@@ -78,7 +78,7 @@ export interface TaxInputs {
   studentLoan: StudentLoanPlan[];
   annualGrossSalary: number;
   annualGrossBonus: number;
-  annualGrossIncomeRange: number;
+  grossEarningsRange: number;
   residentInScotland: boolean;
   noNI: boolean;
   blind: boolean;
@@ -101,7 +101,7 @@ export interface CalculationResult {
 }
 
 export interface TaxCalculationResult {
-  annualGrossIncome: CalculationResult;
+  grossEarnings: CalculationResult;
   adjustedNetIncome: number;
   taxAllowance: CalculationResult;
   taxableIncome: number;

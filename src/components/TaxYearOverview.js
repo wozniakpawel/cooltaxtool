@@ -28,18 +28,18 @@ const TaxYearOverview = (props) => {
   const chartData = useMemo(() => {
     const grossIncomes = Array.from(
       { length: 200 },
-      (_, i) => (i * props.inputs.annualGrossIncomeRange) / 200
+      (_, i) => (i * props.inputs.grossEarningsRange) / 200
     );
 
     const data = grossIncomes.map((grossIncome) => {
-      const { annualGrossIncome, taxAllowance, incomeTax, employeeNI, employerNI, pensionPot, studentLoanRepayments, childBenefits, ...rest } =
+      const { grossEarnings, taxAllowance, incomeTax, employeeNI, employerNI, pensionPot, studentLoanRepayments, childBenefits, ...rest } =
         calculateTaxes({
           ...props.inputs,
           annualGrossBonus: 0,
           annualGrossSalary: grossIncome,
         });
       return {
-        annualGrossIncome: annualGrossIncome.total,
+        grossEarnings: grossEarnings.total,
         taxAllowance: taxAllowance.total,
         incomeTax: incomeTax.total,
         employeeNI: employeeNI.total,
@@ -54,7 +54,7 @@ const TaxYearOverview = (props) => {
     // Calculate marginal tax rate
     for (let i = 1; i < data.length; i++) {
       const deltaTaxes = data[i].combinedTaxes - data[i - 1].combinedTaxes;
-      const deltaIncome = data[i].annualGrossIncome - data[i - 1].annualGrossIncome;
+      const deltaIncome = data[i].grossEarnings - data[i - 1].grossEarnings;
       data[i].marginalCombinedTaxRate = deltaIncome > 0 ? Math.ceil((deltaTaxes / deltaIncome) * 100) : 0;
     }
     data[0].marginalCombinedTaxRate = 0;
@@ -64,8 +64,8 @@ const TaxYearOverview = (props) => {
 
   const percentageData = useMemo(() => {
     return chartData.map((d) => {
-      const gross = d.annualGrossIncome || 1;
-      const result = { annualGrossIncome: d.annualGrossIncome };
+      const gross = d.grossEarnings || 1;
+      const result = { grossEarnings: d.grossEarnings };
       plotSettings.forEach((s) => {
         if (!s.amountOnly) {
           result[s.key] = s.key === "marginalCombinedTaxRate"
@@ -138,8 +138,8 @@ const TaxYearOverview = (props) => {
     (value) => `Gross: ${formatCurrency(value)}`
   );
 
-  const percentSeries = buildSeries(percentageData, visibleSettingsPercent, "annualGrossIncome");
-  const amountSeries = buildSeries(chartData, visibleSettingsAmount, "annualGrossIncome");
+  const percentSeries = buildSeries(percentageData, visibleSettingsPercent, "grossEarnings");
+  const amountSeries = buildSeries(chartData, visibleSettingsAmount, "grossEarnings");
 
   return (
     <Container>
