@@ -46,7 +46,7 @@ const TaxBreakdown = (props: TaxBreakdownProps) => {
 
         <Table size="sm">
           <tbody>
-            {renderBreakDown("Annual Gross Income", results.annualGrossIncome)}
+            {renderBreakDown("Gross Earnings", results.grossEarnings)}
             {renderSingleValue("Adjusted Net Income", results.adjustedNetIncome)}
             {renderBreakDown("Tax Allowance", results.taxAllowance)}
             {renderBreakDown("Employer NI", results.employerNI)}

@@ -20,7 +20,7 @@ const requiredPositiveNumber = yup.number()
 const schema = yup.object().shape({
     annualGrossSalary: requiredPositiveNumber,
     annualGrossBonus: requiredPositiveNumber,
-    annualGrossIncomeRange: requiredPositiveNumber,
+    grossEarningsRange: requiredPositiveNumber,
     pensionContributions: yup.object().shape({
         autoEnrolment: requiredPositiveNumber
             .max(30, "Must be less than or equal to 30."),
@@ -34,7 +34,7 @@ export const defaultInputs: TaxInputs = {
     studentLoan: [] as StudentLoanPlan[],
     annualGrossSalary: 0,
     annualGrossBonus: 0,
-    annualGrossIncomeRange: 150000,
+    grossEarningsRange: 150000,
     residentInScotland: false,
     noNI: false,
     blind: false,
@@ -74,7 +74,7 @@ const UseEffectWrapper = ({ onUserInputsChange }: UseEffectWrapperProps) => {
         const parsedValues = { ...values };
         parsedValues.annualGrossSalary = Number(parsedValues.annualGrossSalary);
         parsedValues.annualGrossBonus = Number(parsedValues.annualGrossBonus);
-        parsedValues.annualGrossIncomeRange = Number(parsedValues.annualGrossIncomeRange);
+        parsedValues.grossEarningsRange = Number(parsedValues.grossEarningsRange);
         parsedValues.pensionContributions = {
             ...parsedValues.pensionContributions,
             autoEnrolment: Number(parsedValues.pensionContributions.autoEnrolment),
@@ -372,24 +372,24 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                             }
 
                                             {!values.incomeAnalysis &&
-                                                <Form.Group as={Row} controlId="annualGrossIncomeRange">
-                                                    <Form.Label column>Annual Gross Income range</Form.Label>
+                                                <Form.Group as={Row} controlId="grossEarningsRange">
+                                                    <Form.Label column>Annual Gross Earnings range</Form.Label>
                                                     <Col>
                                                         <InputGroup hasValidation>
                                                             <InputGroup.Text>£</InputGroup.Text>
                                                             <Form.Control
                                                                 type="number"
                                                                 inputMode="decimal"
-                                                                name="annualGrossIncomeRange"
-                                                                value={values.annualGrossIncomeRange}
+                                                                name="grossEarningsRange"
+                                                                value={values.grossEarningsRange}
                                                                 onChange={handleInputChange}
-                                                                isValid={!errors.annualGrossIncomeRange}
-                                                                isInvalid={!!errors.annualGrossIncomeRange}
+                                                                isValid={!errors.grossEarningsRange}
+                                                                isInvalid={!!errors.grossEarningsRange}
                                                                 min={10000}
                                                                 step={10000}
                                                             />
                                                             <Form.Control.Feedback type="invalid">
-                                                                {errors.annualGrossIncomeRange}
+                                                                {errors.grossEarningsRange}
                                                             </Form.Control.Feedback>
                                                         </InputGroup>
                                                     </Col>
