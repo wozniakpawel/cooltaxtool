@@ -54,7 +54,8 @@ export const defaultInputs = {
     },
     autoEnrolmentAsSalarySacrifice: true,
     taxReliefAtSource: true,
-    incomeAnalysis: false,
+    activeTab: 'taxYearOverview', // 'taxYearOverview', 'incomeAnalysis', 'firstHomes'
+    firstHomesLondon: false,
 };
 
 const hasEmptyString = (obj) => {
@@ -298,24 +299,26 @@ export function UserMenu({ onUserInputsChange }) {
                                         <Card.Body>
                                             <ButtonGroup className="mb-2">
                                                 <Button
-                                                    variant={!values.incomeAnalysis ? 'primary' : 'outline-primary'}
-                                                    onClick={() => handleInputChange({
-                                                        target: { name: 'incomeAnalysis', type: 'checkbox', checked: !values.incomeAnalysis }
-                                                    })}
+                                                    variant={values.activeTab === 'taxYearOverview' ? 'primary' : 'outline-primary'}
+                                                    onClick={() => setFieldValue('activeTab', 'taxYearOverview', true)}
                                                 >
                                                     Tax Year Overview
                                                 </Button>
                                                 <Button
-                                                    variant={values.incomeAnalysis ? 'primary' : 'outline-primary'}
-                                                    onClick={() => handleInputChange({
-                                                        target: { name: 'incomeAnalysis', type: 'checkbox', checked: !values.incomeAnalysis }
-                                                    })}
+                                                    variant={values.activeTab === 'incomeAnalysis' ? 'primary' : 'outline-primary'}
+                                                    onClick={() => setFieldValue('activeTab', 'incomeAnalysis', true)}
                                                 >
                                                     Income analysis
                                                 </Button>
+                                                <Button
+                                                    variant={values.activeTab === 'firstHomes' ? 'primary' : 'outline-primary'}
+                                                    onClick={() => setFieldValue('activeTab', 'firstHomes', true)}
+                                                >
+                                                    First Homes
+                                                </Button>
                                             </ButtonGroup>
 
-                                            {values.incomeAnalysis &&
+                                            {values.activeTab === 'incomeAnalysis' &&
                                                 <>
                                                     <Form.Group as={Row} controlId="annualGrossSalary">
                                                         <Form.Label column>Annual Gross Salary</Form.Label>
@@ -365,7 +368,7 @@ export function UserMenu({ onUserInputsChange }) {
                                                 </>
                                             }
 
-                                            {!values.incomeAnalysis &&
+                                            {(values.activeTab === 'taxYearOverview' || values.activeTab === 'firstHomes') &&
                                                 <Form.Group as={Row} controlId="grossEarningsRange">
                                                     <Form.Label column>Annual Gross Earnings range</Form.Label>
                                                     <Col>
@@ -388,6 +391,17 @@ export function UserMenu({ onUserInputsChange }) {
                                                         </InputGroup>
                                                     </Col>
                                                 </Form.Group>
+                                            }
+
+                                            {values.activeTab === 'firstHomes' &&
+                                                <Form.Check
+                                                    type="switch"
+                                                    id="firstHomesLondon"
+                                                    label="London (higher income cap and house price)"
+                                                    name="firstHomesLondon"
+                                                    checked={values.firstHomesLondon}
+                                                    onChange={handleInputChange}
+                                                />
                                             }
                                         </Card.Body>
                                     </Card>

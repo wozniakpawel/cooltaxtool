@@ -250,7 +250,8 @@ describe('calculateTaxes', () => {
     pensionContributions: { autoEnrolment: 0, salarySacrifice: 0, personal: 0 },
     autoEnrolmentAsSalarySacrifice: true,
     taxReliefAtSource: true,
-    incomeAnalysis: false,
+    activeTab: 'taxYearOverview',
+    firstHomesLondon: false,
   };
 
   it('should calculate taxes for a basic salary', () => {

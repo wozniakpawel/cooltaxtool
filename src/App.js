@@ -3,6 +3,7 @@ import { Container, Row, Col, Form } from "react-bootstrap";
 import { defaultInputs, UserMenu } from "./components/UserMenu";
 import TaxYearOverview from "./components/TaxYearOverview";
 import IncomeAnalysis from "./components/IncomeAnalysis";
+import FirstHomes from "./components/FirstHomes";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -47,11 +48,14 @@ function App() {
             <UserMenu onUserInputsChange={setUserInputs} />
           </Col>
           <Col xs={12} lg={6}>
-            {userInputs.incomeAnalysis && (
+            {userInputs.activeTab === 'taxYearOverview' && (
+              <TaxYearOverview inputs={userInputs} theme={theme} />
+            )}
+            {userInputs.activeTab === 'incomeAnalysis' && (
               <IncomeAnalysis inputs={userInputs} theme={theme} />
             )}
-            {!userInputs.incomeAnalysis && (
-              <TaxYearOverview inputs={userInputs} theme={theme} />
+            {userInputs.activeTab === 'firstHomes' && (
+              <FirstHomes inputs={userInputs} theme={theme} />
             )}
           </Col>
         </Row>

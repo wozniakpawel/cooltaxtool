@@ -73,6 +73,8 @@ export interface PensionContributionsInput {
   personal: number;
 }
 
+export type ActiveTab = 'taxYearOverview' | 'incomeAnalysis' | 'firstHomes';
+
 export interface TaxInputs {
   taxYear: TaxYearKey;
   studentLoan: StudentLoanPlan[];
@@ -86,7 +88,8 @@ export interface TaxInputs {
   pensionContributions: PensionContributionsInput;
   autoEnrolmentAsSalarySacrifice: boolean;
   taxReliefAtSource: boolean;
-  incomeAnalysis: boolean;
+  activeTab: ActiveTab;
+  firstHomesLondon: boolean;
 }
 
 // Calculation result types
