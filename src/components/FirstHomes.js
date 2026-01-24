@@ -26,6 +26,33 @@ const FirstHomes = (props) => {
   const config = isLondon ? FIRST_HOMES_CONFIG.london : FIRST_HOMES_CONFIG.outsideLondon;
   const discountedPrice = config.maxHousePrice * DISCOUNT_RATE;
 
+  // Find gross income needed to match the purchasing power of someone at the cap
+  // Uses binary search for stable result independent of chart range
+  const equivalentGrossIncome = useMemo(() => {
+    const getTakeHome = (gross) => calculateTaxes({
+      ...props.inputs,
+      annualGrossBonus: 0,
+      annualGrossSalary: gross,
+    }).takeHomePay;
+
+    const takeHomeAtCap = getTakeHome(config.incomeCap);
+    const priceMultiplier = config.maxHousePrice / discountedPrice;
+    const targetTakeHome = takeHomeAtCap * priceMultiplier;
+
+    // Binary search between cap and 1M with £100 precision (~14 iterations)
+    let low = config.incomeCap;
+    let high = 1000000;
+    while (high - low > 100) {
+      const mid = (low + high) / 2;
+      if (getTakeHome(mid) < targetTakeHome) {
+        low = mid;
+      } else {
+        high = mid;
+      }
+    }
+    return Math.round(high / 1000) * 1000;
+  }, [props.inputs, config.incomeCap, config.maxHousePrice, discountedPrice]);
+
   const chartData = useMemo(() => {
     const grossIncomes = Array.from(
       { length: 200 },
@@ -41,7 +68,6 @@ const FirstHomes = (props) => {
 
       const takeHomePay = taxResult.takeHomePay;
       const isEligible = grossIncome <= config.incomeCap;
-      // Key insight: house price depends on eligibility
       const housePrice = isEligible ? discountedPrice : config.maxHousePrice;
       const percentOfHousePrice = (takeHomePay / housePrice) * 100;
 
@@ -53,7 +79,7 @@ const FirstHomes = (props) => {
         isEligible,
       };
     });
-  }, [props.inputs, config.incomeCap, config.maxHousePrice, discountedPrice, props.inputs.grossEarningsRange]);
+  }, [props.inputs, config.incomeCap, config.maxHousePrice, discountedPrice]);
 
   const chartTitle = "Annual Take Home Pay as a % of the House Price"
 
@@ -157,6 +183,9 @@ const FirstHomes = (props) => {
       <Alert variant="warning" className="mt-3">
         <small>
           <strong>Note:</strong> Above {formatCurrency(config.incomeCap)}, you lose eligibility and must pay full price ({formatCurrency(config.maxHousePrice)} instead of {formatCurrency(discountedPrice)}), causing the dramatic drop in the chart.
+          {equivalentGrossIncome && (
+            <> To have the same purchasing power at full price, you'd need to earn approximately <strong>{formatCurrency(equivalentGrossIncome)}</strong> gross.</>
+          )}
         </small>
       </Alert>
     </Container>
