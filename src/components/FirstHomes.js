@@ -55,9 +55,11 @@ const FirstHomes = (props) => {
     });
   }, [props.inputs, config.incomeCap, config.maxHousePrice, discountedPrice, props.inputs.grossEarningsRange]);
 
+  const chartTitle = "Annual Take Home Pay as a % of the House Price"
+
   const series = [
     {
-      name: "Take Home Pay (% of House Price)",
+      name: chartTitle,
       data: chartData.map((d) => ({ x: d.grossIncome, y: d.percentOfHousePrice })),
     },
   ];
@@ -65,7 +67,6 @@ const FirstHomes = (props) => {
   const baseOptions = getApexChartOptions(props.theme, {
     isPercentage: false,
     xAxisTitle: "Gross Salary",
-    yAxisTitle: "Take Home Pay (% of House Price)",
   });
 
   const options = {
@@ -84,7 +85,7 @@ const FirstHomes = (props) => {
       min: 0,
       max: undefined,
       title: {
-        text: "Take Home Pay (% of House Price)",
+        text: chartTitle,
         style: baseOptions.yaxis.title?.style,
       },
     },
@@ -144,7 +145,7 @@ const FirstHomes = (props) => {
       </Alert>
 
       <h6 className="text-center mt-3">
-        Take Home Pay as % of House Price
+        {chartTitle}
       </h6>
       <Chart
         options={options}
