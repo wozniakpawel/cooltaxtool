@@ -1,10 +1,10 @@
-import React from "react";
+import { useMemo } from "react";
 import { calculateTaxes } from "../../utils/TaxCalc";
 import { Table, Card } from "react-bootstrap";
 import { formatCurrencyPrecise } from "../../utils/chartUtils";
 
 const TaxBreakdown = (props) => {
-  const results = calculateTaxes(props.inputs);
+  const results = useMemo(() => calculateTaxes(props.inputs), [props.inputs]);
 
   function renderSingleValue(name, value) {
     return (
