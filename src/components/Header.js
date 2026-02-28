@@ -1,7 +1,6 @@
-import React from "react";
-import { Navbar, Container, Row } from "react-bootstrap";
+import { Navbar, Container, Row, Form } from "react-bootstrap";
 
-const Header = () => {
+const Header = ({ theme, toggleTheme }) => {
   return (
     <Navbar>
       <Container className="justify-content-center large">
@@ -19,6 +18,13 @@ const Header = () => {
             UK Tax Calculator & Visualiser
           </Row>
         </Navbar.Brand>
+        <Form.Check
+          type="switch"
+          id="themeToggle"
+          label="Dark mode"
+          checked={theme === "dark"}
+          onChange={toggleTheme}
+        />
       </Container>
     </Navbar>
   );

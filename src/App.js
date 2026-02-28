@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, Row, Col, Form } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import { defaultInputs, UserMenu } from "./components/UserMenu";
 import TaxYearOverview from "./components/TaxYearOverview";
 import IncomeAnalysis from "./components/IncomeAnalysis";
@@ -33,17 +33,7 @@ function App() {
       <Container className="page-content p-0">
         <Row>
           <Col xs={12} lg={6}>
-            <Header theme={theme} themeToggleFunction={toggleTheme} />
-            <Container>
-              <Form.Check
-                type="switch"
-                id="themeToggle"
-                label="Dark mode"
-                name="themeToggle"
-                checked={theme === "dark"}
-                onChange={toggleTheme}
-              />
-            </Container>
+            <Header theme={theme} toggleTheme={toggleTheme} />
             <UserMenu onUserInputsChange={setUserInputs} />
           </Col>
           <Col xs={12} lg={6}>
