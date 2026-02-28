@@ -3,20 +3,13 @@ import { Formik, useFormikContext } from 'formik';
 import NumberOfChildrenSelector from './NumberOfChildrenSelector';
 import * as yup from 'yup';
 import { taxYears } from '../utils/TaxYears';
+import { studentLoanOptions } from '../utils/studentLoanOptions';
 import {
     Container, Card, Row, Col, Form, Alert,
     Button, ButtonGroup, InputGroup,
 } from 'react-bootstrap';
 
 const taxYearOptions = Object.keys(taxYears);
-
-export const studentLoanOptions = [
-    { plan: 'plan1', label: 'Plan 1' },
-    { plan: 'plan2', label: 'Plan 2' },
-    { plan: 'plan4', label: 'Plan 4' },
-    { plan: 'plan5', label: 'Plan 5' },
-    { plan: 'postgrad', label: 'Postgraduate' },
-];
 
 const requiredPositiveNumber = yup.number("Must be a number.")
     .min(0, "Must be a positive number.")

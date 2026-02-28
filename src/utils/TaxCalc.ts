@@ -1,5 +1,5 @@
 import { taxYears } from './TaxYears';
-import { studentLoanOptions } from '../components/UserMenu';
+import { studentLoanOptions } from './studentLoanOptions';
 import type {
     TaxYearConstants,
     TaxInputs,
@@ -10,7 +10,6 @@ import type {
     ChildBenefitsInput,
     ChildBenefitRates,
     HICBCConstants,
-    StudentLoanOption,
 } from '../types/tax';
 
 // Gross Income = Salary + Bonuses + Other Income (Dividends, Rental Income, etc.)
@@ -155,7 +154,7 @@ export function calculateStudentLoanRepayments(
     // you will still pay the same you would with only one non-postgraduate plan
     // but the payments will be split between the plans based on their thresholds
     nonPostgradPlans.forEach((plan, index) => {
-        const option = (studentLoanOptions as StudentLoanOption[]).find(option => option.plan === plan);
+        const option = studentLoanOptions.find(option => option.plan === plan);
         let amount: number;
 
         if (index === nonPostgradPlans.length - 1) {
@@ -195,7 +194,7 @@ export function calculateStudentLoanRepayments(
     // Calculate repayments for postgraduate plan
     // Postgraduate plan repayments are paid on top of all the other plans
     if (studentLoanPlans.includes("postgrad")) {
-        const option = (studentLoanOptions as StudentLoanOption[]).find(option => option.plan === "postgrad");
+        const option = studentLoanOptions.find(option => option.plan === "postgrad");
         const amount = (income <= thresholds["postgrad"]) ? 0 : Math.floor((income - thresholds["postgrad"]) * postgradRate);
         total += amount;
         breakdown.push({ rate: option?.label ?? "Postgraduate", amount });
