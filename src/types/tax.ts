@@ -49,8 +49,14 @@ export interface IncomeTaxConstants {
   restOfUK: TaxBand[];
 }
 
+export interface HICBCConstants {
+  threshold: number;
+  taperDivisor: number; // 100 (pre-2024/25) or 200 (2024/25+)
+}
+
 export interface TaxYearConstants {
   childBenefitRates: ChildBenefitRates;
+  hicbc: HICBCConstants;
   taxAllowance: TaxAllowanceConstants;
   nationalInsurance: NationalInsuranceConstants;
   studentLoan: StudentLoanConstants;

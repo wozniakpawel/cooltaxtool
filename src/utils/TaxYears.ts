@@ -6,6 +6,7 @@ export const taxYears: TaxYearsData = {
             firstChildRate: 26.05,
             additionalChildRate: 17.25,
         },
+        hicbc: { threshold: 60000, taperDivisor: 200 },
         taxAllowance: {
             basicAllowance: 12570,
             taperThreshold: 100000,
@@ -51,6 +52,7 @@ export const taxYears: TaxYearsData = {
             firstChildRate: 25.60,
             additionalChildRate: 16.95,
         },
+        hicbc: { threshold: 60000, taperDivisor: 200 },
         taxAllowance: {
             basicAllowance: 12570,
             taperThreshold: 100000,
@@ -96,6 +98,7 @@ export const taxYears: TaxYearsData = {
             firstChildRate: 24.00,
             additionalChildRate: 15.90,
         },
+        hicbc: { threshold: 50000, taperDivisor: 100 },
         taxAllowance: {
             basicAllowance: 12570,
             taperThreshold: 100000,
@@ -140,6 +143,7 @@ export const taxYears: TaxYearsData = {
             firstChildRate: 21.80,
             additionalChildRate: 14.45,
         },
+        hicbc: { threshold: 50000, taperDivisor: 100 },
         taxAllowance: {
             basicAllowance: 12570,
             taperThreshold: 100000,
@@ -185,6 +189,7 @@ export const taxYears: TaxYearsData = {
             firstChildRate: 21.15,
             additionalChildRate: 14.00,
         },
+        hicbc: { threshold: 50000, taperDivisor: 100 },
         taxAllowance: {
             basicAllowance: 12570,
             taperThreshold: 100000,
@@ -229,6 +234,7 @@ export const taxYears: TaxYearsData = {
             firstChildRate: 21.05,
             additionalChildRate: 13.95,
         },
+        hicbc: { threshold: 50000, taperDivisor: 100 },
         taxAllowance: {
             basicAllowance: 12500,
             taperThreshold: 100000,
@@ -273,6 +279,7 @@ export const taxYears: TaxYearsData = {
             firstChildRate: 20.70,
             additionalChildRate: 13.70,
         },
+        hicbc: { threshold: 50000, taperDivisor: 100 },
         taxAllowance: {
             basicAllowance: 12500,
             taperThreshold: 100000,
@@ -317,6 +324,7 @@ export const taxYears: TaxYearsData = {
             firstChildRate: 20.70,
             additionalChildRate: 13.70,
         },
+        hicbc: { threshold: 50000, taperDivisor: 100 },
         taxAllowance: {
             basicAllowance: 11850,
             taperThreshold: 100000,
@@ -361,6 +369,7 @@ export const taxYears: TaxYearsData = {
             firstChildRate: 20.70,
             additionalChildRate: 13.70,
         },
+        hicbc: { threshold: 50000, taperDivisor: 100 },
         taxAllowance: {
             basicAllowance: 11500,
             taperThreshold: 100000,

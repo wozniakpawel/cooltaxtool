@@ -9,6 +9,7 @@ import type {
     StudentLoanPlan,
     ChildBenefitsInput,
     ChildBenefitRates,
+    HICBCConstants,
     StudentLoanOption,
 } from '../types/tax';
 
@@ -209,9 +210,9 @@ export function calculateStudentLoanRepayments(
 export function calculateChildBenefits(
     adjustedNetIncome: number,
     childBenefits: ChildBenefitsInput,
-    childBenefitRates: ChildBenefitRates
+    childBenefitRates: ChildBenefitRates,
+    hicbc: HICBCConstants
 ): CalculationResult {
-    const HICBCThreshold = 50000;
     const { firstChildRate, additionalChildRate } = childBenefitRates;
 
     if (!childBenefits.childBenefitsTaken) {
@@ -226,9 +227,9 @@ export function calculateChildBenefits(
     const childBenefitAmount = firstChildAmount + additionalChildrenAmount;
 
     let HICBC = 0;
-    if (adjustedNetIncome > HICBCThreshold) {
-        const incomeExcess = adjustedNetIncome - HICBCThreshold;
-        const chargePercentage = Math.min(100, Math.floor(incomeExcess / 100));
+    if (adjustedNetIncome > hicbc.threshold) {
+        const incomeExcess = adjustedNetIncome - hicbc.threshold;
+        const chargePercentage = Math.min(100, Math.floor(incomeExcess / hicbc.taperDivisor));
         HICBC = - (childBenefitAmount * chargePercentage) / 100;
     }
 
@@ -305,7 +306,7 @@ export function calculateTaxes(inputs: TaxInputs): TaxCalculationResult {
     const combinedTaxes = incomeTax.total + employeeNI.total + studentLoanRepayments.total;
 
     // Calculate child benefits
-    const childBenefits = calculateChildBenefits(adjustedNetIncome, inputs.childBenefits, constants.childBenefitRates);
+    const childBenefits = calculateChildBenefits(adjustedNetIncome, inputs.childBenefits, constants.childBenefitRates, constants.hicbc);
 
     // Calculate how much you actually keep
     const takeHomePay = adjustedNetIncome - combinedTaxes;
