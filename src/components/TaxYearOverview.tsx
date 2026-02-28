@@ -7,8 +7,21 @@ import {
   formatPercent,
   getApexChartOptions,
 } from "../utils/chartUtils";
+import type { TaxInputs } from "../types/tax";
+import type { ApexOptions } from "apexcharts";
 
-const plotSettings = [
+interface PlotSetting {
+  key: string;
+  color: string;
+  label: string;
+  amountOnly?: boolean;
+  percentOnly?: boolean;
+  dashed?: boolean;
+}
+
+type ChartDataPoint = Record<string, number>;
+
+const plotSettings: PlotSetting[] = [
   { key: "adjustedNetIncome", color: "#3498db", label: "Adjusted Net Income" },
   { key: "taxAllowance", color: "#1abc9c", label: "Tax Allowance", amountOnly: true },
   { key: "taxableIncome", color: "#2980b9", label: "Taxable Income" },
@@ -24,14 +37,19 @@ const plotSettings = [
   { key: "marginalCombinedTaxRate", color: "#f1c40f", label: "Marginal Combined Tax Rate", dashed: true, percentOnly: true },
 ];
 
-const TaxYearOverview = (props) => {
+interface TaxYearOverviewProps {
+  inputs: TaxInputs;
+  theme: string;
+}
+
+const TaxYearOverview = (props: TaxYearOverviewProps) => {
   const chartData = useMemo(() => {
     const grossIncomes = Array.from(
       { length: 200 },
       (_, i) => (i * props.inputs.annualGrossIncomeRange) / 200
     );
 
-    const data = grossIncomes.map((grossIncome) => {
+    const data: ChartDataPoint[] = grossIncomes.map((grossIncome) => {
       const { annualGrossIncome, taxAllowance, incomeTax, employeeNI, employerNI, pensionPot, studentLoanRepayments, childBenefits, ...rest } =
         calculateTaxes({
           ...props.inputs,
@@ -65,7 +83,7 @@ const TaxYearOverview = (props) => {
   const percentageData = useMemo(() => {
     return chartData.map((d) => {
       const gross = d.annualGrossIncome || 1;
-      const result = { annualGrossIncome: d.annualGrossIncome };
+      const result: ChartDataPoint = { annualGrossIncome: d.annualGrossIncome };
       plotSettings.forEach((s) => {
         if (!s.amountOnly) {
           result[s.key] = s.key === "marginalCombinedTaxRate"
@@ -97,14 +115,14 @@ const TaxYearOverview = (props) => {
     });
   }, [props.inputs.noNI, props.inputs.studentLoan.length, props.inputs.childBenefits.childBenefitsTaken]);
 
-  const buildSeries = (data, visibleSettings, xKey) => {
+  const buildSeries = (data: ChartDataPoint[], visibleSettings: PlotSetting[], xKey: string) => {
     return visibleSettings.map((setting) => ({
       name: setting.label,
       data: data.map((d) => ({ x: d[xKey], y: d[setting.key] })),
     }));
   };
 
-  const buildOptions = (isPercentage, visibleSettings, xFormatter) => {
+  const buildOptions = (isPercentage: boolean, visibleSettings: PlotSetting[], xFormatter: (value: number) => string): ApexOptions => {
     const baseOptions = getApexChartOptions(props.theme, { isPercentage });
 
     return {
@@ -120,7 +138,7 @@ const TaxYearOverview = (props) => {
           formatter: xFormatter,
         },
         y: {
-          formatter: (value) => (isPercentage ? formatPercent(value) : formatCurrency(value)),
+          formatter: (value: number) => (isPercentage ? formatPercent(value) : formatCurrency(value)),
         },
       },
     };
@@ -129,13 +147,13 @@ const TaxYearOverview = (props) => {
   const percentOptions = buildOptions(
     true,
     visibleSettingsPercent,
-    (value) => `Gross: ${formatCurrency(value)}`
+    (value: number) => `Gross: ${formatCurrency(value)}`
   );
 
   const amountOptions = buildOptions(
     false,
     visibleSettingsAmount,
-    (value) => `Gross: ${formatCurrency(value)}`
+    (value: number) => `Gross: ${formatCurrency(value)}`
   );
 
   const percentSeries = buildSeries(percentageData, visibleSettingsPercent, "annualGrossIncome");

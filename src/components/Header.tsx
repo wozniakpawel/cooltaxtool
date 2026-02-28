@@ -1,6 +1,11 @@
 import { Navbar, Container, Row, Form } from "react-bootstrap";
 
-const Header = ({ theme, toggleTheme }) => {
+interface HeaderProps {
+  theme: string;
+  toggleTheme: () => void;
+}
+
+const Header = ({ theme, toggleTheme }: HeaderProps) => {
   return (
     <Navbar>
       <Container className="justify-content-center large">

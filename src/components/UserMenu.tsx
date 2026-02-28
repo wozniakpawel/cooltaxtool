@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, ChangeEvent } from 'react';
 import { Formik, useFormikContext } from 'formik';
 import NumberOfChildrenSelector from './NumberOfChildrenSelector';
 import * as yup from 'yup';
@@ -8,10 +8,12 @@ import {
     Container, Card, Row, Col, Form, Alert,
     Button, ButtonGroup, InputGroup,
 } from 'react-bootstrap';
+import type { TaxInputs, StudentLoanPlan } from '../types/tax';
 
 const taxYearOptions = Object.keys(taxYears);
 
-const requiredPositiveNumber = yup.number("Must be a number.")
+const requiredPositiveNumber = yup.number()
+    .typeError("Must be a number.")
     .min(0, "Must be a positive number.")
     .required("Field required.");
 
@@ -27,9 +29,9 @@ const schema = yup.object().shape({
     }),
 });
 
-export const defaultInputs = {
+export const defaultInputs: TaxInputs = {
     taxYear: taxYearOptions[0],
-    studentLoan: [],
+    studentLoan: [] as StudentLoanPlan[],
     annualGrossSalary: 0,
     annualGrossBonus: 0,
     annualGrossIncomeRange: 150000,
@@ -50,33 +52,40 @@ export const defaultInputs = {
     incomeAnalysis: false,
 };
 
-const hasEmptyString = (obj) => {
+const hasEmptyString = (obj: Record<string, unknown>): boolean => {
     return Object.values(obj).some(value => {
         if (typeof value === 'string') {
             return value === '';
-        } else if (typeof value === 'object') {
-            return hasEmptyString(value);
+        } else if (typeof value === 'object' && value !== null) {
+            return hasEmptyString(value as Record<string, unknown>);
         }
         return false;
     });
 };
 
-const UseEffectWrapper = ({ onUserInputsChange }) => {
-    const { values, errors } = useFormikContext();
+interface UseEffectWrapperProps {
+    onUserInputsChange: (inputs: TaxInputs) => void;
+}
 
-    const parseValuesToFloats = (values) => {
-        let parsedValues = { ...values };
-        parsedValues.annualGrossSalary = parseFloat(parsedValues.annualGrossSalary);
-        parsedValues.annualGrossBonus = parseFloat(parsedValues.annualGrossBonus);
-        parsedValues.annualGrossIncomeRange = parseFloat(parsedValues.annualGrossIncomeRange);
-        parsedValues.pensionContributions.autoEnrolment = parseFloat(parsedValues.pensionContributions.autoEnrolment);
-        parsedValues.pensionContributions.salarySacrifice = parseFloat(parsedValues.pensionContributions.salarySacrifice);
-        parsedValues.pensionContributions.personal = parseFloat(parsedValues.pensionContributions.personal);
+const UseEffectWrapper = ({ onUserInputsChange }: UseEffectWrapperProps) => {
+    const { values, errors } = useFormikContext<TaxInputs>();
+
+    const parseValuesToFloats = (values: TaxInputs): TaxInputs => {
+        const parsedValues = { ...values };
+        parsedValues.annualGrossSalary = Number(parsedValues.annualGrossSalary);
+        parsedValues.annualGrossBonus = Number(parsedValues.annualGrossBonus);
+        parsedValues.annualGrossIncomeRange = Number(parsedValues.annualGrossIncomeRange);
+        parsedValues.pensionContributions = {
+            ...parsedValues.pensionContributions,
+            autoEnrolment: Number(parsedValues.pensionContributions.autoEnrolment),
+            salarySacrifice: Number(parsedValues.pensionContributions.salarySacrifice),
+            personal: Number(parsedValues.pensionContributions.personal),
+        };
         return parsedValues;
     };
 
     useEffect(() => {
-        if (Object.keys(errors).length === 0 && !hasEmptyString(values)) {
+        if (Object.keys(errors).length === 0 && !hasEmptyString(values as unknown as Record<string, unknown>)) {
             onUserInputsChange(parseValuesToFloats(values));
         }
     }, [values, errors, onUserInputsChange]);
@@ -84,7 +93,11 @@ const UseEffectWrapper = ({ onUserInputsChange }) => {
     return null;
 };
 
-export function UserMenu({ onUserInputsChange }) {
+interface UserMenuProps {
+    onUserInputsChange: (inputs: TaxInputs) => void;
+}
+
+export function UserMenu({ onUserInputsChange }: UserMenuProps) {
     return (
         <>
             <Container>
@@ -95,8 +108,8 @@ export function UserMenu({ onUserInputsChange }) {
                 >
 
                     {({ setFieldValue, values, errors }) => {
-                        const handleInputChange = (event) => {
-                            const { name, value, type, checked } = event.target;
+                        const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement> | { target: { name: string; value?: string; type: string; checked?: boolean } }) => {
+                            const { name, value, type, checked } = event.target as HTMLInputElement;
                             if (name === "studentLoan") {
                                 const newStudentLoan = checked
                                     ? [...values.studentLoan, value]

@@ -2,11 +2,16 @@ import { useMemo } from "react";
 import { calculateTaxes } from "../../utils/TaxCalc";
 import { Table, Card } from "react-bootstrap";
 import { formatCurrencyPrecise } from "../../utils/chartUtils";
+import type { TaxInputs, CalculationResult } from "../../types/tax";
 
-const TaxBreakdown = (props) => {
+interface TaxBreakdownProps {
+  inputs: TaxInputs;
+}
+
+const TaxBreakdown = (props: TaxBreakdownProps) => {
   const results = useMemo(() => calculateTaxes(props.inputs), [props.inputs]);
 
-  function renderSingleValue(name, value) {
+  function renderSingleValue(name: string, value: number) {
     return (
       <tr>
         <td>{name}</td>
@@ -17,13 +22,13 @@ const TaxBreakdown = (props) => {
     )
   }
 
-  function renderBreakDown(name, value) {
+  function renderBreakDown(name: string, value: CalculationResult) {
     return (
       <>
         {renderSingleValue(name, value.total)}
         {value.breakdown.map((tax, i) => (
           <tr key={`it-${i}`}>
-            <td className="small" style={{ paddingLeft: "2em" }}>{`${isNaN(tax.rate) ? tax.rate : (tax.rate * 100).toFixed(2) + "%"
+            <td className="small" style={{ paddingLeft: "2em" }}>{`${typeof tax.rate === 'string' ? tax.rate : (tax.rate * 100).toFixed(2) + "%"
               }`}</td>
             <td className="text-end small" style={{ paddingRight: "2em" }}>{formatCurrencyPrecise(tax.amount)}</td>
           </tr>

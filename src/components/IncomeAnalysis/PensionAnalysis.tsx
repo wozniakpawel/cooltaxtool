@@ -6,8 +6,14 @@ import {
   formatPercent,
   getApexChartOptions,
 } from "../../utils/chartUtils";
+import type { TaxInputs } from "../../types/tax";
 
-const TaxSavingsVsPensionContributions = (props) => {
+interface PensionAnalysisProps {
+  inputs: TaxInputs;
+  theme: string;
+}
+
+const TaxSavingsVsPensionContributions = (props: PensionAnalysisProps) => {
   const chartData = useMemo(() => {
     const annualGrossIncome = calculateAnnualGrossIncome(
       props.inputs.annualGrossSalary,
@@ -68,10 +74,10 @@ const TaxSavingsVsPensionContributions = (props) => {
       tooltip: {
         ...baseOptions.tooltip,
         x: {
-          formatter: (value) => `Pension Contribution: ${formatCurrency(value)}`,
+          formatter: (value: number) => `Pension Contribution: ${formatCurrency(value)}`,
         },
         y: {
-          formatter: (value) => formatPercent(value),
+          formatter: (value: number) => formatPercent(value),
         },
       },
     };
