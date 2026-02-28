@@ -7,6 +7,8 @@ import {
   formatPercent,
   getApexChartOptions,
 } from "../utils/chartUtils";
+import type { TaxInputs } from "../types/tax";
+import type { ApexOptions } from "apexcharts";
 
 const DISCOUNT_RATE = 0.5;
 
@@ -21,7 +23,12 @@ const FIRST_HOMES_CONFIG = {
   },
 };
 
-const FirstHomes = (props) => {
+interface FirstHomesProps {
+  inputs: TaxInputs;
+  theme: string;
+}
+
+const FirstHomes = (props: FirstHomesProps) => {
   const isLondon = props.inputs.firstHomesLondon;
   const config = isLondon ? FIRST_HOMES_CONFIG.london : FIRST_HOMES_CONFIG.outsideLondon;
   const discountedPrice = config.maxHousePrice * DISCOUNT_RATE;
@@ -29,7 +36,7 @@ const FirstHomes = (props) => {
   // Find gross income needed to match the purchasing power of someone at the cap
   // Uses binary search for stable result independent of chart range
   const equivalentGrossIncome = useMemo(() => {
-    const getTakeHome = (gross) => calculateTaxes({
+    const getTakeHome = (gross: number) => calculateTaxes({
       ...props.inputs,
       annualGrossBonus: 0,
       annualGrossSalary: gross,
@@ -95,7 +102,9 @@ const FirstHomes = (props) => {
     xAxisTitle: "Gross Salary",
   });
 
-  const options = {
+  const yaxis = Array.isArray(baseOptions.yaxis) ? baseOptions.yaxis[0] : baseOptions.yaxis;
+
+  const options: ApexOptions = {
     ...baseOptions,
     colors: ["#2ecc71"],
     stroke: {
@@ -103,32 +112,32 @@ const FirstHomes = (props) => {
       width: 2,
     },
     yaxis: {
-      ...baseOptions.yaxis,
+      ...yaxis,
       labels: {
-        ...baseOptions.yaxis.labels,
+        ...yaxis?.labels,
         formatter: formatPercent,
       },
       min: 0,
       max: undefined,
       title: {
         text: chartTitle,
-        style: baseOptions.yaxis.title?.style,
+        style: yaxis?.title?.style,
       },
     },
     xaxis: {
       ...baseOptions.xaxis,
       title: {
         text: "Annual Gross Salary",
-        style: baseOptions.xaxis.title?.style,
+        style: baseOptions.xaxis?.title?.style,
       },
     },
     tooltip: {
       ...baseOptions.tooltip,
       x: {
-        formatter: (value) => `Gross Salary: ${formatCurrency(value)}`,
+        formatter: (value: number) => `Gross Salary: ${formatCurrency(value)}`,
       },
       y: {
-        formatter: (value, { dataPointIndex }) => {
+        formatter: (value: number, { dataPointIndex }: { dataPointIndex: number }) => {
           const data = chartData[dataPointIndex];
           if (!data) return formatPercent(value);
           return `${formatPercent(value)} of ${formatCurrency(data.housePrice)}`;
