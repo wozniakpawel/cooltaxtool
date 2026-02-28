@@ -1,7 +1,7 @@
 import React from "react";
 import { calculateTaxes } from "../../utils/TaxCalc";
 import { Table, Card } from "react-bootstrap";
-import { numberWithCommas } from "../../utils/DisplayFormat";
+import { formatCurrencyPrecise } from "../../utils/chartUtils";
 
 const TaxBreakdown = (props) => {
   const results = calculateTaxes(props.inputs);
@@ -11,7 +11,7 @@ const TaxBreakdown = (props) => {
       <tr>
         <td>{name}</td>
         <td className="text-end">
-          {numberWithCommas(value)}
+          {formatCurrencyPrecise(value)}
         </td>
       </tr>
     )
@@ -25,7 +25,7 @@ const TaxBreakdown = (props) => {
           <tr key={`it-${i}`}>
             <td className="small" style={{ paddingLeft: "2em" }}>{`${isNaN(tax.rate) ? tax.rate : (tax.rate * 100).toFixed(2) + "%"
               }`}</td>
-            <td className="text-end small" style={{ paddingRight: "2em" }}>{numberWithCommas(tax.amount)}</td>
+            <td className="text-end small" style={{ paddingRight: "2em" }}>{formatCurrencyPrecise(tax.amount)}</td>
           </tr>
         ))}
       </>
@@ -53,7 +53,7 @@ const TaxBreakdown = (props) => {
             <tr>
               <th>Total you pay</th>
               <td style={{ fontWeight: "bold" }} className="text-end">
-                {numberWithCommas(results.combinedTaxes)}
+                {formatCurrencyPrecise(results.combinedTaxes)}
               </td>
             </tr>
           </thead>
@@ -69,7 +69,7 @@ const TaxBreakdown = (props) => {
             <tr>
               <th>Total you keep</th>
               <td style={{ fontWeight: "bold" }} className="text-end">
-                {numberWithCommas(results.yourMoney)}
+                {formatCurrencyPrecise(results.yourMoney)}
               </td>
             </tr>
           </thead>

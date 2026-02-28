@@ -1,4 +1,19 @@
-export const formatCurrency = (value) => `£${value.toLocaleString()}`;
+const currencyFormatter = new Intl.NumberFormat("en-GB", {
+  style: "currency",
+  currency: "GBP",
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
+});
+
+const currencyFormatterPrecise = new Intl.NumberFormat("en-GB", {
+  style: "currency",
+  currency: "GBP",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+export const formatCurrency = (value) => currencyFormatter.format(value);
+export const formatCurrencyPrecise = (value) => currencyFormatterPrecise.format(value);
 export const formatPercent = (value) => `${value.toFixed(1)}%`;
 
 export const getChartTheme = (theme) => {
