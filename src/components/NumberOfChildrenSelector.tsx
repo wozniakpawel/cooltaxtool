@@ -19,7 +19,7 @@ const NumberOfChildrenSelector = ({ setFieldValue, values }: NumberOfChildrenSel
       onSelect={handleSelect}
     >
       {childrenOptions.map((num) => (
-        <Dropdown.Item key={num} eventKey={num}>
+        <Dropdown.Item key={num} eventKey={String(num)}>
           {num}
         </Dropdown.Item>
       ))}

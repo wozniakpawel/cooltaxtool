@@ -254,6 +254,9 @@ export function grossManualPensionContributions(
 // Top-level function to calculate taxes
 export function calculateTaxes(inputs: TaxInputs): TaxCalculationResult {
     const constants = taxYears[inputs.taxYear];
+    if (!constants) {
+        throw new Error(`Unsupported tax year: "${inputs.taxYear}". Available: ${Object.keys(taxYears).join(', ')}`);
+    }
 
     const annualGrossIncome = calculateAnnualGrossIncome(inputs.annualGrossSalary, inputs.annualGrossBonus);
 
@@ -308,7 +311,12 @@ export function calculateTaxes(inputs: TaxInputs): TaxCalculationResult {
     const childBenefits = calculateChildBenefits(adjustedNetIncome, inputs.childBenefits, constants.childBenefitRates, constants.hicbc);
 
     // Calculate how much you actually keep
-    const takeHomePay = adjustedNetIncome - combinedTaxes;
+    // Pension amounts the employee pays out of remaining income (not already deducted via salary sacrifice)
+    const netPensionDeductions =
+        (inputs.autoEnrolmentAsSalarySacrifice ? 0 : autoEnrolmentContribution)
+        + inputs.pensionContributions.personal;
+
+    const takeHomePay = Math.max(0, incomeAfterSalarySacrifice - netPensionDeductions - combinedTaxes);
     const yourMoney = pensionPot.total + takeHomePay + childBenefits.total;
 
     return {

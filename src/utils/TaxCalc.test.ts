@@ -313,8 +313,9 @@ describe('calculateTaxes', () => {
   it('should calculate take home pay correctly', () => {
     const result = calculateTaxes(baseInputs);
 
-    const expectedTakeHome = result.adjustedNetIncome - result.combinedTaxes;
-    expect(result.takeHomePay).toBe(expectedTakeHome);
+    // takeHomePay = incomeAfterSalarySacrifice - netPensionDeductions - combinedTaxes, floored at 0
+    // With baseInputs (no pension contributions), this simplifies to grossIncome - combinedTaxes
+    expect(result.takeHomePay).toBe(result.annualGrossIncome.total - result.combinedTaxes);
   });
 
   it('should handle Scottish tax rates', () => {

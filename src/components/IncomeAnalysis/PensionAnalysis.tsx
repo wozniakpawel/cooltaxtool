@@ -49,13 +49,9 @@ const TaxSavingsVsPensionContributions = (props: PensionAnalysisProps) => {
       const taxSavingsPercentage = pensionContribution > 0
         ? Math.max(0, Math.min(100, (taxSavings / pensionContribution) * 100))
         : 0;
-      const effectiveTaxRate = Math.max(
-        0,
-        Math.min(
-          100,
-          (taxesWithVoluntaryPension.combinedTaxes / annualGrossIncome) * 100
-        )
-      );
+      const effectiveTaxRate = annualGrossIncome > 0
+        ? Math.max(0, Math.min(100, (taxesWithVoluntaryPension.combinedTaxes / annualGrossIncome) * 100))
+        : 0;
 
       return {
         pensionContribution,
