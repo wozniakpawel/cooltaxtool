@@ -41,7 +41,7 @@ export const defaultInputs: TaxInputs = {
     noNI: false,
     blind: false,
     childBenefits: {
-        childBenefitsTaken: false,
+        mode: 'off',
         numberOfChildren: 1,
     },
     pensionContributions: {
@@ -169,15 +169,21 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                             checked={values.blind}
                                             onChange={handleInputChange}
                                         />
-                                        <Form.Check
-                                            type="switch"
-                                            id="childBenefits.childBenefitsTaken"
-                                            label={<>Child Benefits <InfoPopover {...explanations.childBenefits} /></>}
-                                            name="childBenefits.childBenefitsTaken"
-                                            checked={values.childBenefits.childBenefitsTaken}
-                                            onChange={handleInputChange}
-                                        />
-                                        {values.childBenefits.childBenefitsTaken &&
+                                        <Form.Group as={Row} controlId="childBenefits.mode" className="mt-1 mb-1">
+                                            <Form.Label column>Child Benefits <InfoPopover {...explanations.childBenefits} /></Form.Label>
+                                            <Col>
+                                                <Form.Select
+                                                    name="childBenefits.mode"
+                                                    value={values.childBenefits.mode}
+                                                    onChange={handleInputChange}
+                                                >
+                                                    <option value="off">Off</option>
+                                                    <option value="self">I receive Child Benefits</option>
+                                                    <option value="partner">My partner receives Child Benefits</option>
+                                                </Form.Select>
+                                            </Col>
+                                        </Form.Group>
+                                        {values.childBenefits.mode !== 'off' &&
                                             <>
                                                 <NumberOfChildrenSelector
                                                     setFieldValue={setFieldValue}

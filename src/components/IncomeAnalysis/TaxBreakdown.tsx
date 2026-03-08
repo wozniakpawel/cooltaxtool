@@ -69,6 +69,7 @@ const TaxBreakdown = (props: TaxBreakdownProps) => {
             {renderBreakDown(<>Income Tax <InfoPopover {...explanations.result_incomeTax} /></>, results.incomeTax)}
             {renderBreakDown(<>Employee NI <InfoPopover {...explanations.result_employeeNI} /></>, results.employeeNI)}
             {renderBreakDown(<>Student Loan <InfoPopover {...explanations.result_studentLoan} /></>, results.studentLoanRepayments)}
+            {results.hicbc > 0 && renderSingleValue("HICBC", results.hicbc)}
           </tbody>
         </Table>
 
@@ -84,7 +85,7 @@ const TaxBreakdown = (props: TaxBreakdownProps) => {
           <tbody>
             {renderSingleValue(<>Take Home Pay <InfoPopover {...explanations.result_takeHomePay} /></>, results.takeHomePay)}
             {renderBreakDown(<>Pension Pot <InfoPopover {...explanations.result_pensionPot} /></>, results.pensionPot)}
-            {renderBreakDown(<>Child Benefits <InfoPopover {...explanations.result_childBenefits} /></>, results.childBenefits)}
+            {results.childBenefits.total > 0 && renderBreakDown(<>Child Benefits <InfoPopover {...explanations.result_childBenefits} /></>, results.childBenefits)}
           </tbody>
         </Table>
       </Card.Body>
