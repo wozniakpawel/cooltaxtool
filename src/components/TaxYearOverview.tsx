@@ -51,7 +51,7 @@ const TaxYearOverview = (props: TaxYearOverviewProps) => {
   const chartData = useMemo(() => {
     const grossIncomes = Array.from(
       { length: 200 },
-      (_, i) => (i * incomeRange) / 200
+      (_, i) => (i * Math.max(incomeRange, 1000)) / 200
     );
 
     const data: ChartDataPoint[] = grossIncomes.map((grossIncome) => {
@@ -179,10 +179,7 @@ const TaxYearOverview = (props: TaxYearOverviewProps) => {
               type="number"
               inputMode="decimal"
               value={incomeRange}
-              onChange={(e) => {
-                const val = Number(e.target.value);
-                if (val >= 10000) setIncomeRange(val);
-              }}
+              onChange={(e) => setIncomeRange(Number(e.target.value) || 0)}
               min={10000}
               step={10000}
             />
