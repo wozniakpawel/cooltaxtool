@@ -1,6 +1,6 @@
-import { useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Chart from "react-apexcharts";
-import { Container } from "react-bootstrap";
+import { Container, Form, Row, Col, InputGroup } from "react-bootstrap";
 import { calculateTaxes } from "../utils/TaxCalc";
 import {
   formatCurrency,
@@ -44,10 +44,16 @@ interface TaxYearOverviewProps {
 }
 
 const TaxYearOverview = (props: TaxYearOverviewProps) => {
+  const [incomeRange, setIncomeRange] = useState(props.inputs.annualGrossIncomeRange);
+
+  useEffect(() => {
+    setIncomeRange(props.inputs.annualGrossIncomeRange);
+  }, [props.inputs.annualGrossIncomeRange]);
+
   const chartData = useMemo(() => {
     const grossIncomes = Array.from(
       { length: 200 },
-      (_, i) => (i * props.inputs.annualGrossIncomeRange) / 200
+      (_, i) => (i * incomeRange) / 200
     );
 
     const data: ChartDataPoint[] = grossIncomes.map((grossIncome) => {
@@ -79,7 +85,7 @@ const TaxYearOverview = (props: TaxYearOverviewProps) => {
     data[0].marginalCombinedTaxRate = 0;
 
     return data;
-  }, [props.inputs]);
+  }, [props.inputs, incomeRange]);
 
   const percentageData = useMemo(() => {
     return chartData.map((d) => {
@@ -166,6 +172,22 @@ const TaxYearOverview = (props: TaxYearOverviewProps) => {
 
   return (
     <Container>
+      <Form.Group as={Row} controlId="incomeRange" className="mb-3">
+        <Form.Label column>Income range</Form.Label>
+        <Col>
+          <InputGroup>
+            <InputGroup.Text>£</InputGroup.Text>
+            <Form.Control
+              type="number"
+              inputMode="decimal"
+              value={incomeRange}
+              onChange={(e) => setIncomeRange(Number(e.target.value))}
+              min={10000}
+              step={10000}
+            />
+          </InputGroup>
+        </Col>
+      </Form.Group>
       <h5 className="text-center mt-3">Percentages of gross income</h5>
       <Chart
         options={percentOptions}
