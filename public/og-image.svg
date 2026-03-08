@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#333"/>
+
+  <!-- Brand -->
+  <text x="600" y="180" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="bold" text-anchor="middle">
+    <tspan fill="#0d6efd">Cool</tspan><tspan fill="#dc3545">Tax</tspan><tspan fill="#0d6efd">Tool</tspan>
+  </text>
+  <text x="600" y="240" font-family="system-ui, -apple-system, sans-serif" font-size="28" fill="#ccc" text-anchor="middle">UK Tax Calculator &amp; Visualiser</text>
+
+  <!-- Simplified chart bars -->
+  <rect x="250" y="320" width="100" height="200" rx="8" fill="#4CAF50"/>
+  <rect x="390" y="360" width="100" height="160" rx="8" fill="#2196F3"/>
+  <rect x="530" y="400" width="100" height="120" rx="8" fill="#FF9800"/>
+  <rect x="670" y="430" width="100" height="90" rx="8" fill="#f44336"/>
+  <rect x="810" y="460" width="100" height="60" rx="8" fill="#9C27B0"/>
+
+  <!-- Bar labels -->
+  <text x="300" y="310" font-family="system-ui, sans-serif" font-size="14" fill="#ccc" text-anchor="middle">Take Home</text>
+  <text x="440" y="350" font-family="system-ui, sans-serif" font-size="14" fill="#ccc" text-anchor="middle">Income Tax</text>
+  <text x="580" y="390" font-family="system-ui, sans-serif" font-size="14" fill="#ccc" text-anchor="middle">NI</text>
+  <text x="720" y="420" font-family="system-ui, sans-serif" font-size="14" fill="#ccc" text-anchor="middle">Pension</text>
+  <text x="860" y="450" font-family="system-ui, sans-serif" font-size="14" fill="#ccc" text-anchor="middle">Student Loan</text>
+
+  <!-- URL -->
+  <text x="600" y="600" font-family="system-ui, -apple-system, sans-serif" font-size="22" fill="#888" text-anchor="middle">cooltaxtool.com</text>
+</svg>

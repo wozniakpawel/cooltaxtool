@@ -74,10 +74,7 @@ export const getApexChartOptions = (theme: string, { isPercentage = false, xAxis
         style: {
           colors: axisColor,
         },
-        formatter: (_val: string, _timestamp?: number, opts?: { w: { globals: { labels: string[] } } }) => {
-          const index = opts?.w?.globals?.labels ? 0 : 0;
-          return formatCurrency(Number(_val));
-        },
+        formatter: (_val: string) => formatCurrency(Number(_val)),
       },
       axisBorder: {
         color: axisColor,

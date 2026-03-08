@@ -68,8 +68,10 @@ export type TaxYearKey = string;
 export type TaxYearsData = Record<TaxYearKey, TaxYearConstants>;
 
 // User input types
+export type ChildBenefitsMode = 'off' | 'self' | 'partner';
+
 export interface ChildBenefitsInput {
-  childBenefitsTaken: boolean;
+  mode: ChildBenefitsMode;
   numberOfChildren: number;
 }
 
@@ -96,6 +98,8 @@ export interface TaxInputs {
   taxReliefAtSource: boolean;
   activeTab: ActiveTab;
   firstHomesLondon: boolean;
+  pensionEnabled: boolean;
+  studentLoanEnabled: boolean;
 }
 
 // Calculation result types
@@ -110,7 +114,7 @@ export interface CalculationResult {
 }
 
 export interface TaxCalculationResult {
-  grossEarnings: CalculationResult;
+  annualGrossIncome: CalculationResult;
   adjustedNetIncome: number;
   taxAllowance: CalculationResult;
   taxableIncome: number;
@@ -119,6 +123,7 @@ export interface TaxCalculationResult {
   employerNI: CalculationResult;
   studentLoanRepayments: CalculationResult;
   combinedTaxes: number;
+  hicbc: number;
   childBenefits: CalculationResult;
   takeHomePay: number;
   pensionPot: CalculationResult;

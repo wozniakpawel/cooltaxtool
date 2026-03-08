@@ -19,7 +19,7 @@ import type {
 // ============================================================================
 
 // Gross Earnings = Salary + Bonuses + Other Income (Dividends, Rental Income, etc.)
-export function calculateGrossEarnings(
+export function calculateAnnualGrossIncome(
     annualGrossSalary: number,
     annualGrossBonus: number
 ): CalculationResult {
@@ -269,37 +269,48 @@ export function calculateStudentLoanRepayments(
 // Child Benefits
 // ============================================================================
 
+export interface ChildBenefitsResult {
+    childBenefits: CalculationResult;
+    hicbc: number;
+}
+
 export function calculateChildBenefits(
     adjustedNetIncome: number,
     childBenefits: ChildBenefitsInput,
     childBenefitRates: ChildBenefitRates,
     hicbc: HICBCConstants
-): CalculationResult {
-    if (!childBenefits.childBenefitsTaken) {
-        return { total: 0, breakdown: [] };
-    }
-
+): ChildBenefitsResult {
     const { firstChildRate, additionalChildRate } = childBenefitRates;
+
+    if (childBenefits.mode === 'off') {
+        return {
+            childBenefits: { total: 0, breakdown: [] },
+            hicbc: 0,
+        };
+    }
 
     // Calculate annual benefit amounts
     const firstChildAmount = firstChildRate * 52;
     const additionalChildrenAmount = (childBenefits.numberOfChildren - 1) * additionalChildRate * 52;
     const childBenefitAmount = firstChildAmount + additionalChildrenAmount;
 
-    // High Income Child Benefit Charge
-    let HICBC = 0;
+    let hicbcCharge = 0;
     if (adjustedNetIncome > hicbc.threshold) {
         const incomeExcess = adjustedNetIncome - hicbc.threshold;
         const chargePercentage = Math.min(100, Math.floor(incomeExcess / hicbc.taperDivisor));
-        HICBC = -(childBenefitAmount * chargePercentage) / 100;
+        hicbcCharge = (childBenefitAmount * chargePercentage) / 100;
     }
 
+    const showBenefits = childBenefits.mode === 'self';
+
     return {
-        total: childBenefitAmount + HICBC,
-        breakdown: [
-            { rate: "Child Benefits", amount: childBenefitAmount },
-            { rate: "HICBC", amount: HICBC },
-        ],
+        childBenefits: {
+            total: showBenefits ? childBenefitAmount : 0,
+            breakdown: showBenefits ? [
+                { rate: "Child Benefits", amount: childBenefitAmount },
+            ] : [],
+        },
+        hicbc: hicbcCharge,
     };
 }
 
@@ -309,49 +320,87 @@ export function calculateChildBenefits(
 
 export function calculateTaxes(inputs: TaxInputs): TaxCalculationResult {
     const constants = taxYears[inputs.taxYear];
+    if (!constants) {
+        throw new Error(`Unsupported tax year: "${inputs.taxYear}". Available: ${Object.keys(taxYears).join(', ')}`);
+    }
 
-    // 1. Calculate gross earnings (salary + bonus)
-    const grossEarnings = calculateGrossEarnings(inputs.annualGrossSalary, inputs.annualGrossBonus);
+    const pensionContributions = inputs.pensionEnabled
+        ? inputs.pensionContributions
+        : { autoEnrolment: 0, salarySacrifice: 0, personal: 0 };
+    const autoEnrolmentAsSalarySacrifice = inputs.pensionEnabled
+        ? inputs.autoEnrolmentAsSalarySacrifice
+        : true;
+    const taxReliefAtSource = inputs.pensionEnabled
+        ? inputs.taxReliefAtSource
+        : true;
+    const studentLoan = inputs.studentLoanEnabled
+        ? inputs.studentLoan
+        : [];
 
-    // 2. Calculate pension contributions and income after salary sacrifice
-    const { pensionPot, incomeAfterSalarySacrifice } = calculatePensionPot(
-        grossEarnings.total,
-        inputs.pensionContributions,
-        inputs.autoEnrolmentAsSalarySacrifice,
-        inputs.taxReliefAtSource
-    );
+    // 1. Calculate gross income (salary + bonus)
+    const annualGrossIncome = calculateAnnualGrossIncome(inputs.annualGrossSalary, inputs.annualGrossBonus);
 
-    // 3. Calculate adjusted net income (used for allowance tapering and HICBC)
-    const adjustedNetIncome = Math.max(0, grossEarnings.total - pensionPot.total);
+    // 2. Apply salary sacrifice
+    let incomeAfterSalarySacrifice = Math.max(0, annualGrossIncome.total - pensionContributions.salarySacrifice);
 
-    // 4. Calculate tax allowance (considering personal allowance taper and blind person's allowance)
-    const taxAllowance = calculateTaxAllowance(adjustedNetIncome, inputs.blind, constants);
+    // 3. Calculate auto enrolment pension contributions
+    const autoEnrolmentContribution = incomeAfterSalarySacrifice * (pensionContributions.autoEnrolment / 100);
 
-    // 5. Calculate taxable income
-    const taxableIncome = Math.max(0, adjustedNetIncome - taxAllowance.total);
+    // Deduct auto enrolment contributions from gross income, but only if they are salary sacrificed
+    if (autoEnrolmentAsSalarySacrifice)
+        incomeAfterSalarySacrifice -= autoEnrolmentContribution;
 
-    // 6. Calculate income tax
-    const incomeTax = calculateIncomeTax(taxableIncome, constants, inputs.residentInScotland);
+    // 4. Calculate personal pension contribution (with tax relief at source)
+    const grossedPersonalContribution = grossPensionContribution(pensionContributions.personal, taxReliefAtSource);
 
-    // 7. Calculate National Insurance (based on income after salary sacrifice)
+    // 5. Calculate how much you will have in your pension pot at the end of the tax year
+    const pensionPot: CalculationResult = {
+        total: pensionContributions.salarySacrifice + autoEnrolmentContribution + grossedPersonalContribution,
+        breakdown: [
+            { rate: "Salary sacrifice", amount: pensionContributions.salarySacrifice },
+            { rate: "Auto enrolment", amount: autoEnrolmentContribution },
+            { rate: "Gross Personal", amount: grossedPersonalContribution },
+        ],
+    };
+
+    // 6. Calculate adjusted net income
+    const adjustedNetIncome = Math.max(0, annualGrossIncome.total - pensionPot.total);
+
+    // 7. Calculate employee national insurance contributions
     const employeeNI = calculateNationalInsurance(incomeAfterSalarySacrifice, constants, false, inputs.noNI);
+
+    // 8. Calculate employer national insurance contributions
     const employerNI = calculateNationalInsurance(incomeAfterSalarySacrifice, constants, true, inputs.noNI);
 
-    // 8. Calculate student loan repayments (based on income after salary sacrifice)
-    const studentLoanRepayments = calculateStudentLoanRepayments(incomeAfterSalarySacrifice, inputs.studentLoan, constants);
+    // 9. Calculate student loan repayments
+    const studentLoanRepayments = calculateStudentLoanRepayments(incomeAfterSalarySacrifice, studentLoan, constants);
 
-    // 9. Calculate total deductions
-    const combinedTaxes = incomeTax.total + employeeNI.total + studentLoanRepayments.total;
+    // 10. Calculate tax allowance (considering personal allowance taper and blind person's allowance)
+    const taxAllowance = calculateTaxAllowance(adjustedNetIncome, inputs.blind, constants);
 
-    // 10. Calculate child benefits (depends on adjusted net income for HICBC)
-    const childBenefits = calculateChildBenefits(adjustedNetIncome, inputs.childBenefits, constants.childBenefitRates, constants.hicbc);
+    // 11. Calculate taxable income
+    const taxableIncome = Math.max(0, adjustedNetIncome - taxAllowance.total);
 
-    // 11. Calculate final amounts
-    const takeHomePay = adjustedNetIncome - combinedTaxes;
-    const yourMoney = pensionPot.total + takeHomePay + childBenefits.total;
+    // 12. Calculate income tax
+    const incomeTax = calculateIncomeTax(taxableIncome, constants, inputs.residentInScotland);
+
+    // 13. Calculate child benefits and HICBC
+    const childBenefitsResult = calculateChildBenefits(adjustedNetIncome, inputs.childBenefits, constants.childBenefitRates, constants.hicbc);
+
+    // 14. Calculate combined taxes (including HICBC)
+    const combinedTaxes = incomeTax.total + employeeNI.total + studentLoanRepayments.total + childBenefitsResult.hicbc;
+
+    // 15. Calculate how much you actually keep
+    // Pension amounts the employee pays out of remaining income (not already deducted via salary sacrifice)
+    const netPensionDeductions =
+        (autoEnrolmentAsSalarySacrifice ? 0 : autoEnrolmentContribution)
+        + pensionContributions.personal;
+
+    const takeHomePay = Math.max(0, incomeAfterSalarySacrifice - netPensionDeductions - combinedTaxes);
+    const yourMoney = pensionPot.total + takeHomePay + childBenefitsResult.childBenefits.total;
 
     return {
-        grossEarnings,
+        annualGrossIncome,
         adjustedNetIncome,
         taxAllowance,
         taxableIncome,
@@ -360,7 +409,8 @@ export function calculateTaxes(inputs: TaxInputs): TaxCalculationResult {
         employerNI,
         studentLoanRepayments,
         combinedTaxes,
-        childBenefits,
+        hicbc: childBenefitsResult.hicbc,
+        childBenefits: childBenefitsResult.childBenefits,
         takeHomePay,
         pensionPot,
         yourMoney,

@@ -1,0 +1,144 @@
+const explanations: Record<string, { title: string; content: string }> = {
+  taxYear: {
+    title: "Tax Year",
+    content:
+      "The UK tax year runs from 6 April to 5 April the following year. Tax rates, thresholds, and allowances change each year. Select the tax year you want to calculate for. The 2022/23 year uses estimated effective NI rates due to mid-year rate changes.",
+  },
+  residentInScotland: {
+    title: "Resident in Scotland",
+    content:
+      "If you are a Scottish taxpayer, you pay Scottish Income Tax rates instead of the rest-of-UK rates. Scotland has more tax bands (currently six: starter, basic, intermediate, higher, advanced, and top rate) compared to three for the rest of the UK. National Insurance is the same across the UK.",
+  },
+  noNI: {
+    title: "Exclude NI",
+    content:
+      "Toggle this if you do not pay National Insurance contributions — for example, if you are over State Pension age. Employees over State Pension age do not pay Employee NI, but their employer still pays Employer NI.",
+  },
+  blind: {
+    title: "Blind Person's Allowance",
+    content:
+      "If you are registered blind (or severely sight-impaired), you receive an additional tax-free allowance on top of the standard Personal Allowance. This reduces your taxable income and therefore the amount of income tax you pay.",
+  },
+  childBenefits: {
+    title: "Child Benefits",
+    content:
+      "Child Benefit is a regular payment from the government to help with the cost of raising children. It is paid to anyone responsible for a child under 16 (or under 20 if in approved education or training). However, if the higher-income parent earns above the HICBC threshold, a tax charge (High Income Child Benefit Charge) claws back some or all of the benefit.",
+  },
+  numberOfChildren: {
+    title: "Number of Children",
+    content:
+      "The first child receives a higher weekly rate of Child Benefit than subsequent children. The total benefit increases with each additional child, but at the lower per-child rate for the second child onwards.",
+  },
+  studentLoan: {
+    title: "Student Loans",
+    content:
+      "Student loan repayments are deducted from your pay once you earn above the repayment threshold for your plan type. Plan 1 covers pre-2012 English/Welsh and all Northern Irish loans. Plan 2 covers post-2012 English/Welsh loans. Plan 4 covers Scottish loans. Plan 5 covers post-2023 English loans. Postgraduate loans are for Master's or Doctoral loans and are repaid at a lower rate alongside other plans.",
+  },
+  autoEnrolment: {
+    title: "Auto Enrolment",
+    content:
+      "Auto enrolment is the government's workplace pension scheme. Your employer must automatically enrol you and contribute to a pension. The percentage you enter here is your employee contribution rate applied to your qualifying earnings. The legal minimum total contribution is 8% (with at least 3% from your employer — not modelled here).",
+  },
+  autoEnrolmentAsSalarySacrifice: {
+    title: "Auto Enrolment as Salary Sacrifice",
+    content:
+      "When enabled, your auto enrolment contributions are treated as salary sacrifice. This means they are deducted from your gross pay before tax and National Insurance are calculated, saving you NI contributions compared to a standard (relief at source) pension. Many employers offer this arrangement.",
+  },
+  salarySacrifice: {
+    title: "Salary/Bonus Sacrifice",
+    content:
+      "Salary sacrifice is an arrangement where you agree to reduce your contractual salary in exchange for a non-cash benefit, typically an employer pension contribution. Because your gross pay is reduced, you save on both Income Tax and National Insurance. The amount entered here is the annual total sacrificed from your salary and/or bonus.",
+  },
+  personalContributions: {
+    title: "Personal Pension Contributions",
+    content:
+      "Personal pension contributions are voluntary payments you make to a pension from your net (after-tax) pay. If 'Relief at source' is enabled, your pension provider claims basic rate tax relief (20%) from HMRC and adds it to your pot. Higher/additional rate taxpayers can reclaim further relief via self-assessment. This tool models the full tax relief effect.",
+  },
+  taxReliefAtSource: {
+    title: "Relief at Source",
+    content:
+      "Relief at source is a method of providing tax relief on personal pension contributions. Under this system, your pension provider claims basic rate tax relief (currently 20%) from HMRC on your behalf and adds it to your pension pot. For example, if you contribute £80, the provider claims £20 from HMRC, making the gross contribution £100. Higher and additional rate taxpayers can claim further relief through self-assessment.",
+  },
+  incomeAnalysis: {
+    title: "View Mode",
+    content:
+      "Tax Year Overview shows how taxes change across a range of incomes as line charts. Income Analysis lets you enter a specific salary and bonus to see a detailed breakdown of your taxes, take-home pay, and pension, plus a chart showing how pension contributions affect your tax savings.",
+  },
+  annualGrossSalary: {
+    title: "Annual Gross Salary",
+    content:
+      "Your total annual salary before any deductions (tax, NI, pension, student loan). This is the contractual salary your employer pays you, sometimes called your 'headline' salary. Do not include bonuses — enter those separately.",
+  },
+  annualGrossBonus: {
+    title: "Annual Gross Bonus",
+    content:
+      "Any additional lump-sum payments on top of your salary, such as annual bonuses or commissions. Bonuses are taxed as part of your total income. If you salary-sacrifice part of your bonus into a pension, enter the sacrifice amount in the pension section.",
+  },
+  annualGrossIncomeRange: {
+    title: "Annual Gross Income Range",
+    content:
+      "The maximum income shown on the X-axis of the Tax Year Overview charts. Adjust this to zoom in or out on the income range. For example, set to £60,000 to focus on basic/higher rate thresholds, or £200,000+ to see the additional rate and personal allowance taper.",
+  },
+  result_annualGrossIncome: {
+    title: "Annual Gross Income",
+    content:
+      "Your total annual income before any deductions. This is the sum of your salary and bonus. It is the starting point for all tax calculations.",
+  },
+  result_adjustedNetIncome: {
+    title: "Adjusted Net Income",
+    content:
+      "Your gross income minus pension contributions (salary sacrifice and grossed-up personal contributions). HMRC uses this figure to determine your Personal Allowance taper (which starts at £100,000) and your High Income Child Benefit Charge. Increasing pension contributions reduces your Adjusted Net Income.",
+  },
+  result_taxAllowance: {
+    title: "Tax Allowance",
+    content:
+      "The amount of income you can earn tax-free, also known as the Personal Allowance. The standard allowance is £12,570, but it is reduced by £1 for every £2 of adjusted net income above £100,000, reaching zero at £125,140. The Blind Person's Allowance is added on top if applicable.",
+  },
+  result_employerNI: {
+    title: "Employer NI",
+    content:
+      "National Insurance contributions paid by your employer on top of your salary. This does not reduce your take-home pay but is a real cost to your employer. It is shown here for transparency and to understand the total cost of employment. Employer NI is calculated on your salary after salary sacrifice deductions.",
+  },
+  result_combinedTaxes: {
+    title: "Total You Pay",
+    content:
+      "The total amount deducted from your income: Income Tax + Employee National Insurance + Student Loan repayments. This is the sum of all compulsory deductions (not including pension contributions, which are voluntary).",
+  },
+  result_incomeTax: {
+    title: "Income Tax",
+    content:
+      "Tax charged on your taxable income (gross income minus tax allowance, minus pension relief). It is calculated in bands: each band has a rate applied only to income within that band's range. The breakdown shows how much of your income falls into each band and the tax charged on it.",
+  },
+  result_employeeNI: {
+    title: "Employee NI",
+    content:
+      "National Insurance contributions deducted from your pay. You pay NI on earnings between the Primary Threshold and Upper Earnings Limit at the main rate, and a lower rate on earnings above the Upper Earnings Limit. NI is calculated on your salary after salary sacrifice deductions.",
+  },
+  result_studentLoan: {
+    title: "Student Loan Repayments",
+    content:
+      "Repayments deducted from your pay for outstanding student loans. You repay 9% of income above your plan's threshold (6% for postgraduate loans). If you have multiple plans, the highest threshold is used for non-postgraduate plans and repayments are split proportionally.",
+  },
+  result_yourMoney: {
+    title: "Total You Keep",
+    content:
+      "The total value you receive from your employment: Take Home Pay (cash in your bank) + Pension Pot (saved for retirement) + Child Benefits (if claimed). This represents the full financial value of your employment package.",
+  },
+  result_takeHomePay: {
+    title: "Take Home Pay",
+    content:
+      "The cash you actually receive in your bank account after all deductions: Income Tax, Employee NI, Student Loan repayments, and pension contributions. This is your net pay — the money available to spend.",
+  },
+  result_pensionPot: {
+    title: "Pension Pot",
+    content:
+      "The total annual amount going into your pension from all sources: auto enrolment, salary sacrifice, and personal contributions (grossed up with tax relief if applicable). This is money saved for your retirement.",
+  },
+  result_childBenefits: {
+    title: "Child Benefits",
+    content:
+      "The net Child Benefit you receive after the High Income Child Benefit Charge (HICBC). If the higher-income parent earns above the HICBC threshold, a percentage of the benefit is clawed back as a tax charge. Above a certain income, the full benefit is charged back, making the net benefit zero.",
+  },
+};
+
+export default explanations;

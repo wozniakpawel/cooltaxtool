@@ -29,8 +29,9 @@ const plotSettings: PlotSetting[] = [
   { key: "employeeNI", color: "#e74c3c", label: "Employee NI Contributions" },
   { key: "employerNI", color: "#d35400", label: "Employer NI Contributions" },
   { key: "studentLoanRepayments", color: "#f39c12", label: "Student Loan Repayments" },
-  { key: "combinedTaxes", color: "#c0392b", label: "Combined taxes (IT, EE NI, SL)" },
-  { key: "childBenefits", color: "#35cc71", label: "Child Benefits (incl. HICBC)", dashed: true },
+  { key: "combinedTaxes", color: "#c0392b", label: "Combined taxes (IT, EE NI, SL, HICBC)" },
+  { key: "hicbc", color: "#d63031", label: "HICBC", dashed: true },
+  { key: "childBenefits", color: "#35cc71", label: "Child Benefits", dashed: true },
   { key: "takeHomePay", color: "#2ecc71", label: "Take Home Pay" },
   { key: "pensionPot", color: "#27ae60", label: "Pension Pot" },
   { key: "yourMoney", color: "#16a085", label: "Your money (Pension Pot + Take Home)" },
@@ -50,14 +51,14 @@ const TaxYearOverview = (props: TaxYearOverviewProps) => {
     );
 
     const data: ChartDataPoint[] = grossIncomes.map((grossIncome) => {
-      const { grossEarnings, taxAllowance, incomeTax, employeeNI, employerNI, pensionPot, studentLoanRepayments, childBenefits, ...rest } =
+      const { annualGrossIncome, taxAllowance, incomeTax, employeeNI, employerNI, pensionPot, studentLoanRepayments, childBenefits, ...rest } =
         calculateTaxes({
           ...props.inputs,
           annualGrossBonus: 0,
           annualGrossSalary: grossIncome,
         });
       return {
-        grossEarnings: grossEarnings.total,
+        annualGrossIncome: annualGrossIncome.total,
         taxAllowance: taxAllowance.total,
         incomeTax: incomeTax.total,
         employeeNI: employeeNI.total,
@@ -72,7 +73,7 @@ const TaxYearOverview = (props: TaxYearOverviewProps) => {
     // Calculate marginal tax rate
     for (let i = 1; i < data.length; i++) {
       const deltaTaxes = data[i].combinedTaxes - data[i - 1].combinedTaxes;
-      const deltaIncome = data[i].grossEarnings - data[i - 1].grossEarnings;
+      const deltaIncome = data[i].annualGrossIncome - data[i - 1].annualGrossIncome;
       data[i].marginalCombinedTaxRate = deltaIncome > 0 ? Math.ceil((deltaTaxes / deltaIncome) * 100) : 0;
     }
     data[0].marginalCombinedTaxRate = 0;
@@ -82,8 +83,8 @@ const TaxYearOverview = (props: TaxYearOverviewProps) => {
 
   const percentageData = useMemo(() => {
     return chartData.map((d) => {
-      const gross = d.grossEarnings || 1;
-      const result: ChartDataPoint = { grossEarnings: d.grossEarnings };
+      const gross = d.annualGrossIncome || 1;
+      const result: ChartDataPoint = { annualGrossIncome: d.annualGrossIncome };
       plotSettings.forEach((s) => {
         if (!s.amountOnly) {
           result[s.key] = s.key === "marginalCombinedTaxRate"
@@ -99,21 +100,25 @@ const TaxYearOverview = (props: TaxYearOverviewProps) => {
     return plotSettings.filter((setting) => {
       if (setting.percentOnly) return false;
       if ((setting.key === "employeeNI" || setting.key === "employerNI") && props.inputs.noNI) return false;
-      if (setting.key === "studentLoanRepayments" && props.inputs.studentLoan.length === 0) return false;
-      if (setting.key === "childBenefits" && !props.inputs.childBenefits.childBenefitsTaken) return false;
+      if (setting.key === "studentLoanRepayments" && (!props.inputs.studentLoanEnabled || props.inputs.studentLoan.length === 0)) return false;
+      if (setting.key === "pensionPot" && !props.inputs.pensionEnabled) return false;
+      if (setting.key === "childBenefits" && props.inputs.childBenefits.mode !== 'self') return false;
+      if (setting.key === "hicbc" && props.inputs.childBenefits.mode !== 'partner') return false;
       return true;
     });
-  }, [props.inputs.noNI, props.inputs.studentLoan.length, props.inputs.childBenefits.childBenefitsTaken]);
+  }, [props.inputs.noNI, props.inputs.studentLoanEnabled, props.inputs.studentLoan.length, props.inputs.pensionEnabled, props.inputs.childBenefits.mode]);
 
   const visibleSettingsPercent = useMemo(() => {
     return plotSettings.filter((setting) => {
       if (setting.amountOnly) return false;
       if ((setting.key === "employeeNI" || setting.key === "employerNI") && props.inputs.noNI) return false;
-      if (setting.key === "studentLoanRepayments" && props.inputs.studentLoan.length === 0) return false;
-      if (setting.key === "childBenefits" && !props.inputs.childBenefits.childBenefitsTaken) return false;
+      if (setting.key === "studentLoanRepayments" && (!props.inputs.studentLoanEnabled || props.inputs.studentLoan.length === 0)) return false;
+      if (setting.key === "pensionPot" && !props.inputs.pensionEnabled) return false;
+      if (setting.key === "childBenefits" && props.inputs.childBenefits.mode !== 'self') return false;
+      if (setting.key === "hicbc" && props.inputs.childBenefits.mode !== 'partner') return false;
       return true;
     });
-  }, [props.inputs.noNI, props.inputs.studentLoan.length, props.inputs.childBenefits.childBenefitsTaken]);
+  }, [props.inputs.noNI, props.inputs.studentLoanEnabled, props.inputs.studentLoan.length, props.inputs.pensionEnabled, props.inputs.childBenefits.mode]);
 
   const buildSeries = (data: ChartDataPoint[], visibleSettings: PlotSetting[], xKey: string) => {
     return visibleSettings.map((setting) => ({
@@ -156,8 +161,8 @@ const TaxYearOverview = (props: TaxYearOverviewProps) => {
     (value: number) => `Gross: ${formatCurrency(value)}`
   );
 
-  const percentSeries = buildSeries(percentageData, visibleSettingsPercent, "grossEarnings");
-  const amountSeries = buildSeries(chartData, visibleSettingsAmount, "grossEarnings");
+  const percentSeries = buildSeries(percentageData, visibleSettingsPercent, "annualGrossIncome");
+  const amountSeries = buildSeries(chartData, visibleSettingsAmount, "annualGrossIncome");
 
   return (
     <Container>

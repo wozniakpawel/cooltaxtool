@@ -1,12 +1,14 @@
 import { useEffect, ChangeEvent } from 'react';
 import { Formik, useFormikContext } from 'formik';
 import NumberOfChildrenSelector from './NumberOfChildrenSelector';
+import InfoPopover from './InfoPopover';
+import explanations from '../utils/explanations';
 import * as yup from 'yup';
 import { taxYears } from '../utils/TaxYears';
 import { studentLoanOptions } from '../utils/studentLoanOptions';
 import {
     Container, Card, Row, Col, Form, Alert,
-    Button, ButtonGroup, InputGroup,
+    Button, ButtonGroup, InputGroup, Collapse,
 } from 'react-bootstrap';
 import type { TaxInputs, StudentLoanPlan } from '../types/tax';
 
@@ -39,7 +41,7 @@ export const defaultInputs: TaxInputs = {
     noNI: false,
     blind: false,
     childBenefits: {
-        childBenefitsTaken: false,
+        mode: 'off',
         numberOfChildren: 1,
     },
     pensionContributions: {
@@ -49,8 +51,10 @@ export const defaultInputs: TaxInputs = {
     },
     autoEnrolmentAsSalarySacrifice: true,
     taxReliefAtSource: true,
-    activeTab: 'taxYearOverview', // 'taxYearOverview', 'incomeAnalysis', 'firstHomes'
+    activeTab: 'taxYearOverview',
     firstHomesLondon: false,
+    pensionEnabled: false,
+    studentLoanEnabled: false,
 };
 
 const hasEmptyString = (obj: Record<string, unknown>): boolean => {
@@ -127,7 +131,7 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                 <Form noValidate>
 
                                     <Form.Group as={Row} controlId="taxYear" className="mt-2">
-                                        <Form.Label column>Tax Year</Form.Label>
+                                        <Form.Label column>Tax Year <InfoPopover {...explanations.taxYear} /></Form.Label>
                                         <Col>
                                             <Form.Control as="select" name="taxYear" value={values.taxYear} onChange={handleInputChange}>
                                                 {taxYearOptions.map(year => (
@@ -147,7 +151,7 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                         <Form.Check
                                             type="switch"
                                             id="residentInScotland"
-                                            label="Resident in Scotland"
+                                            label={<>Resident in Scotland <InfoPopover {...explanations.residentInScotland} /></>}
                                             name="residentInScotland"
                                             checked={values.residentInScotland}
                                             onChange={handleInputChange}
@@ -155,7 +159,7 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                         <Form.Check
                                             type="switch"
                                             id="noNI"
-                                            label="Exclude NI"
+                                            label={<>Exclude NI <InfoPopover {...explanations.noNI} /></>}
                                             name="noNI"
                                             checked={values.noNI}
                                             onChange={handleInputChange}
@@ -163,141 +167,178 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                         <Form.Check
                                             type="switch"
                                             id="blind"
-                                            label="Blind"
+                                            label={<>Blind <InfoPopover {...explanations.blind} /></>}
                                             name="blind"
                                             checked={values.blind}
                                             onChange={handleInputChange}
                                         />
-                                        <Form.Check
-                                            type="switch"
-                                            id="childBenefits.childBenefitsTaken"
-                                            label="Child Benefits"
-                                            name="childBenefits.childBenefitsTaken"
-                                            checked={values.childBenefits.childBenefitsTaken}
-                                            onChange={handleInputChange}
-                                        />
-                                        {values.childBenefits.childBenefitsTaken &&
-                                            <NumberOfChildrenSelector
-                                                setFieldValue={setFieldValue}
-                                                values={values}
-                                            />
+                                        <Form.Group as={Row} controlId="childBenefits.mode" className="mt-1 mb-1">
+                                            <Form.Label column>Child Benefits <InfoPopover {...explanations.childBenefits} /></Form.Label>
+                                            <Col>
+                                                <Form.Select
+                                                    name="childBenefits.mode"
+                                                    value={values.childBenefits.mode}
+                                                    onChange={handleInputChange}
+                                                >
+                                                    <option value="off">Off</option>
+                                                    <option value="self">I receive Child Benefits</option>
+                                                    <option value="partner">My partner receives Child Benefits</option>
+                                                </Form.Select>
+                                            </Col>
+                                        </Form.Group>
+                                        {values.childBenefits.mode !== 'off' &&
+                                            <>
+                                                <NumberOfChildrenSelector
+                                                    setFieldValue={setFieldValue}
+                                                    values={values}
+                                                />
+                                                <InfoPopover {...explanations.numberOfChildren} />
+                                            </>
                                         }
                                     </Form.Group>
 
                                     <Card className="mt-2">
                                         <Card.Body>
-                                            <Card.Title>Student Loans</Card.Title>
-                                            <Form.Group as={Row} controlId="studentLoan">
-                                                {/* <Form.Label column>Student Loans</Form.Label> */}
-                                                <Col>
-                                                    {studentLoanOptions.map(option => (
-                                                        <Form.Check
-                                                            key={option.plan}
-                                                            type="checkbox"
-                                                            label={option.label}
-                                                            name="studentLoan"
-                                                            value={option.plan}
-                                                            checked={values.studentLoan.includes(option.plan)}
-                                                            onChange={handleInputChange}
-                                                        />
-                                                    ))}
-                                                </Col>
-                                            </Form.Group>
+                                            <Card.Title>
+                                                <Form.Check
+                                                    type="switch"
+                                                    id="studentLoanEnabled"
+                                                    label={<>Student Loans <InfoPopover {...explanations.studentLoan} /></>}
+                                                    name="studentLoanEnabled"
+                                                    checked={values.studentLoanEnabled}
+                                                    onChange={handleInputChange}
+                                                    className="d-inline-flex align-items-center"
+                                                />
+                                            </Card.Title>
+                                            <Collapse in={values.studentLoanEnabled}>
+                                                <div>
+                                                    <Form.Group as={Row} controlId="studentLoan">
+                                                        {/* <Form.Label column>Student Loans</Form.Label> */}
+                                                        <Col>
+                                                            {studentLoanOptions.map(option => (
+                                                                <Form.Check
+                                                                    key={option.plan}
+                                                                    type="checkbox"
+                                                                    label={option.label}
+                                                                    name="studentLoan"
+                                                                    value={option.plan}
+                                                                    checked={values.studentLoan.includes(option.plan)}
+                                                                    onChange={handleInputChange}
+                                                                />
+                                                            ))}
+                                                        </Col>
+                                                    </Form.Group>
+                                                </div>
+                                            </Collapse>
                                         </Card.Body>
                                     </Card>
 
                                     <Card className="mt-2">
                                         <Card.Body>
-                                            <Card.Title>Pension</Card.Title>
-                                            <Form.Group as={Row} controlId="pensionContributions.autoEnrolment">
-                                                <Form.Label column>Auto Enrolment</Form.Label>
-                                                <Col>
-                                                    <InputGroup hasValidation>
-                                                        <InputGroup.Text>%</InputGroup.Text>
-                                                        <Form.Control
-                                                            type="number"
-                                                            inputMode="decimal"
-                                                            name="pensionContributions.autoEnrolment"
-                                                            value={values.pensionContributions.autoEnrolment}
-                                                            onChange={handleInputChange}
-                                                            isValid={!errors.pensionContributions?.autoEnrolment}
-                                                            isInvalid={!!errors.pensionContributions?.autoEnrolment}
-                                                            min={0}
-                                                            max={30}
-                                                            step={0.1}
-                                                        />
-                                                        <Form.Control.Feedback type="invalid">
-                                                            {errors.pensionContributions?.autoEnrolment}
-                                                        </Form.Control.Feedback>
-                                                    </InputGroup>
-                                                </Col>
-                                            </Form.Group>
-                                            <Form.Check
-                                                type="switch"
-                                                id="autoEnrolmentAsSalarySacrifice"
-                                                label="As salary sacrifice"
-                                                name="autoEnrolmentAsSalarySacrifice"
-                                                checked={values.autoEnrolmentAsSalarySacrifice}
-                                                onChange={handleInputChange}
-                                            />
+                                            <Card.Title>
+                                                <Form.Check
+                                                    type="switch"
+                                                    id="pensionEnabled"
+                                                    label={<>Pension</>}
+                                                    name="pensionEnabled"
+                                                    checked={values.pensionEnabled}
+                                                    onChange={handleInputChange}
+                                                    className="d-inline-flex align-items-center"
+                                                />
+                                            </Card.Title>
+                                            <Collapse in={values.pensionEnabled}>
+                                                <div>
+                                                    <Form.Group as={Row} controlId="pensionContributions.autoEnrolment">
+                                                        <Form.Label column>Auto Enrolment <InfoPopover {...explanations.autoEnrolment} /></Form.Label>
+                                                        <Col>
+                                                            <InputGroup hasValidation>
+                                                                <InputGroup.Text>%</InputGroup.Text>
+                                                                <Form.Control
+                                                                    type="number"
+                                                                    inputMode="decimal"
+                                                                    name="pensionContributions.autoEnrolment"
+                                                                    value={values.pensionContributions.autoEnrolment}
+                                                                    onChange={handleInputChange}
+                                                                    isValid={!errors.pensionContributions?.autoEnrolment}
+                                                                    isInvalid={!!errors.pensionContributions?.autoEnrolment}
+                                                                    min={0}
+                                                                    max={30}
+                                                                    step={0.1}
+                                                                />
+                                                                <Form.Control.Feedback type="invalid">
+                                                                    {errors.pensionContributions?.autoEnrolment}
+                                                                </Form.Control.Feedback>
+                                                            </InputGroup>
+                                                        </Col>
+                                                    </Form.Group>
+                                                    <Form.Check
+                                                        type="switch"
+                                                        id="autoEnrolmentAsSalarySacrifice"
+                                                        label={<>As salary sacrifice <InfoPopover {...explanations.autoEnrolmentAsSalarySacrifice} /></>}
+                                                        name="autoEnrolmentAsSalarySacrifice"
+                                                        checked={values.autoEnrolmentAsSalarySacrifice}
+                                                        onChange={handleInputChange}
+                                                    />
 
-                                            <hr />
+                                                    <hr />
 
-                                            <Form.Group as={Row} controlId="pensionContributions.salarySacrifice">
-                                                <Form.Label column>Salary/Bonus Sacrifice</Form.Label>
-                                                <Col>
-                                                    <InputGroup hasValidation>
-                                                        <InputGroup.Text>£</InputGroup.Text>
-                                                        <Form.Control
-                                                            type="number"
-                                                            inputMode="decimal"
-                                                            name="pensionContributions.salarySacrifice"
-                                                            value={values.pensionContributions.salarySacrifice}
-                                                            onChange={handleInputChange}
-                                                            isValid={!errors.pensionContributions?.salarySacrifice}
-                                                            isInvalid={!!errors.pensionContributions?.salarySacrifice}
-                                                            min={0}
-                                                            step={100}
-                                                        />
-                                                        <Form.Control.Feedback type="invalid">
-                                                            {errors.pensionContributions?.salarySacrifice}
-                                                        </Form.Control.Feedback>
-                                                    </InputGroup>
-                                                </Col>
-                                            </Form.Group>
+                                                    <Form.Group as={Row} controlId="pensionContributions.salarySacrifice">
+                                                        <Form.Label column>Salary/Bonus Sacrifice <InfoPopover {...explanations.salarySacrifice} /></Form.Label>
+                                                        <Col>
+                                                            <InputGroup hasValidation>
+                                                                <InputGroup.Text>£</InputGroup.Text>
+                                                                <Form.Control
+                                                                    type="number"
+                                                                    inputMode="decimal"
+                                                                    name="pensionContributions.salarySacrifice"
+                                                                    value={values.pensionContributions.salarySacrifice}
+                                                                    onChange={handleInputChange}
+                                                                    isValid={!errors.pensionContributions?.salarySacrifice}
+                                                                    isInvalid={!!errors.pensionContributions?.salarySacrifice}
+                                                                    min={0}
+                                                                    step={100}
+                                                                />
+                                                                <Form.Control.Feedback type="invalid">
+                                                                    {errors.pensionContributions?.salarySacrifice}
+                                                                </Form.Control.Feedback>
+                                                            </InputGroup>
+                                                        </Col>
+                                                    </Form.Group>
 
-                                            <hr />
+                                                    <hr />
 
-                                            <Form.Group as={Row} controlId="pensionContributions.personal">
-                                                <Form.Label column>Personal Contributions</Form.Label>
-                                                <Col>
-                                                    <InputGroup hasValidation>
-                                                        <InputGroup.Text>£</InputGroup.Text>
-                                                        <Form.Control
-                                                            type="number"
-                                                            inputMode="decimal"
-                                                            name="pensionContributions.personal"
-                                                            value={values.pensionContributions.personal}
-                                                            onChange={handleInputChange}
-                                                            isValid={!errors.pensionContributions?.personal}
-                                                            isInvalid={!!errors.pensionContributions?.personal}
-                                                            min={0}
-                                                            step={100}
-                                                        />
-                                                        <Form.Control.Feedback type="invalid">
-                                                            {errors.pensionContributions?.personal}
-                                                        </Form.Control.Feedback>
-                                                    </InputGroup>
-                                                </Col>
-                                            </Form.Group>
-                                            <Form.Check
-                                                type="switch"
-                                                id="taxReliefAtSource"
-                                                label="Relief at source"
-                                                name="taxReliefAtSource"
-                                                checked={values.taxReliefAtSource}
-                                                onChange={handleInputChange}
-                                            />
+                                                    <Form.Group as={Row} controlId="pensionContributions.personal">
+                                                        <Form.Label column>Personal Contributions <InfoPopover {...explanations.personalContributions} /></Form.Label>
+                                                        <Col>
+                                                            <InputGroup hasValidation>
+                                                                <InputGroup.Text>£</InputGroup.Text>
+                                                                <Form.Control
+                                                                    type="number"
+                                                                    inputMode="decimal"
+                                                                    name="pensionContributions.personal"
+                                                                    value={values.pensionContributions.personal}
+                                                                    onChange={handleInputChange}
+                                                                    isValid={!errors.pensionContributions?.personal}
+                                                                    isInvalid={!!errors.pensionContributions?.personal}
+                                                                    min={0}
+                                                                    step={100}
+                                                                />
+                                                                <Form.Control.Feedback type="invalid">
+                                                                    {errors.pensionContributions?.personal}
+                                                                </Form.Control.Feedback>
+                                                            </InputGroup>
+                                                        </Col>
+                                                    </Form.Group>
+                                                    <Form.Check
+                                                        type="switch"
+                                                        id="taxReliefAtSource"
+                                                        label={<>Relief at source <InfoPopover {...explanations.taxReliefAtSource} /></>}
+                                                        name="taxReliefAtSource"
+                                                        checked={values.taxReliefAtSource}
+                                                        onChange={handleInputChange}
+                                                    />
+                                                </div>
+                                            </Collapse>
                                         </Card.Body>
                                     </Card>
 
@@ -327,7 +368,7 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                             {values.activeTab === 'incomeAnalysis' &&
                                                 <>
                                                     <Form.Group as={Row} controlId="annualGrossSalary">
-                                                        <Form.Label column>Annual Gross Salary</Form.Label>
+                                                        <Form.Label column>Annual Gross Salary <InfoPopover {...explanations.annualGrossSalary} /></Form.Label>
                                                         <Col>
                                                             <InputGroup hasValidation>
                                                                 <InputGroup.Text>£</InputGroup.Text>
@@ -350,7 +391,7 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                                     </Form.Group>
 
                                                     <Form.Group as={Row} controlId="annualGrossBonus" className="mt-2">
-                                                        <Form.Label column>Annual Gross Bonus</Form.Label>
+                                                        <Form.Label column>Annual Gross Bonus <InfoPopover {...explanations.annualGrossBonus} /></Form.Label>
                                                         <Col>
                                                             <InputGroup hasValidation>
                                                                 <InputGroup.Text>£</InputGroup.Text>
@@ -376,7 +417,7 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
 
                                             {(values.activeTab === 'taxYearOverview' || values.activeTab === 'firstHomes') &&
                                                 <Form.Group as={Row} controlId="grossEarningsRange">
-                                                    <Form.Label column>Annual Gross Earnings range</Form.Label>
+                                                    <Form.Label column>Annual Gross Income range <InfoPopover {...explanations.annualGrossIncomeRange} /></Form.Label>
                                                     <Col>
                                                         <InputGroup hasValidation>
                                                             <InputGroup.Text>£</InputGroup.Text>
