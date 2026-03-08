@@ -50,6 +50,8 @@ export const defaultInputs: TaxInputs = {
     autoEnrolmentAsSalarySacrifice: true,
     taxReliefAtSource: true,
     incomeAnalysis: false,
+    pensionEnabled: false,
+    studentLoanEnabled: false,
 };
 
 const hasEmptyString = (obj: Record<string, unknown>): boolean => {

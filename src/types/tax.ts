@@ -93,6 +93,8 @@ export interface TaxInputs {
   autoEnrolmentAsSalarySacrifice: boolean;
   taxReliefAtSource: boolean;
   incomeAnalysis: boolean;
+  pensionEnabled: boolean;
+  studentLoanEnabled: boolean;
 }
 
 // Calculation result types
