@@ -22,7 +22,6 @@ const requiredPositiveNumber = yup.number()
 const schema = yup.object().shape({
     annualGrossSalary: requiredPositiveNumber,
     annualGrossBonus: requiredPositiveNumber,
-    annualGrossIncomeRange: requiredPositiveNumber,
     pensionContributions: yup.object().shape({
         autoEnrolment: requiredPositiveNumber
             .max(30, "Must be less than or equal to 30."),

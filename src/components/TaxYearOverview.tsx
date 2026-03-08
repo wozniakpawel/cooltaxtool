@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import Chart from "react-apexcharts";
 import { Container, Form, Row, Col, InputGroup } from "react-bootstrap";
 import { calculateTaxes } from "../utils/TaxCalc";
@@ -7,6 +7,8 @@ import {
   formatPercent,
   getApexChartOptions,
 } from "../utils/chartUtils";
+import InfoPopover from "./InfoPopover";
+import explanations from "../utils/explanations";
 import type { TaxInputs } from "../types/tax";
 import type { ApexOptions } from "apexcharts";
 
@@ -45,10 +47,6 @@ interface TaxYearOverviewProps {
 
 const TaxYearOverview = (props: TaxYearOverviewProps) => {
   const [incomeRange, setIncomeRange] = useState(props.inputs.annualGrossIncomeRange);
-
-  useEffect(() => {
-    setIncomeRange(props.inputs.annualGrossIncomeRange);
-  }, [props.inputs.annualGrossIncomeRange]);
 
   const chartData = useMemo(() => {
     const grossIncomes = Array.from(
@@ -173,7 +171,7 @@ const TaxYearOverview = (props: TaxYearOverviewProps) => {
   return (
     <Container>
       <Form.Group as={Row} controlId="incomeRange" className="mb-3">
-        <Form.Label column>Income range</Form.Label>
+        <Form.Label column>Income range <InfoPopover {...explanations.annualGrossIncomeRange} /></Form.Label>
         <Col>
           <InputGroup>
             <InputGroup.Text>£</InputGroup.Text>
@@ -181,7 +179,10 @@ const TaxYearOverview = (props: TaxYearOverviewProps) => {
               type="number"
               inputMode="decimal"
               value={incomeRange}
-              onChange={(e) => setIncomeRange(Number(e.target.value))}
+              onChange={(e) => {
+                const val = Number(e.target.value);
+                if (val >= 10000) setIncomeRange(val);
+              }}
               min={10000}
               step={10000}
             />
