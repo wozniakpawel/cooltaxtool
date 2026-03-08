@@ -62,7 +62,7 @@ const explanations: Record<string, { title: string; content: string }> = {
   incomeAnalysis: {
     title: "View Mode",
     content:
-      "Tax Year Overview shows how taxes change across a range of incomes as line charts. Income Analysis lets you enter a specific salary and bonus to see a detailed breakdown of your taxes, take-home pay, and pension, plus a chart showing how pension contributions affect your tax savings.",
+      "Income Explorer shows how taxes change across a range of incomes as line charts. My Taxes lets you enter a specific salary and bonus to see a detailed breakdown of your taxes, take-home pay, and pension, plus a chart showing how pension contributions affect your tax savings.",
   },
   annualGrossSalary: {
     title: "Annual Gross Salary",
@@ -77,7 +77,7 @@ const explanations: Record<string, { title: string; content: string }> = {
   annualGrossIncomeRange: {
     title: "Annual Gross Income Range",
     content:
-      "The maximum income shown on the X-axis of the Tax Year Overview charts. Adjust this to zoom in or out on the income range. For example, set to £60,000 to focus on basic/higher rate thresholds, or £200,000+ to see the additional rate and personal allowance taper.",
+      "The maximum income shown on the X-axis of the Income Explorer charts. Adjust this to zoom in or out on the income range. For example, set to £60,000 to focus on basic/higher rate thresholds, or £200,000+ to see the additional rate and personal allowance taper.",
   },
   result_annualGrossIncome: {
     title: "Annual Gross Income",
