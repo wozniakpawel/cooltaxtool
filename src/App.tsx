@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, ButtonGroup, Button } from "react-bootstrap";
 import { defaultInputs, UserMenu } from "./components/UserMenu";
 import TaxYearOverview from "./components/TaxYearOverview";
 import IncomeAnalysis from "./components/IncomeAnalysis";
@@ -36,7 +36,21 @@ function App() {
             <Header theme={theme} toggleTheme={toggleTheme} />
             <UserMenu onUserInputsChange={setUserInputs} />
           </Col>
-          <Col xs={12} lg={6}>
+          <Col xs={12} lg={6} className="pt-3">
+            <ButtonGroup className="mb-3">
+              <Button
+                variant={userInputs.incomeAnalysis ? 'primary' : 'outline-primary'}
+                onClick={() => setUserInputs({ ...userInputs, incomeAnalysis: true })}
+              >
+                My Taxes
+              </Button>
+              <Button
+                variant={!userInputs.incomeAnalysis ? 'primary' : 'outline-primary'}
+                onClick={() => setUserInputs({ ...userInputs, incomeAnalysis: false })}
+              >
+                Income Explorer
+              </Button>
+            </ButtonGroup>
             {userInputs.incomeAnalysis && (
               <IncomeAnalysis inputs={userInputs} theme={theme} />
             )}

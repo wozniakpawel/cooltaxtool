@@ -8,7 +8,7 @@ import { taxYears } from '../utils/TaxYears';
 import { studentLoanOptions } from '../utils/studentLoanOptions';
 import {
     Container, Card, Row, Col, Form, Alert,
-    Button, ButtonGroup, InputGroup, Collapse,
+    InputGroup, Collapse,
 } from 'react-bootstrap';
 import type { TaxInputs, StudentLoanPlan } from '../types/tax';
 
@@ -50,7 +50,7 @@ export const defaultInputs: TaxInputs = {
     },
     autoEnrolmentAsSalarySacrifice: true,
     taxReliefAtSource: true,
-    incomeAnalysis: false,
+    incomeAnalysis: true,
     pensionEnabled: false,
     studentLoanEnabled: false,
 };
@@ -385,29 +385,6 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                             </InputGroup>
                                         </Col>
                                     </Form.Group>
-
-                                    <Card className="mt-2">
-                                        <Card.Body>
-                                            <ButtonGroup className="mb-0">
-                                                <Button
-                                                    variant={!values.incomeAnalysis ? 'primary' : 'outline-primary'}
-                                                    onClick={() => handleInputChange({
-                                                        target: { name: 'incomeAnalysis', type: 'checkbox', checked: !values.incomeAnalysis }
-                                                    })}
-                                                >
-                                                    Income Explorer
-                                                </Button>
-                                                <Button
-                                                    variant={values.incomeAnalysis ? 'primary' : 'outline-primary'}
-                                                    onClick={() => handleInputChange({
-                                                        target: { name: 'incomeAnalysis', type: 'checkbox', checked: !values.incomeAnalysis }
-                                                    })}
-                                                >
-                                                    My Taxes
-                                                </Button>
-                                            </ButtonGroup>
-                                        </Card.Body>
-                                    </Card>
 
                                     <iframe
                                         src="https://github.com/sponsors/wozniakpawel/button"
