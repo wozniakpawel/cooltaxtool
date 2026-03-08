@@ -9,7 +9,7 @@ test('renders app header', () => {
 test('renders tax year selector', () => {
   render(<App />);
   expect(screen.getByText('Tax Year')).toBeInTheDocument();
-  expect(screen.getByRole('combobox')).toBeInTheDocument();
+  expect(screen.getByRole('combobox', { name: /tax year/i })).toBeInTheDocument();
 });
 
 test('renders dark mode toggle', () => {
