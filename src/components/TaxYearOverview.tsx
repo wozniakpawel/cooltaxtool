@@ -178,8 +178,8 @@ const TaxYearOverview = (props: TaxYearOverviewProps) => {
             <Form.Control
               type="number"
               inputMode="decimal"
-              value={incomeRange}
-              onChange={(e) => setIncomeRange(Number(e.target.value) || 0)}
+              value={incomeRange || ''}
+              onChange={(e) => setIncomeRange(Number(e.target.value))}
               min={10000}
               step={10000}
             />
