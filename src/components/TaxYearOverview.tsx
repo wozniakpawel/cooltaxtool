@@ -29,8 +29,9 @@ const plotSettings: PlotSetting[] = [
   { key: "employeeNI", color: "#e74c3c", label: "Employee NI Contributions" },
   { key: "employerNI", color: "#d35400", label: "Employer NI Contributions" },
   { key: "studentLoanRepayments", color: "#f39c12", label: "Student Loan Repayments" },
-  { key: "combinedTaxes", color: "#c0392b", label: "Combined taxes (IT, EE NI, SL)" },
-  { key: "childBenefits", color: "#35cc71", label: "Child Benefits (incl. HICBC)", dashed: true },
+  { key: "combinedTaxes", color: "#c0392b", label: "Combined taxes (IT, EE NI, SL, HICBC)" },
+  { key: "hicbc", color: "#d63031", label: "HICBC", dashed: true },
+  { key: "childBenefits", color: "#35cc71", label: "Child Benefits", dashed: true },
   { key: "takeHomePay", color: "#2ecc71", label: "Take Home Pay" },
   { key: "pensionPot", color: "#27ae60", label: "Pension Pot" },
   { key: "yourMoney", color: "#16a085", label: "Your money (Pension Pot + Take Home)" },
@@ -100,20 +101,22 @@ const TaxYearOverview = (props: TaxYearOverviewProps) => {
       if (setting.percentOnly) return false;
       if ((setting.key === "employeeNI" || setting.key === "employerNI") && props.inputs.noNI) return false;
       if (setting.key === "studentLoanRepayments" && props.inputs.studentLoan.length === 0) return false;
-      if (setting.key === "childBenefits" && !props.inputs.childBenefits.childBenefitsTaken) return false;
+      if (setting.key === "childBenefits" && props.inputs.childBenefits.mode !== 'self') return false;
+      if (setting.key === "hicbc" && props.inputs.childBenefits.mode !== 'partner') return false;
       return true;
     });
-  }, [props.inputs.noNI, props.inputs.studentLoan.length, props.inputs.childBenefits.childBenefitsTaken]);
+  }, [props.inputs.noNI, props.inputs.studentLoan.length, props.inputs.childBenefits.mode]);
 
   const visibleSettingsPercent = useMemo(() => {
     return plotSettings.filter((setting) => {
       if (setting.amountOnly) return false;
       if ((setting.key === "employeeNI" || setting.key === "employerNI") && props.inputs.noNI) return false;
       if (setting.key === "studentLoanRepayments" && props.inputs.studentLoan.length === 0) return false;
-      if (setting.key === "childBenefits" && !props.inputs.childBenefits.childBenefitsTaken) return false;
+      if (setting.key === "childBenefits" && props.inputs.childBenefits.mode !== 'self') return false;
+      if (setting.key === "hicbc" && props.inputs.childBenefits.mode !== 'partner') return false;
       return true;
     });
-  }, [props.inputs.noNI, props.inputs.studentLoan.length, props.inputs.childBenefits.childBenefitsTaken]);
+  }, [props.inputs.noNI, props.inputs.studentLoan.length, props.inputs.childBenefits.mode]);
 
   const buildSeries = (data: ChartDataPoint[], visibleSettings: PlotSetting[], xKey: string) => {
     return visibleSettings.map((setting) => ({
