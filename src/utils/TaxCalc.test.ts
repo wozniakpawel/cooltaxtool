@@ -191,62 +191,77 @@ describe('calculateStudentLoanRepayments', () => {
 });
 
 describe('calculateChildBenefits', () => {
-  const childBenefitsInput = { childBenefitsTaken: true, numberOfChildren: 2 };
+  const selfInput = { mode: 'self' as const, numberOfChildren: 2 };
+  const partnerInput = { mode: 'partner' as const, numberOfChildren: 2 };
 
-  it('should return zero when not claiming', () => {
-    const result = calculateChildBenefits(50000, { childBenefitsTaken: false, numberOfChildren: 2 }, constants.childBenefitRates, constants.hicbc);
-    expect(result.total).toBe(0);
+  it('should return zeros when mode is off', () => {
+    const result = calculateChildBenefits(50000, { mode: 'off', numberOfChildren: 2 }, constants.childBenefitRates, constants.hicbc);
+    expect(result.childBenefits.total).toBe(0);
+    expect(result.hicbc).toBe(0);
   });
 
-  it('should calculate full benefits below HICBC threshold', () => {
-    // First child: 25.60 * 52 = £1,331.20
-    // Additional child: 16.95 * 52 = £881.40
-    // Total = £2,212.60
-    const result = calculateChildBenefits(40000, childBenefitsInput, constants.childBenefitRates, constants.hicbc);
-    expect(result.total).toBeCloseTo(2212.60, 2);
-  });
-
-  describe('2024/25+ HICBC (threshold £60k, taper divisor 200)', () => {
-    it('should not apply HICBC below £60,000', () => {
-      // At £55,000: below the £60k threshold, full benefits
-      const result = calculateChildBenefits(55000, childBenefitsInput, constants.childBenefitRates, constants.hicbc);
-      expect(result.total).toBeCloseTo(2212.60, 2);
+  describe('self mode', () => {
+    it('should return gross benefits and zero hicbc below threshold', () => {
+      // First child: 25.60 * 52 = 1331.20
+      // Additional child: 16.95 * 52 = 881.40
+      // Total = 2212.60
+      const result = calculateChildBenefits(40000, selfInput, constants.childBenefitRates, constants.hicbc);
+      expect(result.childBenefits.total).toBeCloseTo(2212.60, 2);
+      expect(result.hicbc).toBe(0);
     });
 
-    it('should apply HICBC above £60,000', () => {
-      // At £70,000: excess = £10,000
-      // Charge percentage = floor(10000/200) = 50%
-      // Benefits = £2,212.60, HICBC = -£1,106.30
-      // Net = £1,106.30
-      const result = calculateChildBenefits(70000, childBenefitsInput, constants.childBenefitRates, constants.hicbc);
-      expect(result.total).toBeCloseTo(1106.30, 2);
+    it('should return gross benefits and hicbc above threshold', () => {
+      // At 70000: excess = 10000, charge % = floor(10000/200) = 50%
+      // Benefits = 2212.60, HICBC = 2212.60 * 50% = 1106.30
+      const result = calculateChildBenefits(70000, selfInput, constants.childBenefitRates, constants.hicbc);
+      expect(result.childBenefits.total).toBeCloseTo(2212.60, 2);
+      expect(result.hicbc).toBeCloseTo(1106.30, 2);
     });
 
-    it('should return zero net benefits at £80,000+', () => {
-      // At £80,000+: charge percentage = floor(20000/200) = 100%
-      // HICBC claws back all benefits
-      const result = calculateChildBenefits(80000, childBenefitsInput, constants.childBenefitRates, constants.hicbc);
-      expect(result.total).toBe(0);
+    it('should clawback full benefits at 80000+', () => {
+      const result = calculateChildBenefits(80000, selfInput, constants.childBenefitRates, constants.hicbc);
+      expect(result.childBenefits.total).toBeCloseTo(2212.60, 2);
+      expect(result.hicbc).toBeCloseTo(2212.60, 2);
     });
   });
 
-  describe('pre-2024/25 HICBC (threshold £50k, taper divisor 100)', () => {
+  describe('partner mode', () => {
+    it('should return zero benefits and zero hicbc below threshold', () => {
+      const result = calculateChildBenefits(40000, partnerInput, constants.childBenefitRates, constants.hicbc);
+      expect(result.childBenefits.total).toBe(0);
+      expect(result.hicbc).toBe(0);
+    });
+
+    it('should return zero benefits and hicbc above threshold', () => {
+      const result = calculateChildBenefits(70000, partnerInput, constants.childBenefitRates, constants.hicbc);
+      expect(result.childBenefits.total).toBe(0);
+      expect(result.hicbc).toBeCloseTo(1106.30, 2);
+    });
+
+    it('should return zero benefits and full hicbc at 80000+', () => {
+      const result = calculateChildBenefits(80000, partnerInput, constants.childBenefitRates, constants.hicbc);
+      expect(result.childBenefits.total).toBe(0);
+      expect(result.hicbc).toBeCloseTo(2212.60, 2);
+    });
+  });
+
+  describe('pre-2024/25 HICBC (threshold 50k, taper divisor 100)', () => {
     const oldConstants = taxYears['2023/24'];
 
-    it('should apply HICBC above £50,000', () => {
-      // At £55,000: excess = £5,000
-      // Charge percentage = floor(5000/100) = 50%
-      // First child: 24.00 * 52 = £1,248.00
-      // Additional child: 15.90 * 52 = £826.80
-      // Benefits = £2,074.80, HICBC = -£1,037.40
-      // Net = £1,037.40
-      const result = calculateChildBenefits(55000, childBenefitsInput, oldConstants.childBenefitRates, oldConstants.hicbc);
-      expect(result.total).toBeCloseTo(1037.40, 2);
+    it('should apply HICBC above 50000 in self mode', () => {
+      // At 55000: excess = 5000, charge % = floor(5000/100) = 50%
+      // First child: 24.00 * 52 = 1248.00
+      // Additional child: 15.90 * 52 = 826.80
+      // Benefits = 2074.80, HICBC = 1037.40
+      const result = calculateChildBenefits(55000, selfInput, oldConstants.childBenefitRates, oldConstants.hicbc);
+      expect(result.childBenefits.total).toBeCloseTo(2074.80, 2);
+      expect(result.hicbc).toBeCloseTo(1037.40, 2);
     });
 
-    it('should return zero net benefits at £60,000+', () => {
-      const result = calculateChildBenefits(60000, childBenefitsInput, oldConstants.childBenefitRates, oldConstants.hicbc);
-      expect(result.total).toBe(0);
+    it('should return full hicbc at 60000+ in partner mode', () => {
+      const result = calculateChildBenefits(60000, partnerInput, oldConstants.childBenefitRates, oldConstants.hicbc);
+      expect(result.childBenefits.total).toBe(0);
+      expect(result.hicbc).toBeCloseTo(2074.80, 2);
     });
   });
 });
@@ -274,7 +289,7 @@ describe('calculateTaxes', () => {
     residentInScotland: false,
     noNI: false,
     blind: false,
-    childBenefits: { childBenefitsTaken: false, numberOfChildren: 1 },
+    childBenefits: { mode: 'off', numberOfChildren: 1 },
     pensionContributions: { autoEnrolment: 0, salarySacrifice: 0, personal: 0 },
     autoEnrolmentAsSalarySacrifice: true,
     taxReliefAtSource: true,
@@ -306,7 +321,7 @@ describe('calculateTaxes', () => {
   it('should calculate combined taxes correctly', () => {
     const result = calculateTaxes(baseInputs);
 
-    const expectedCombined = result.incomeTax.total + result.employeeNI.total + result.studentLoanRepayments.total;
+    const expectedCombined = result.incomeTax.total + result.employeeNI.total + result.studentLoanRepayments.total + result.hicbc;
     expect(result.combinedTaxes).toBe(expectedCombined);
   });
 
@@ -335,16 +350,34 @@ describe('calculateTaxes', () => {
     expect(result.combinedTaxes).toBeGreaterThan(calculateTaxes(baseInputs).combinedTaxes);
   });
 
-  it('should handle child benefits with HICBC', () => {
+  it('should handle child benefits with HICBC in self mode', () => {
     const inputs: TaxInputs = {
       ...baseInputs,
-      annualGrossSalary: 55000,
-      childBenefits: { childBenefitsTaken: true, numberOfChildren: 2 },
+      annualGrossSalary: 70000,
+      childBenefits: { mode: 'self', numberOfChildren: 2 },
     };
     const result = calculateTaxes(inputs);
 
-    // Should have partial child benefits due to HICBC
-    expect(result.childBenefits.total).toBeGreaterThan(0);
-    expect(result.childBenefits.total).toBeLessThan(2500); // Less than full amount
+    expect(result.childBenefits.total).toBeCloseTo(2212.60, 2);
+    expect(result.hicbc).toBeCloseTo(1106.30, 2);
+    expect(result.combinedTaxes).toBe(result.incomeTax.total + result.employeeNI.total + result.studentLoanRepayments.total + result.hicbc);
+  });
+
+  it('should handle HICBC in partner mode', () => {
+    const inputs: TaxInputs = {
+      ...baseInputs,
+      annualGrossSalary: 70000,
+      childBenefits: { mode: 'partner', numberOfChildren: 2 },
+    };
+    const result = calculateTaxes(inputs);
+
+    expect(result.childBenefits.total).toBe(0);
+    expect(result.hicbc).toBeCloseTo(1106.30, 2);
+    expect(result.combinedTaxes).toBe(result.incomeTax.total + result.employeeNI.total + result.studentLoanRepayments.total + result.hicbc);
+  });
+
+  it('should include hicbc in combinedTaxes', () => {
+    const result = calculateTaxes(baseInputs);
+    expect(result.combinedTaxes).toBe(result.incomeTax.total + result.employeeNI.total + result.studentLoanRepayments.total + result.hicbc);
   });
 });

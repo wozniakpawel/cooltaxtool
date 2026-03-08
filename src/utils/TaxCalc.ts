@@ -206,18 +206,23 @@ export function calculateStudentLoanRepayments(
     };
 }
 
+export interface ChildBenefitsResult {
+    childBenefits: CalculationResult;
+    hicbc: number;
+}
+
 export function calculateChildBenefits(
     adjustedNetIncome: number,
     childBenefits: ChildBenefitsInput,
     childBenefitRates: ChildBenefitRates,
     hicbc: HICBCConstants
-): CalculationResult {
+): ChildBenefitsResult {
     const { firstChildRate, additionalChildRate } = childBenefitRates;
 
-    if (!childBenefits.childBenefitsTaken) {
+    if (childBenefits.mode === 'off') {
         return {
-            total: 0,
-            breakdown: [],
+            childBenefits: { total: 0, breakdown: [] },
+            hicbc: 0,
         };
     }
 
@@ -225,21 +230,23 @@ export function calculateChildBenefits(
     const additionalChildrenAmount = (childBenefits.numberOfChildren - 1) * additionalChildRate * 52;
     const childBenefitAmount = firstChildAmount + additionalChildrenAmount;
 
-    let HICBC = 0;
+    let hicbcCharge = 0;
     if (adjustedNetIncome > hicbc.threshold) {
         const incomeExcess = adjustedNetIncome - hicbc.threshold;
         const chargePercentage = Math.min(100, Math.floor(incomeExcess / hicbc.taperDivisor));
-        HICBC = - (childBenefitAmount * chargePercentage) / 100;
+        hicbcCharge = (childBenefitAmount * chargePercentage) / 100;
     }
 
-    const total = childBenefitAmount + HICBC;
+    const showBenefits = childBenefits.mode === 'self';
 
     return {
-        total,
-        breakdown: [
-            { rate: "Child Benefits", amount: childBenefitAmount },
-            { rate: "HICBC", amount: HICBC },
-        ],
+        childBenefits: {
+            total: showBenefits ? childBenefitAmount : 0,
+            breakdown: showBenefits ? [
+                { rate: "Child Benefits", amount: childBenefitAmount },
+            ] : [],
+        },
+        hicbc: hicbcCharge,
     };
 }
 
@@ -304,11 +311,11 @@ export function calculateTaxes(inputs: TaxInputs): TaxCalculationResult {
     // Calculate income tax
     const incomeTax = calculateIncomeTax(taxableIncome, constants, inputs.residentInScotland);
 
-    // Calculate combined taxes
-    const combinedTaxes = incomeTax.total + employeeNI.total + studentLoanRepayments.total;
+    // Calculate child benefits and HICBC
+    const childBenefitsResult = calculateChildBenefits(adjustedNetIncome, inputs.childBenefits, constants.childBenefitRates, constants.hicbc);
 
-    // Calculate child benefits
-    const childBenefits = calculateChildBenefits(adjustedNetIncome, inputs.childBenefits, constants.childBenefitRates, constants.hicbc);
+    // Calculate combined taxes (including HICBC)
+    const combinedTaxes = incomeTax.total + employeeNI.total + studentLoanRepayments.total + childBenefitsResult.hicbc;
 
     // Calculate how much you actually keep
     // Pension amounts the employee pays out of remaining income (not already deducted via salary sacrifice)
@@ -317,7 +324,7 @@ export function calculateTaxes(inputs: TaxInputs): TaxCalculationResult {
         + inputs.pensionContributions.personal;
 
     const takeHomePay = Math.max(0, incomeAfterSalarySacrifice - netPensionDeductions - combinedTaxes);
-    const yourMoney = pensionPot.total + takeHomePay + childBenefits.total;
+    const yourMoney = pensionPot.total + takeHomePay + childBenefitsResult.childBenefits.total;
 
     return {
         annualGrossIncome,
@@ -329,7 +336,8 @@ export function calculateTaxes(inputs: TaxInputs): TaxCalculationResult {
         employerNI,
         studentLoanRepayments,
         combinedTaxes,
-        childBenefits,
+        hicbc: childBenefitsResult.hicbc,
+        childBenefits: childBenefitsResult.childBenefits,
         takeHomePay,
         pensionPot,
         yourMoney,
