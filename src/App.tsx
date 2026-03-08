@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Container, Row, Col, ButtonGroup, Button } from "react-bootstrap";
 import { defaultInputs, UserMenu } from "./components/UserMenu";
 import TaxYearOverview from "./components/TaxYearOverview";
 import IncomeAnalysis from "./components/IncomeAnalysis";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import type { TaxInputs } from "./types/tax";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const getInitialTheme = () => {
@@ -28,13 +29,17 @@ function App() {
     setTheme(theme === "light" ? "dark" : "light");
   }
 
+  const handleUserInputsChange = useCallback((inputs: TaxInputs) => {
+    setUserInputs(prev => ({ ...inputs, incomeAnalysis: prev.incomeAnalysis }));
+  }, []);
+
   return (
     <Container fluid className="d-flex flex-column min-vh-100 p-0">
       <Container className="page-content p-0">
         <Row>
           <Col xs={12} lg={6}>
             <Header theme={theme} toggleTheme={toggleTheme} />
-            <UserMenu onUserInputsChange={(inputs) => setUserInputs(prev => ({ ...inputs, incomeAnalysis: prev.incomeAnalysis }))} />
+            <UserMenu onUserInputsChange={handleUserInputsChange} />
           </Col>
           <Col xs={12} lg={6} className="pt-3">
             <ButtonGroup className="mb-3">
