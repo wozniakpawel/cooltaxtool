@@ -1,6 +1,8 @@
 import { useEffect, ChangeEvent } from 'react';
 import { Formik, useFormikContext } from 'formik';
 import NumberOfChildrenSelector from './NumberOfChildrenSelector';
+import InfoPopover from './InfoPopover';
+import explanations from '../utils/explanations';
 import * as yup from 'yup';
 import { taxYears } from '../utils/TaxYears';
 import { studentLoanOptions } from '../utils/studentLoanOptions';
@@ -126,7 +128,7 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                 <Form noValidate>
 
                                     <Form.Group as={Row} controlId="taxYear" className="mt-2">
-                                        <Form.Label column>Tax Year</Form.Label>
+                                        <Form.Label column>Tax Year <InfoPopover {...explanations.taxYear} /></Form.Label>
                                         <Col>
                                             <Form.Control as="select" name="taxYear" value={values.taxYear} onChange={handleInputChange}>
                                                 {taxYearOptions.map(year => (
@@ -146,7 +148,7 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                         <Form.Check
                                             type="switch"
                                             id="residentInScotland"
-                                            label="Resident in Scotland"
+                                            label={<>Resident in Scotland <InfoPopover {...explanations.residentInScotland} /></>}
                                             name="residentInScotland"
                                             checked={values.residentInScotland}
                                             onChange={handleInputChange}
@@ -154,7 +156,7 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                         <Form.Check
                                             type="switch"
                                             id="noNI"
-                                            label="Exclude NI"
+                                            label={<>Exclude NI <InfoPopover {...explanations.noNI} /></>}
                                             name="noNI"
                                             checked={values.noNI}
                                             onChange={handleInputChange}
@@ -162,13 +164,13 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                         <Form.Check
                                             type="switch"
                                             id="blind"
-                                            label="Blind"
+                                            label={<>Blind <InfoPopover {...explanations.blind} /></>}
                                             name="blind"
                                             checked={values.blind}
                                             onChange={handleInputChange}
                                         />
                                         <Form.Group as={Row} controlId="childBenefits.mode" className="mt-1 mb-1">
-                                            <Form.Label column>Child Benefits</Form.Label>
+                                            <Form.Label column>Child Benefits <InfoPopover {...explanations.childBenefits} /></Form.Label>
                                             <Col>
                                                 <Form.Select
                                                     name="childBenefits.mode"
@@ -182,16 +184,19 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                             </Col>
                                         </Form.Group>
                                         {values.childBenefits.mode !== 'off' &&
-                                            <NumberOfChildrenSelector
-                                                setFieldValue={setFieldValue}
-                                                values={values}
-                                            />
+                                            <>
+                                                <NumberOfChildrenSelector
+                                                    setFieldValue={setFieldValue}
+                                                    values={values}
+                                                />
+                                                <InfoPopover {...explanations.numberOfChildren} />
+                                            </>
                                         }
                                     </Form.Group>
 
                                     <Card className="mt-2">
                                         <Card.Body>
-                                            <Card.Title>Student Loans</Card.Title>
+                                            <Card.Title>Student Loans <InfoPopover {...explanations.studentLoan} /></Card.Title>
                                             <Form.Group as={Row} controlId="studentLoan">
                                                 {/* <Form.Label column>Student Loans</Form.Label> */}
                                                 <Col>
@@ -215,7 +220,7 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                         <Card.Body>
                                             <Card.Title>Pension</Card.Title>
                                             <Form.Group as={Row} controlId="pensionContributions.autoEnrolment">
-                                                <Form.Label column>Auto Enrolment</Form.Label>
+                                                <Form.Label column>Auto Enrolment <InfoPopover {...explanations.autoEnrolment} /></Form.Label>
                                                 <Col>
                                                     <InputGroup hasValidation>
                                                         <InputGroup.Text>%</InputGroup.Text>
@@ -240,7 +245,7 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                             <Form.Check
                                                 type="switch"
                                                 id="autoEnrolmentAsSalarySacrifice"
-                                                label="As salary sacrifice"
+                                                label={<>As salary sacrifice <InfoPopover {...explanations.autoEnrolmentAsSalarySacrifice} /></>}
                                                 name="autoEnrolmentAsSalarySacrifice"
                                                 checked={values.autoEnrolmentAsSalarySacrifice}
                                                 onChange={handleInputChange}
@@ -249,7 +254,7 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                             <hr />
 
                                             <Form.Group as={Row} controlId="pensionContributions.salarySacrifice">
-                                                <Form.Label column>Salary/Bonus Sacrifice</Form.Label>
+                                                <Form.Label column>Salary/Bonus Sacrifice <InfoPopover {...explanations.salarySacrifice} /></Form.Label>
                                                 <Col>
                                                     <InputGroup hasValidation>
                                                         <InputGroup.Text>£</InputGroup.Text>
@@ -274,7 +279,7 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                             <hr />
 
                                             <Form.Group as={Row} controlId="pensionContributions.personal">
-                                                <Form.Label column>Personal Contributions</Form.Label>
+                                                <Form.Label column>Personal Contributions <InfoPopover {...explanations.personalContributions} /></Form.Label>
                                                 <Col>
                                                     <InputGroup hasValidation>
                                                         <InputGroup.Text>£</InputGroup.Text>
@@ -298,7 +303,7 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                             <Form.Check
                                                 type="switch"
                                                 id="taxReliefAtSource"
-                                                label="Relief at source"
+                                                label={<>Relief at source <InfoPopover {...explanations.taxReliefAtSource} /></>}
                                                 name="taxReliefAtSource"
                                                 checked={values.taxReliefAtSource}
                                                 onChange={handleInputChange}
@@ -330,7 +335,7 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                             {values.incomeAnalysis &&
                                                 <>
                                                     <Form.Group as={Row} controlId="annualGrossSalary">
-                                                        <Form.Label column>Annual Gross Salary</Form.Label>
+                                                        <Form.Label column>Annual Gross Salary <InfoPopover {...explanations.annualGrossSalary} /></Form.Label>
                                                         <Col>
                                                             <InputGroup hasValidation>
                                                                 <InputGroup.Text>£</InputGroup.Text>
@@ -353,7 +358,7 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                                     </Form.Group>
 
                                                     <Form.Group as={Row} controlId="annualGrossBonus" className="mt-2">
-                                                        <Form.Label column>Annual Gross Bonus</Form.Label>
+                                                        <Form.Label column>Annual Gross Bonus <InfoPopover {...explanations.annualGrossBonus} /></Form.Label>
                                                         <Col>
                                                             <InputGroup hasValidation>
                                                                 <InputGroup.Text>£</InputGroup.Text>
@@ -379,7 +384,7 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
 
                                             {!values.incomeAnalysis &&
                                                 <Form.Group as={Row} controlId="annualGrossIncomeRange">
-                                                    <Form.Label column>Annual Gross Income range</Form.Label>
+                                                    <Form.Label column>Annual Gross Income range <InfoPopover {...explanations.annualGrossIncomeRange} /></Form.Label>
                                                     <Col>
                                                         <InputGroup hasValidation>
                                                             <InputGroup.Text>£</InputGroup.Text>
