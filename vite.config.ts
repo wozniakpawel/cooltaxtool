@@ -15,5 +15,6 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/setupTests.tsx',
     css: true,
+    exclude: ['**/node_modules/**', '.worktrees/**'],
   },
 });
