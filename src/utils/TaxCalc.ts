@@ -250,12 +250,25 @@ export function calculateChildBenefits(
     };
 }
 
-// Calculate personal pension contribution value, depending if the tax is relieved at source
+// Calculate personal pension contribution value, depending if the tax is relieved at source.
+// Non-taxpayers (income <= basicAllowance) only get relief on the first £2,880 per HMRC rules.
+const LOW_INCOME_RELIEF_CAP = 2880;
+
 export function grossManualPensionContributions(
     personalContribution: number,
-    taxReliefAtSource: boolean
+    taxReliefAtSource: boolean,
+    annualGrossIncome: number,
+    basicAllowance: number
 ): number {
-    return taxReliefAtSource ? personalContribution * 1.25 : personalContribution;
+    if (!taxReliefAtSource) return personalContribution;
+
+    if (annualGrossIncome > basicAllowance) {
+        return personalContribution * 1.25;
+    }
+
+    const relieved = Math.min(personalContribution, LOW_INCOME_RELIEF_CAP);
+    const unrelieved = Math.max(0, personalContribution - LOW_INCOME_RELIEF_CAP);
+    return relieved * 1.25 + unrelieved;
 }
 
 // Top-level function to calculate taxes
@@ -291,7 +304,12 @@ export function calculateTaxes(inputs: TaxInputs): TaxCalculationResult {
         incomeAfterSalarySacrifice -= autoEnrolmentContribution;
 
     // Calculate personal pension contribution (with tax relief at source)
-    const grossedPersonalContribution = grossManualPensionContributions(pensionContributions.personal, taxReliefAtSource);
+    const grossedPersonalContribution = grossManualPensionContributions(
+        pensionContributions.personal,
+        taxReliefAtSource,
+        annualGrossIncome.total,
+        constants.taxAllowance.basicAllowance
+    );
 
     // Calculate how much you will have in your pension pot at the end of the tax year
     const pensionPot: CalculationResult = {
