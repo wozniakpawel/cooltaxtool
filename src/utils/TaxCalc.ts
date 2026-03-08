@@ -265,26 +265,39 @@ export function calculateTaxes(inputs: TaxInputs): TaxCalculationResult {
         throw new Error(`Unsupported tax year: "${inputs.taxYear}". Available: ${Object.keys(taxYears).join(', ')}`);
     }
 
+    const pensionContributions = inputs.pensionEnabled
+        ? inputs.pensionContributions
+        : { autoEnrolment: 0, salarySacrifice: 0, personal: 0 };
+    const autoEnrolmentAsSalarySacrifice = inputs.pensionEnabled
+        ? inputs.autoEnrolmentAsSalarySacrifice
+        : true;
+    const taxReliefAtSource = inputs.pensionEnabled
+        ? inputs.taxReliefAtSource
+        : true;
+    const studentLoan = inputs.studentLoanEnabled
+        ? inputs.studentLoan
+        : [];
+
     const annualGrossIncome = calculateAnnualGrossIncome(inputs.annualGrossSalary, inputs.annualGrossBonus);
 
     // Apply salary sacrifice
-    let incomeAfterSalarySacrifice = Math.max(0, annualGrossIncome.total - inputs.pensionContributions.salarySacrifice);
+    let incomeAfterSalarySacrifice = Math.max(0, annualGrossIncome.total - pensionContributions.salarySacrifice);
 
     // Calculate auto enrolment pension contributions
-    const autoEnrolmentContribution = incomeAfterSalarySacrifice * (inputs.pensionContributions.autoEnrolment / 100);
+    const autoEnrolmentContribution = incomeAfterSalarySacrifice * (pensionContributions.autoEnrolment / 100);
 
     // Deduct auto enrolment contributions from gross income, but only if they are salary sacrificed
-    if (inputs.autoEnrolmentAsSalarySacrifice)
+    if (autoEnrolmentAsSalarySacrifice)
         incomeAfterSalarySacrifice -= autoEnrolmentContribution;
 
     // Calculate personal pension contribution (with tax relief at source)
-    const grossedPersonalContribution = grossManualPensionContributions(inputs.pensionContributions.personal, inputs.taxReliefAtSource);
+    const grossedPersonalContribution = grossManualPensionContributions(pensionContributions.personal, taxReliefAtSource);
 
     // Calculate how much you will have in your pension pot at the end of the tax year
     const pensionPot: CalculationResult = {
-        total: inputs.pensionContributions.salarySacrifice + autoEnrolmentContribution + grossedPersonalContribution,
+        total: pensionContributions.salarySacrifice + autoEnrolmentContribution + grossedPersonalContribution,
         breakdown: [
-            { rate: "Salary sacrifice", amount: inputs.pensionContributions.salarySacrifice },
+            { rate: "Salary sacrifice", amount: pensionContributions.salarySacrifice },
             { rate: "Auto enrolment", amount: autoEnrolmentContribution },
             { rate: "Gross Personal", amount: grossedPersonalContribution },
         ],
@@ -300,7 +313,7 @@ export function calculateTaxes(inputs: TaxInputs): TaxCalculationResult {
     const employerNI = calculateNationalInsurance(incomeAfterSalarySacrifice, constants, true, inputs.noNI);
 
     // Calculate student loan repayments
-    const studentLoanRepayments = calculateStudentLoanRepayments(incomeAfterSalarySacrifice, inputs.studentLoan, constants);
+    const studentLoanRepayments = calculateStudentLoanRepayments(incomeAfterSalarySacrifice, studentLoan, constants);
 
     // Determine the tax allowance (considering personal allowance taper and blind person's allowance)
     const taxAllowance = calculateTaxAllowance(adjustedNetIncome, inputs.blind, constants);
@@ -320,8 +333,8 @@ export function calculateTaxes(inputs: TaxInputs): TaxCalculationResult {
     // Calculate how much you actually keep
     // Pension amounts the employee pays out of remaining income (not already deducted via salary sacrifice)
     const netPensionDeductions =
-        (inputs.autoEnrolmentAsSalarySacrifice ? 0 : autoEnrolmentContribution)
-        + inputs.pensionContributions.personal;
+        (autoEnrolmentAsSalarySacrifice ? 0 : autoEnrolmentContribution)
+        + pensionContributions.personal;
 
     const takeHomePay = Math.max(0, incomeAfterSalarySacrifice - netPensionDeductions - combinedTaxes);
     const yourMoney = pensionPot.total + takeHomePay + childBenefitsResult.childBenefits.total;

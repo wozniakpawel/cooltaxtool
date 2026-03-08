@@ -294,6 +294,8 @@ describe('calculateTaxes', () => {
     autoEnrolmentAsSalarySacrifice: true,
     taxReliefAtSource: true,
     incomeAnalysis: false,
+    pensionEnabled: false,
+    studentLoanEnabled: false,
   };
 
   it('should calculate taxes for a basic salary', () => {
@@ -310,6 +312,7 @@ describe('calculateTaxes', () => {
   it('should reduce taxable income with salary sacrifice pension', () => {
     const inputs: TaxInputs = {
       ...baseInputs,
+      pensionEnabled: true,
       pensionContributions: { ...baseInputs.pensionContributions, salarySacrifice: 5000 },
     };
     const result = calculateTaxes(inputs);
@@ -343,7 +346,7 @@ describe('calculateTaxes', () => {
   });
 
   it('should handle student loan repayments', () => {
-    const inputs: TaxInputs = { ...baseInputs, studentLoan: ['plan2'] };
+    const inputs: TaxInputs = { ...baseInputs, studentLoanEnabled: true, studentLoan: ['plan2'] };
     const result = calculateTaxes(inputs);
 
     expect(result.studentLoanRepayments.total).toBeGreaterThan(0);
@@ -379,5 +382,46 @@ describe('calculateTaxes', () => {
   it('should include hicbc in combinedTaxes', () => {
     const result = calculateTaxes(baseInputs);
     expect(result.combinedTaxes).toBe(result.incomeTax.total + result.employeeNI.total + result.studentLoanRepayments.total + result.hicbc);
+  });
+
+  describe("section toggles", () => {
+    it("ignores pension contributions when pensionEnabled is false", () => {
+        const result = calculateTaxes({
+            ...baseInputs,
+            pensionEnabled: false,
+            pensionContributions: { autoEnrolment: 5, salarySacrifice: 5000, personal: 3000 },
+        });
+        expect(result.pensionPot.total).toBe(0);
+    });
+
+    it("includes pension contributions when pensionEnabled is true", () => {
+        const result = calculateTaxes({
+            ...baseInputs,
+            pensionEnabled: true,
+            annualGrossSalary: 50000,
+            pensionContributions: { autoEnrolment: 5, salarySacrifice: 5000, personal: 3000 },
+        });
+        expect(result.pensionPot.total).toBeGreaterThan(0);
+    });
+
+    it("ignores student loans when studentLoanEnabled is false", () => {
+        const result = calculateTaxes({
+            ...baseInputs,
+            studentLoanEnabled: false,
+            studentLoan: ["plan2" as const],
+            annualGrossSalary: 50000,
+        });
+        expect(result.studentLoanRepayments.total).toBe(0);
+    });
+
+    it("includes student loans when studentLoanEnabled is true", () => {
+        const result = calculateTaxes({
+            ...baseInputs,
+            studentLoanEnabled: true,
+            studentLoan: ["plan2" as const],
+            annualGrossSalary: 50000,
+        });
+        expect(result.studentLoanRepayments.total).toBeGreaterThan(0);
+    });
   });
 });

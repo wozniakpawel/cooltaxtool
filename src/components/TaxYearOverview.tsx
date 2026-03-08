@@ -100,23 +100,25 @@ const TaxYearOverview = (props: TaxYearOverviewProps) => {
     return plotSettings.filter((setting) => {
       if (setting.percentOnly) return false;
       if ((setting.key === "employeeNI" || setting.key === "employerNI") && props.inputs.noNI) return false;
-      if (setting.key === "studentLoanRepayments" && props.inputs.studentLoan.length === 0) return false;
+      if (setting.key === "studentLoanRepayments" && (!props.inputs.studentLoanEnabled || props.inputs.studentLoan.length === 0)) return false;
+      if (setting.key === "pensionPot" && !props.inputs.pensionEnabled) return false;
       if (setting.key === "childBenefits" && props.inputs.childBenefits.mode !== 'self') return false;
       if (setting.key === "hicbc" && props.inputs.childBenefits.mode !== 'partner') return false;
       return true;
     });
-  }, [props.inputs.noNI, props.inputs.studentLoan.length, props.inputs.childBenefits.mode]);
+  }, [props.inputs.noNI, props.inputs.studentLoanEnabled, props.inputs.studentLoan.length, props.inputs.pensionEnabled, props.inputs.childBenefits.mode]);
 
   const visibleSettingsPercent = useMemo(() => {
     return plotSettings.filter((setting) => {
       if (setting.amountOnly) return false;
       if ((setting.key === "employeeNI" || setting.key === "employerNI") && props.inputs.noNI) return false;
-      if (setting.key === "studentLoanRepayments" && props.inputs.studentLoan.length === 0) return false;
+      if (setting.key === "studentLoanRepayments" && (!props.inputs.studentLoanEnabled || props.inputs.studentLoan.length === 0)) return false;
+      if (setting.key === "pensionPot" && !props.inputs.pensionEnabled) return false;
       if (setting.key === "childBenefits" && props.inputs.childBenefits.mode !== 'self') return false;
       if (setting.key === "hicbc" && props.inputs.childBenefits.mode !== 'partner') return false;
       return true;
     });
-  }, [props.inputs.noNI, props.inputs.studentLoan.length, props.inputs.childBenefits.mode]);
+  }, [props.inputs.noNI, props.inputs.studentLoanEnabled, props.inputs.studentLoan.length, props.inputs.pensionEnabled, props.inputs.childBenefits.mode]);
 
   const buildSeries = (data: ChartDataPoint[], visibleSettings: PlotSetting[], xKey: string) => {
     return visibleSettings.map((setting) => ({
