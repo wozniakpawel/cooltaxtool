@@ -350,7 +350,7 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                                         target: { name: 'incomeAnalysis', type: 'checkbox', checked: !values.incomeAnalysis }
                                                     })}
                                                 >
-                                                    Tax Year Overview
+                                                    Income Explorer
                                                 </Button>
                                                 <Button
                                                     variant={values.incomeAnalysis ? 'primary' : 'outline-primary'}
@@ -358,7 +358,7 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                                         target: { name: 'incomeAnalysis', type: 'checkbox', checked: !values.incomeAnalysis }
                                                     })}
                                                 >
-                                                    Income analysis
+                                                    My Taxes
                                                 </Button>
                                             </ButtonGroup>
 
