@@ -102,6 +102,12 @@ const TaxBreakdown = (props: TaxBreakdownProps) => {
             {results.childBenefits.total > 0 && renderBreakDown(<>Child Benefits <InfoPopover {...explanations.result_childBenefits} /></>, results.childBenefits)}
           </tbody>
         </Table>
+
+        {period !== 'annual' && (
+          <p className="text-muted small mb-0">
+            Figures are annual calculations divided by period. Actual payslip amounts may differ slightly due to per-period NI and Student Loan thresholds.
+          </p>
+        )}
       </Card.Body>
     </Card>
   );
