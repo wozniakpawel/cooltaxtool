@@ -11,8 +11,8 @@ interface IncomeAnalysisProps {
 const IncomeAnalysis = (props: IncomeAnalysisProps) => {
     return (
         <Container>
-            <PensionAnalysis {...props} />
             <TaxBreakdown {...props} />
+            {props.inputs.pensionEnabled && <PensionAnalysis {...props} />}
         </Container>
     );
 };
