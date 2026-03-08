@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { calculateTaxes } from "../../utils/TaxCalc";
-import { Table, Card } from "react-bootstrap";
+import { Table, Card, ButtonGroup, Button } from "react-bootstrap";
 import { formatCurrencyPrecise } from "../../utils/chartUtils";
 import type { TaxInputs, CalculationResult } from "../../types/tax";
 import InfoPopover from '../InfoPopover';
@@ -13,13 +13,16 @@ interface TaxBreakdownProps {
 
 const TaxBreakdown = (props: TaxBreakdownProps) => {
   const results = useMemo(() => calculateTaxes(props.inputs), [props.inputs]);
+  const [period, setPeriod] = useState<'annual' | 'monthly' | 'weekly' | 'daily'>('annual');
+  const divisors = { annual: 1, monthly: 12, weekly: 52, daily: 365 };
+  const divisor = divisors[period];
 
   function renderSingleValue(name: ReactNode, value: number) {
     return (
       <tr>
         <td>{name}</td>
         <td className="text-end">
-          {formatCurrencyPrecise(value)}
+          {formatCurrencyPrecise(value / divisor)}
         </td>
       </tr>
     )
@@ -33,7 +36,7 @@ const TaxBreakdown = (props: TaxBreakdownProps) => {
           <tr key={`it-${i}`}>
             <td className="small" style={{ paddingLeft: "2em" }}>{`${typeof tax.rate === 'string' ? tax.rate : (tax.rate * 100).toFixed(2) + "%"
               }`}</td>
-            <td className="text-end small" style={{ paddingRight: "2em" }}>{formatCurrencyPrecise(tax.amount)}</td>
+            <td className="text-end small" style={{ paddingRight: "2em" }}>{formatCurrencyPrecise(tax.amount / divisor)}</td>
           </tr>
         ))}
       </>
@@ -43,8 +46,19 @@ const TaxBreakdown = (props: TaxBreakdownProps) => {
   return (
     <Card>
       <Card.Body>
-        <Card.Title>
+        <Card.Title className="d-flex justify-content-between align-items-center">
           Tax breakdown
+          <ButtonGroup size="sm">
+            {(['annual', 'monthly', 'weekly', 'daily'] as const).map((p) => (
+              <Button
+                key={p}
+                variant={period === p ? 'primary' : 'outline-primary'}
+                onClick={() => setPeriod(p)}
+              >
+                {p.charAt(0).toUpperCase() + p.slice(1)}
+              </Button>
+            ))}
+          </ButtonGroup>
         </Card.Title>
 
         <Table size="sm">
@@ -61,7 +75,7 @@ const TaxBreakdown = (props: TaxBreakdownProps) => {
             <tr>
               <th>Total you pay <InfoPopover {...explanations.result_combinedTaxes} /></th>
               <td style={{ fontWeight: "bold" }} className="text-end">
-                {formatCurrencyPrecise(results.combinedTaxes)}
+                {formatCurrencyPrecise(results.combinedTaxes / divisor)}
               </td>
             </tr>
           </thead>
@@ -78,7 +92,7 @@ const TaxBreakdown = (props: TaxBreakdownProps) => {
             <tr>
               <th>Total you keep <InfoPopover {...explanations.result_yourMoney} /></th>
               <td style={{ fontWeight: "bold" }} className="text-end">
-                {formatCurrencyPrecise(results.yourMoney)}
+                {formatCurrencyPrecise(results.yourMoney / divisor)}
               </td>
             </tr>
           </thead>
