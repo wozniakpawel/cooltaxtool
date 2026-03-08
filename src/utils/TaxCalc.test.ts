@@ -268,14 +268,38 @@ describe('calculateChildBenefits', () => {
 
 describe('grossManualPensionContributions', () => {
   it('should gross up contributions with tax relief at source', () => {
-    // £800 contribution becomes £1,000 with 25% tax relief
-    const result = grossManualPensionContributions(800, true);
+    // £800 contribution becomes £1,000 with 25% tax relief (taxpayer)
+    const result = grossManualPensionContributions(800, true, 50000, 12570);
     expect(result).toBe(1000);
   });
 
   it('should not gross up contributions without tax relief at source', () => {
-    const result = grossManualPensionContributions(800, false);
+    const result = grossManualPensionContributions(800, false, 50000, 12570);
     expect(result).toBe(800);
+  });
+
+  it('should cap relief at £2,880 for non-taxpayers', () => {
+    // Non-taxpayer (income £10,000, allowance £12,570) contributing £5,000
+    // Only first £2,880 gets grossed up: £2,880 * 1.25 + £2,120 = £5,720
+    const result = grossManualPensionContributions(5000, true, 10000, 12570);
+    expect(result).toBe(5720);
+  });
+
+  it('should give full relief to non-taxpayers contributing under £2,880', () => {
+    // Non-taxpayer contributing £2,000 — all gets relief
+    const result = grossManualPensionContributions(2000, true, 10000, 12570);
+    expect(result).toBe(2500);
+  });
+
+  it('should give full relief to taxpayers regardless of amount', () => {
+    // Taxpayer (income £50,000) contributing £5,000 — full relief
+    const result = grossManualPensionContributions(5000, true, 50000, 12570);
+    expect(result).toBe(6250);
+  });
+
+  it('should not gross up non-taxpayer contributions without relief at source', () => {
+    const result = grossManualPensionContributions(5000, false, 10000, 12570);
+    expect(result).toBe(5000);
   });
 });
 
