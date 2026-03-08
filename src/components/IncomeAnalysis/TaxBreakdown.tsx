@@ -66,6 +66,7 @@ const TaxBreakdown = (props: TaxBreakdownProps) => {
             {renderBreakDown("Income Tax", results.incomeTax)}
             {renderBreakDown("Employee NI", results.employeeNI)}
             {renderBreakDown("Student Loan", results.studentLoanRepayments)}
+            {results.hicbc > 0 && renderSingleValue("HICBC", results.hicbc)}
           </tbody>
         </Table>
 
@@ -81,7 +82,7 @@ const TaxBreakdown = (props: TaxBreakdownProps) => {
           <tbody>
             {renderSingleValue("Take Home Pay", results.takeHomePay)}
             {renderBreakDown("Pension Pot", results.pensionPot)}
-            {renderBreakDown("Child Benefits", results.childBenefits)}
+            {results.childBenefits.total > 0 && renderBreakDown("Child Benefits", results.childBenefits)}
           </tbody>
         </Table>
       </Card.Body>
