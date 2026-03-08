@@ -1,8 +1,11 @@
+import type { ReactNode } from "react";
 import { useMemo } from "react";
 import { calculateTaxes } from "../../utils/TaxCalc";
 import { Table, Card } from "react-bootstrap";
 import { formatCurrencyPrecise } from "../../utils/chartUtils";
 import type { TaxInputs, CalculationResult } from "../../types/tax";
+import InfoPopover from '../InfoPopover';
+import explanations from '../../utils/explanations';
 
 interface TaxBreakdownProps {
   inputs: TaxInputs;
@@ -11,7 +14,7 @@ interface TaxBreakdownProps {
 const TaxBreakdown = (props: TaxBreakdownProps) => {
   const results = useMemo(() => calculateTaxes(props.inputs), [props.inputs]);
 
-  function renderSingleValue(name: string, value: number) {
+  function renderSingleValue(name: ReactNode, value: number) {
     return (
       <tr>
         <td>{name}</td>
@@ -22,7 +25,7 @@ const TaxBreakdown = (props: TaxBreakdownProps) => {
     )
   }
 
-  function renderBreakDown(name: string, value: CalculationResult) {
+  function renderBreakDown(name: ReactNode, value: CalculationResult) {
     return (
       <>
         {renderSingleValue(name, value.total)}
@@ -46,42 +49,42 @@ const TaxBreakdown = (props: TaxBreakdownProps) => {
 
         <Table size="sm">
           <tbody>
-            {renderBreakDown("Annual Gross Income", results.annualGrossIncome)}
-            {renderSingleValue("Adjusted Net Income", results.adjustedNetIncome)}
-            {renderBreakDown("Tax Allowance", results.taxAllowance)}
-            {renderBreakDown("Employer NI", results.employerNI)}
+            {renderBreakDown(<>Annual Gross Income <InfoPopover {...explanations.result_annualGrossIncome} /></>, results.annualGrossIncome)}
+            {renderSingleValue(<>Adjusted Net Income <InfoPopover {...explanations.result_adjustedNetIncome} /></>, results.adjustedNetIncome)}
+            {renderBreakDown(<>Tax Allowance <InfoPopover {...explanations.result_taxAllowance} /></>, results.taxAllowance)}
+            {renderBreakDown(<>Employer NI <InfoPopover {...explanations.result_employerNI} /></>, results.employerNI)}
           </tbody>
         </Table>
 
         <Table size="sm" variant="danger" style={{ color: "#000" }}>
           <thead>
             <tr>
-              <th>Total you pay</th>
+              <th>Total you pay <InfoPopover {...explanations.result_combinedTaxes} /></th>
               <td style={{ fontWeight: "bold" }} className="text-end">
                 {formatCurrencyPrecise(results.combinedTaxes)}
               </td>
             </tr>
           </thead>
           <tbody>
-            {renderBreakDown("Income Tax", results.incomeTax)}
-            {renderBreakDown("Employee NI", results.employeeNI)}
-            {renderBreakDown("Student Loan", results.studentLoanRepayments)}
+            {renderBreakDown(<>Income Tax <InfoPopover {...explanations.result_incomeTax} /></>, results.incomeTax)}
+            {renderBreakDown(<>Employee NI <InfoPopover {...explanations.result_employeeNI} /></>, results.employeeNI)}
+            {renderBreakDown(<>Student Loan <InfoPopover {...explanations.result_studentLoan} /></>, results.studentLoanRepayments)}
           </tbody>
         </Table>
 
         <Table size="sm" variant="success" style={{ color: "#000" }}>
           <thead>
             <tr>
-              <th>Total you keep</th>
+              <th>Total you keep <InfoPopover {...explanations.result_yourMoney} /></th>
               <td style={{ fontWeight: "bold" }} className="text-end">
                 {formatCurrencyPrecise(results.yourMoney)}
               </td>
             </tr>
           </thead>
           <tbody>
-            {renderSingleValue("Take Home Pay", results.takeHomePay)}
-            {renderBreakDown("Pension Pot", results.pensionPot)}
-            {renderBreakDown("Child Benefits", results.childBenefits)}
+            {renderSingleValue(<>Take Home Pay <InfoPopover {...explanations.result_takeHomePay} /></>, results.takeHomePay)}
+            {renderBreakDown(<>Pension Pot <InfoPopover {...explanations.result_pensionPot} /></>, results.pensionPot)}
+            {renderBreakDown(<>Child Benefits <InfoPopover {...explanations.result_childBenefits} /></>, results.childBenefits)}
           </tbody>
         </Table>
       </Card.Body>
