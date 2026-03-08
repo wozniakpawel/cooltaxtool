@@ -34,7 +34,7 @@ function App() {
         <Row>
           <Col xs={12} lg={6}>
             <Header theme={theme} toggleTheme={toggleTheme} />
-            <UserMenu onUserInputsChange={(inputs) => setUserInputs(prev => ({ ...inputs, incomeAnalysis: prev.incomeAnalysis }))} />
+            <UserMenu onUserInputsChange={setUserInputs} />
           </Col>
           <Col xs={12} lg={6} className="pt-3">
             <ButtonGroup className="mb-3">
