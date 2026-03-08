@@ -341,9 +341,55 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                         </Card.Body>
                                     </Card>
 
+                                    <Form.Group as={Row} controlId="annualGrossSalary" className="mt-2">
+                                        <Form.Label column>Annual Gross Salary <InfoPopover {...explanations.annualGrossSalary} /></Form.Label>
+                                        <Col>
+                                            <InputGroup hasValidation>
+                                                <InputGroup.Text>£</InputGroup.Text>
+                                                <Form.Control
+                                                    type="number"
+                                                    inputMode="decimal"
+                                                    name="annualGrossSalary"
+                                                    value={values.annualGrossSalary}
+                                                    onChange={handleInputChange}
+                                                    isValid={!errors.annualGrossSalary}
+                                                    isInvalid={!!errors.annualGrossSalary}
+                                                    min={0}
+                                                    step={1000}
+                                                />
+                                                <Form.Control.Feedback type="invalid">
+                                                    {errors.annualGrossSalary}
+                                                </Form.Control.Feedback>
+                                            </InputGroup>
+                                        </Col>
+                                    </Form.Group>
+
+                                    <Form.Group as={Row} controlId="annualGrossBonus" className="mt-2">
+                                        <Form.Label column>Annual Gross Bonus <InfoPopover {...explanations.annualGrossBonus} /></Form.Label>
+                                        <Col>
+                                            <InputGroup hasValidation>
+                                                <InputGroup.Text>£</InputGroup.Text>
+                                                <Form.Control
+                                                    type="number"
+                                                    inputMode="decimal"
+                                                    name="annualGrossBonus"
+                                                    value={values.annualGrossBonus}
+                                                    onChange={handleInputChange}
+                                                    isValid={!errors.annualGrossBonus}
+                                                    isInvalid={!!errors.annualGrossBonus}
+                                                    min={0}
+                                                    step={1000}
+                                                />
+                                                <Form.Control.Feedback type="invalid">
+                                                    {errors.annualGrossBonus}
+                                                </Form.Control.Feedback>
+                                            </InputGroup>
+                                        </Col>
+                                    </Form.Group>
+
                                     <Card className="mt-2">
                                         <Card.Body>
-                                            <ButtonGroup className="mb-2">
+                                            <ButtonGroup className="mb-0">
                                                 <Button
                                                     variant={!values.incomeAnalysis ? 'primary' : 'outline-primary'}
                                                     onClick={() => handleInputChange({
@@ -361,81 +407,6 @@ export function UserMenu({ onUserInputsChange }: UserMenuProps) {
                                                     My Taxes
                                                 </Button>
                                             </ButtonGroup>
-
-                                            {values.incomeAnalysis &&
-                                                <>
-                                                    <Form.Group as={Row} controlId="annualGrossSalary">
-                                                        <Form.Label column>Annual Gross Salary <InfoPopover {...explanations.annualGrossSalary} /></Form.Label>
-                                                        <Col>
-                                                            <InputGroup hasValidation>
-                                                                <InputGroup.Text>£</InputGroup.Text>
-                                                                <Form.Control
-                                                                    type="number"
-                                                                    inputMode="decimal"
-                                                                    name="annualGrossSalary"
-                                                                    value={values.annualGrossSalary}
-                                                                    onChange={handleInputChange}
-                                                                    isValid={!errors.annualGrossSalary}
-                                                                    isInvalid={!!errors.annualGrossSalary}
-                                                                    min={0}
-                                                                    step={1000}
-                                                                />
-                                                                <Form.Control.Feedback type="invalid">
-                                                                    {errors.annualGrossSalary}
-                                                                </Form.Control.Feedback>
-                                                            </InputGroup>
-                                                        </Col>
-                                                    </Form.Group>
-
-                                                    <Form.Group as={Row} controlId="annualGrossBonus" className="mt-2">
-                                                        <Form.Label column>Annual Gross Bonus <InfoPopover {...explanations.annualGrossBonus} /></Form.Label>
-                                                        <Col>
-                                                            <InputGroup hasValidation>
-                                                                <InputGroup.Text>£</InputGroup.Text>
-                                                                <Form.Control
-                                                                    type="number"
-                                                                    inputMode="decimal"
-                                                                    name="annualGrossBonus"
-                                                                    value={values.annualGrossBonus}
-                                                                    onChange={handleInputChange}
-                                                                    isValid={!errors.annualGrossBonus}
-                                                                    isInvalid={!!errors.annualGrossBonus}
-                                                                    min={0}
-                                                                    step={1000}
-                                                                />
-                                                                <Form.Control.Feedback type="invalid">
-                                                                    {errors.annualGrossBonus}
-                                                                </Form.Control.Feedback>
-                                                            </InputGroup>
-                                                        </Col>
-                                                    </Form.Group>
-                                                </>
-                                            }
-
-                                            {!values.incomeAnalysis &&
-                                                <Form.Group as={Row} controlId="annualGrossIncomeRange">
-                                                    <Form.Label column>Annual Gross Income range <InfoPopover {...explanations.annualGrossIncomeRange} /></Form.Label>
-                                                    <Col>
-                                                        <InputGroup hasValidation>
-                                                            <InputGroup.Text>£</InputGroup.Text>
-                                                            <Form.Control
-                                                                type="number"
-                                                                inputMode="decimal"
-                                                                name="annualGrossIncomeRange"
-                                                                value={values.annualGrossIncomeRange}
-                                                                onChange={handleInputChange}
-                                                                isValid={!errors.annualGrossIncomeRange}
-                                                                isInvalid={!!errors.annualGrossIncomeRange}
-                                                                min={10000}
-                                                                step={10000}
-                                                            />
-                                                            <Form.Control.Feedback type="invalid">
-                                                                {errors.annualGrossIncomeRange}
-                                                            </Form.Control.Feedback>
-                                                        </InputGroup>
-                                                    </Col>
-                                                </Form.Group>
-                                            }
                                         </Card.Body>
                                     </Card>
 
