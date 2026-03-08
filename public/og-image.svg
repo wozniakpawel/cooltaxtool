@@ -2,7 +2,9 @@
   <rect width="1200" height="630" fill="#333"/>
 
   <!-- Brand -->
-  <text x="600" y="180" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="bold" fill="#fff" text-anchor="middle">CoolTaxTool</text>
+  <text x="600" y="180" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="bold" text-anchor="middle">
+    <tspan fill="#0d6efd">Cool</tspan><tspan fill="#dc3545">Tax</tspan><tspan fill="#0d6efd">Tool</tspan>
+  </text>
   <text x="600" y="240" font-family="system-ui, -apple-system, sans-serif" font-size="28" fill="#ccc" text-anchor="middle">UK Tax Calculator &amp; Visualiser</text>
 
   <!-- Simplified chart bars -->
